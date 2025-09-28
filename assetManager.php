@@ -42,6 +42,9 @@ function assetManager()
     $recentAssets = getRecentAssets(10);
     $ui->assign('recentAssets', $recentAssets);
     $ui->assign('version', 'v1.0.0');
+    $ui->assign('xheader', '<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>');
     $ui->display('assetManager.tpl');
 }
 
@@ -1344,4 +1347,46 @@ function generatePdfHtml($reportData)
         </html>";
 
     return $html;
+}
+
+/**
+ * Handler for marking welcome message as seen
+ */
+function asset_welcome_seen()
+{
+    _admin();
+    // _log("Processing asset_welcome_seen request");
+    
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header('Content-Type: application/json');
+       // _log("Invalid request method for asset_welcome_seen");
+        echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+        exit;
+    }
+    // Update the settings to record that welcome message has been seen
+    try {
+        $exists = ORM::for_table('tbl_appconfig')
+            ->where('setting', 'welcome_message_viewed')
+            ->count();
+            
+        if ($exists) {
+            ORM::for_table('tbl_appconfig')
+                ->where('setting', 'welcome_message_viewed')
+                ->find_one()
+                ->set('value', 'yes')
+                ->save();
+        } else {
+            ORM::for_table('tbl_appconfig')->create()
+                ->set('setting', 'welcome_message_viewed')
+                ->set('value', 'yes')
+                ->save();
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+    } catch (Exception $e) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
+    exit;
 }

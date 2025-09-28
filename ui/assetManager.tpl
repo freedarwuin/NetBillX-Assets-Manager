@@ -1,10 +1,5 @@
 {include file="sections/header.tpl"}
 
-<!-- Chart.js and Leaflet Libraries -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <style>
     .asset-stats-card {
         transition: transform 0.2s;
@@ -1556,9 +1551,89 @@
     </div>
 </div>
 
+{if $_c.welcome_message_viewed neq 'yes'}
+<div class="modal fade" id="welcomeAssetManagerModal" tabindex="-1" role="dialog" aria-labelledby="welcomeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="welcomeModalLabel"><i class="fa fa-cubes"></i> {Lang::T('Welcome to Asset Manager!')}
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <img src="https://shop.focuslinkstech.com.ng/public/storage/settings/172805218211.png" alt="Logo" style="max-height: 80px;" class="mb-3">
+                    <h4>{Lang::T('Thank you for installing the Asset Manager plugin')}</h4>
+                    <p class="text-muted">{Lang::T('Manage your organization\'s assets with ease')}</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fa fa-star"></i> {Lang::T('Key Features')}</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Track all your physical assets')}</li>
+                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Schedule and manage maintenance')}</li>
+                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Generate detailed reports')}</li>
+                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Export data to PDF')}</li>
+                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Track assignments and warranties')}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fa fa-rocket"></i> {Lang::T('Getting Started')}</h5>
+                            </div>
+                            <div class="card-body">
+                                <ol class="pl-3">
+                                    <li class="mb-2">{Lang::T('Add your first asset by clicking the')} <strong>{Lang::T('Add Asset')}</strong> {Lang::T('button')}</li>
+                                    <li class="mb-2">{Lang::T('View your assets by clicking the')} <strong>{Lang::T('View Assets')}</strong> {Lang::T('button')}</li>
+                                    <li class="mb-2">{Lang::T('Categorize your assets')} (Network, Infrastructure, etc.)</li>
+                                    <li class="mb-2">{Lang::T('Set up locations to track where assets are deployed')}</li>
+                                    <li class="mb-2">{Lang::T('Schedule maintenance for important equipment')}</li>
+                                    <li class="mb-2">{Lang::T('Generate your first report to see the system in action')}</li>
+                                    <li class="mb-2">{Lang::T('Please don\'t forget to donate to support the development')} <a href="https://www.paypal.com/paypalme/focuslinkstech" target="_blank">{Lang::T('Donate Now')}</a></li> 
+                                    <li class="mb-2">{Lang::T('Click on Get Started to continue')}</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="https://www.paypal.com/paypalme/focuslinkstech" target="_blank" class="btn btn-primary"><i class="fa fa-paypal"></i> {Lang::T('Donate')}</a>
+                <button type="button" class="btn btn-success" data-dismiss="modal"><i class="fa fa-check-circle"></i> {Lang::T('Get Started')}</button>
+            </div>
+        </div>
+    </div>
+</div>
+{/if}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <script>
+    $(document).ready(function () {
+        $("#welcomeAssetManagerModal").modal({
+            backdrop: "static",
+            keyboard: false
+        });
+
+        // Handle welcome message acknowledgment
+        $("#welcomeAssetManagerModal .btn-success").on("click", function () {
+            $.post("?_route=plugin/asset_welcome_seen", {}, function (data) {
+                console.log("Welcome message acknowledged");
+            });
+        });
+    });
+
     // Asset Management JavaScript Functions
     let currentAssets = [];
     let filteredAssets = [];
