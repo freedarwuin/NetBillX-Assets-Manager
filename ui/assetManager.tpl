@@ -291,44 +291,47 @@
         background-color: #fcf8e3;
         border-left: 4px solid #f0ad4e;
     }
-    
+
     /* Location panel styles */
-    .location-item, .category-item {
+    .location-item,
+    .category-item {
         transition: all 0.2s ease;
     }
-    
-    .location-item:hover, .category-item:hover {
+
+    .location-item:hover,
+    .category-item:hover {
         background-color: #f5f5f5;
     }
-    
-    .location-item.active, .category-item.active {
+
+    .location-item.active,
+    .category-item.active {
         background-color: #eaf4fd;
         border-left: 3px solid #3388ff;
     }
-    
+
     .location-filter {
         margin-bottom: 10px;
     }
-    
-    .nav-tabs.nav-justified > li > a {
+
+    .nav-tabs.nav-justified>li>a {
         border-radius: 0;
         border-bottom: none;
         color: #555;
         font-weight: 600;
         padding: 8px 0;
     }
-    
-    .nav-tabs.nav-justified > li.active > a {
+
+    .nav-tabs.nav-justified>li.active>a {
         border-bottom: 2px solid #337ab7;
         color: #337ab7;
     }
-    
+
     .coverage-legend {
         font-size: 11px;
         display: flex;
         justify-content: space-between;
     }
-    
+
     .coverage-legend i {
         margin-right: 4px;
     }
@@ -539,7 +542,7 @@
                             <i class="fa fa-calendar"></i> {Lang::T('Maintenance Schedule')}
                         </a>
                     </li>
-                    
+
 
                     <!-- Reports Tab -->
                     <li role="presentation">
@@ -882,26 +885,31 @@
                                     <div class="panel-heading" style="background-color: #f8f8f8; padding: 10px 15px;">
                                         <h4><i class="fa fa-map"></i> {Lang::T('Asset Location Map')}</h4>
                                         <div class="btn-group btn-group-sm pull-right" style="margin-top: -25px;">
-                                            <button id="layer-all" class="btn btn-default map-layer-btn active" onclick="toggleMapLayer('all')">
+                                            <button id="layer-all" class="btn btn-default map-layer-btn active"
+                                                onclick="toggleMapLayer('all')">
                                                 <i class="fa fa-globe"></i> {Lang::T('All')}
                                             </button>
-                                            <button id="layer-network" class="btn btn-default map-layer-btn" onclick="toggleMapLayer('network')">
+                                            <button id="layer-network" class="btn btn-default map-layer-btn"
+                                                onclick="toggleMapLayer('network')">
                                                 <i class="fa fa-wifi"></i> {Lang::T('Network')}
                                             </button>
-                                            <button id="layer-infrastructure" class="btn btn-default map-layer-btn" 
+                                            <button id="layer-infrastructure" class="btn btn-default map-layer-btn"
                                                 onclick="toggleMapLayer('infrastructure')">
                                                 <i class="fa fa-building"></i> {Lang::T('Infrastructure')}
                                             </button>
-                                            <button id="layer-vehicles" class="btn btn-default map-layer-btn" onclick="toggleMapLayer('vehicles')">
+                                            <button id="layer-vehicles" class="btn btn-default map-layer-btn"
+                                                onclick="toggleMapLayer('vehicles')">
                                                 <i class="fa fa-truck"></i> {Lang::T('Vehicles')}
                                             </button>
-                                            <button id="reset-map" class="btn btn-default" onclick="resetMapView()" title="{Lang::T('Reset View')}">
+                                            <button id="reset-map" class="btn btn-default" onclick="resetMapView()"
+                                                title="{Lang::T('Reset View')}">
                                                 <i class="fa fa-refresh"></i>
                                             </button>
                                         </div>
                                     </div>
                                     <div class="panel-body" style="padding: 0;">
-                                        <div id="assetMap" class="map-container" style="height: 600px; width: 100%;"></div>
+                                        <div id="assetMap" class="map-container" style="height: 600px; width: 100%;">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -914,53 +922,69 @@
                                         <!-- Search location filter -->
                                         <div class="location-filter" style="padding: 15px 15px 5px;">
                                             <div class="input-group">
-                                                <input type="text" class="form-control" id="locationSearchInput" placeholder="{Lang::T('Filter locations...')}">
+                                                <input type="text" class="form-control" id="locationSearchInput"
+                                                    placeholder="{Lang::T('Filter locations...')}">
                                                 <span class="input-group-btn">
-                                                    <button class="btn btn-default" type="button" onclick="filterLocations()">
+                                                    <button class="btn btn-default" type="button"
+                                                        onclick="filterLocations()">
                                                         <i class="fa fa-search"></i>
                                                     </button>
                                                 </span>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Location Stats -->
                                         <div class="location-stats">
                                             <ul class="nav nav-tabs nav-justified">
-                                                <li class="active"><a data-toggle="tab" href="#locations-tab"><i class="fa fa-building-o"></i> {Lang::T('Locations')}</a></li>
-                                                <li><a data-toggle="tab" href="#categories-tab"><i class="fa fa-tags"></i> {Lang::T('Categories')}</a></li>
+                                                <li class="active"><a data-toggle="tab" href="#locations-tab"><i
+                                                            class="fa fa-building-o"></i> {Lang::T('Locations')}</a>
+                                                </li>
+                                                <li><a data-toggle="tab" href="#categories-tab"><i
+                                                            class="fa fa-tags"></i> {Lang::T('Categories')}</a></li>
                                             </ul>
-                                            
+
                                             <div class="tab-content" style="padding: 0;">
                                                 <div id="locations-tab" class="tab-pane fade in active">
-                                                    <div class="list-group" id="locationsList" style="margin-bottom: 0; max-height: 300px; overflow-y: auto;">
+                                                    <div class="list-group" id="locationsList"
+                                                        style="margin-bottom: 0; max-height: 300px; overflow-y: auto;">
                                                         <!-- Location items will be dynamically populated -->
                                                         <div class="list-group-item text-center">
-                                                            <i class="fa fa-spinner fa-spin"></i> {Lang::T('Loading locations...')}
+                                                            <i class="fa fa-spinner fa-spin"></i> {Lang::T('Loading
+                                                            locations...')}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div id="categories-tab" class="tab-pane fade">
-                                                    <div class="list-group" id="categoriesList" style="margin-bottom: 0; max-height: 300px; overflow-y: auto;">
+                                                    <div class="list-group" id="categoriesList"
+                                                        style="margin-bottom: 0; max-height: 300px; overflow-y: auto;">
                                                         <!-- Category items will be dynamically populated -->
                                                         <div class="list-group-item text-center">
-                                                            <i class="fa fa-spinner fa-spin"></i> {Lang::T('Loading categories...')}
+                                                            <i class="fa fa-spinner fa-spin"></i> {Lang::T('Loading
+                                                            categories...')}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Coverage Area Card -->
-                                        <div class="card" style="margin: 0; padding: 15px; border-top: 1px solid #ddd; background-color: #f9f9f9;">
+                                        <div class="card"
+                                            style="margin: 0; padding: 15px; border-top: 1px solid #ddd; background-color: #f9f9f9;">
                                             <h5 style="margin-top: 0; font-weight: bold; color: #333;">
                                                 <i class="fa fa-globe"></i> {Lang::T('Coverage Areas')}
                                             </h5>
-                                            <div class="progress" style="height: 10px; margin-bottom: 10px;" id="coverage-progress">
-                                                <div class="progress-bar progress-bar-success" style="width: 0%" title="Zone A"></div>
-                                                <div class="progress-bar progress-bar-warning" style="width: 0%" title="Zone B"></div>
-                                                <div class="progress-bar progress-bar-danger" style="width: 0%" title="Zone C"></div>
+                                            <div class="progress" style="height: 10px; margin-bottom: 10px;"
+                                                id="coverage-progress">
+                                                <div class="progress-bar progress-bar-success" style="width: 0%"
+                                                    title="Zone A"></div>
+                                                <div class="progress-bar progress-bar-warning" style="width: 0%"
+                                                    title="Zone B"></div>
+                                                <div class="progress-bar progress-bar-danger" style="width: 0%"
+                                                    title="Zone C"></div>
                                             </div>
-                                            <div class="coverage-legend" style="display: flex; justify-content: space-between; font-size: 12px;" id="coverage-legend">
+                                            <div class="coverage-legend"
+                                                style="display: flex; justify-content: space-between; font-size: 12px;"
+                                                id="coverage-legend">
                                                 <span><i class="fa fa-circle text-success"></i> Zone A: 0%</span>
                                                 <span><i class="fa fa-circle text-warning"></i> Zone B: 0%</span>
                                                 <span><i class="fa fa-circle text-danger"></i> Zone C: 0%</span>
@@ -1092,30 +1116,36 @@
                                     </div>
                                     <div class="panel-body">
                                         <div class="list-group">
-                                            <a href="#" class="list-group-item active" data-report="inventory" onclick="changeReport('inventory')">
+                                            <a href="#" class="list-group-item active" data-report="inventory"
+                                                onclick="changeReport('inventory')">
                                                 <i class="fa fa-list"></i> {Lang::T('Asset Inventory Report')}
                                             </a>
-                                            <a href="#" class="list-group-item" data-report="value" onclick="changeReport('value')">
+                                            <a href="#" class="list-group-item" data-report="value"
+                                                onclick="changeReport('value')">
                                                 <i class="fa fa-money"></i> {Lang::T('Asset Value Report')}
                                             </a>
-                                            <a href="#" class="list-group-item" data-report="maintenance" onclick="changeReport('maintenance')">
+                                            <a href="#" class="list-group-item" data-report="maintenance"
+                                                onclick="changeReport('maintenance')">
                                                 <i class="fa fa-wrench"></i> {Lang::T('Maintenance History Report')}
                                             </a>
-                                            <a href="#" class="list-group-item" data-report="depreciation" onclick="changeReport('depreciation')">
+                                            <a href="#" class="list-group-item" data-report="depreciation"
+                                                onclick="changeReport('depreciation')">
                                                 <i class="fa fa-line-chart"></i> {Lang::T('Depreciation Report')}
                                             </a>
-                                            <a href="#" class="list-group-item" data-report="status" onclick="changeReport('status')">
+                                            <a href="#" class="list-group-item" data-report="status"
+                                                onclick="changeReport('status')">
                                                 <i class="fa fa-check-circle"></i> {Lang::T('Asset Status Report')}
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-9">
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <h4 id="report-title"><i class="fa fa-list"></i> {Lang::T('Asset Inventory Report')}</h4>
+                                        <h4 id="report-title"><i class="fa fa-list"></i> {Lang::T('Asset Inventory
+                                            Report')}</h4>
                                         <div class="btn-group btn-group-sm pull-right" style="margin-top: -25px;">
                                             <button class="btn btn-default" onclick="exportReportPDF()">
                                                 <i class="fa fa-file-pdf-o"></i> PDF
@@ -1150,8 +1180,10 @@
                                                     <select class="form-control" id="report-category">
                                                         <option value="all">{Lang::T('All Categories')}</option>
                                                         <option value="network">{Lang::T('Network Equipment')}</option>
-                                                        <option value="customer">{Lang::T('Customer Equipment')}</option>
-                                                        <option value="infrastructure">{Lang::T('Infrastructure')}</option>
+                                                        <option value="customer">{Lang::T('Customer Equipment')}
+                                                        </option>
+                                                        <option value="infrastructure">{Lang::T('Infrastructure')}
+                                                        </option>
                                                         <option value="vehicle">{Lang::T('Vehicles')}</option>
                                                         <option value="tool">{Lang::T('Tools')}</option>
                                                     </select>
@@ -1171,14 +1203,15 @@
                                                     <select class="form-control" id="report-status">
                                                         <option value="all">{Lang::T('All Statuses')}</option>
                                                         <option value="active">{Lang::T('Active')}</option>
-                                                        <option value="maintenance">{Lang::T('Under Maintenance')}</option>
+                                                        <option value="maintenance">{Lang::T('Under Maintenance')}
+                                                        </option>
                                                         <option value="retired">{Lang::T('Retired/Disposed')}</option>
                                                         <option value="storage">{Lang::T('In Storage')}</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="row custom-date-range" style="display:none; margin-bottom: 15px;">
                                             <div class="col-md-6">
                                                 <div class="form-group">
@@ -1193,7 +1226,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="row" style="margin-bottom: 15px;">
                                             <div class="col-md-12">
                                                 <button class="btn btn-primary" onclick="generateReport()">
@@ -1201,14 +1234,14 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Report Content -->
                                         <div class="report-content">
                                             <div id="report-visualization" style="height: 300px; margin-bottom: 20px;">
                                                 <!-- Charts will be rendered here -->
                                                 <canvas id="reportChart"></canvas>
                                             </div>
-                                            
+
                                             <div class="table-responsive">
                                                 <table class="table table-striped table-bordered" id="report-table">
                                                     <thead id="report-table-head">
@@ -1219,7 +1252,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            
+
                                             <div id="report-summary" class="well well-sm" style="margin-top: 20px;">
                                                 <!-- Summary information will be displayed here -->
                                             </div>
@@ -1557,7 +1590,8 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="welcomeModalLabel"><i class="fa fa-cubes"></i> {Lang::T('Welcome to Asset Manager!')}
+                <h5 class="modal-title" id="welcomeModalLabel"><i class="fa fa-cubes"></i> {Lang::T('Welcome to Asset
+                    Manager!')}
                 </h5>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -1565,7 +1599,8 @@
             </div>
             <div class="modal-body">
                 <div class="text-center mb-4">
-                    <img src="https://shop.focuslinkstech.com.ng/public/storage/settings/172805218211.png" alt="Logo" style="max-height: 80px;" class="mb-3">
+                    <img src="https://shop.focuslinkstech.com.ng/public/storage/settings/172805218211.png" alt="Logo"
+                        style="max-height: 80px;" class="mb-3">
                     <h4>{Lang::T('Thank you for installing the Asset Manager plugin')}</h4>
                     <p class="text-muted">{Lang::T('Manage your organization\'s assets with ease')}</p>
                 </div>
@@ -1578,11 +1613,16 @@
                             </div>
                             <div class="card-body">
                                 <ul class="list-group list-group-flush">
-                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Track all your physical assets')}</li>
-                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Schedule and manage maintenance')}</li>
-                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Generate detailed reports')}</li>
-                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Export data to PDF')}</li>
-                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Track assignments and warranties')}</li>
+                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Track
+                                        all your physical assets')}</li>
+                                    <li class="list-group-item"><i class="fa fa-check text-success"></i>
+                                        {Lang::T('Schedule and manage maintenance')}</li>
+                                    <li class="list-group-item"><i class="fa fa-check text-success"></i>
+                                        {Lang::T('Generate detailed reports')}</li>
+                                    <li class="list-group-item"><i class="fa fa-check text-success"></i>
+                                        {Lang::T('Export data to PDF')}</li>
+                                    <li class="list-group-item"><i class="fa fa-check text-success"></i> {Lang::T('Track
+                                        assignments and warranties')}</li>
                                 </ul>
                             </div>
                         </div>
@@ -1595,13 +1635,20 @@
                             </div>
                             <div class="card-body">
                                 <ol class="pl-3">
-                                    <li class="mb-2">{Lang::T('Add your first asset by clicking the')} <strong>{Lang::T('Add Asset')}</strong> {Lang::T('button')}</li>
-                                    <li class="mb-2">{Lang::T('View your assets by clicking the')} <strong>{Lang::T('View Assets')}</strong> {Lang::T('button')}</li>
-                                    <li class="mb-2">{Lang::T('Categorize your assets')} (Network, Infrastructure, etc.)</li>
-                                    <li class="mb-2">{Lang::T('Set up locations to track where assets are deployed')}</li>
+                                    <li class="mb-2">{Lang::T('Add your first asset by clicking the')}
+                                        <strong>{Lang::T('Add Asset')}</strong> {Lang::T('button')}</li>
+                                    <li class="mb-2">{Lang::T('View your assets by clicking the')}
+                                        <strong>{Lang::T('View Assets')}</strong> {Lang::T('button')}</li>
+                                    <li class="mb-2">{Lang::T('Categorize your assets')} (Network, Infrastructure, etc.)
+                                    </li>
+                                    <li class="mb-2">{Lang::T('Set up locations to track where assets are deployed')}
+                                    </li>
                                     <li class="mb-2">{Lang::T('Schedule maintenance for important equipment')}</li>
-                                    <li class="mb-2">{Lang::T('Generate your first report to see the system in action')}</li>
-                                    <li class="mb-2">{Lang::T('Please don\'t forget to donate to support the development')} <a href="https://www.paypal.com/paypalme/focuslinkstech" target="_blank">{Lang::T('Donate Now')}</a></li> 
+                                    <li class="mb-2">{Lang::T('Generate your first report to see the system in action')}
+                                    </li>
+                                    <li class="mb-2">{Lang::T('Please don\'t forget to donate to support the
+                                        development')} <a href="https://www.paypal.com/paypalme/focuslinkstech"
+                                            target="_blank">{Lang::T('Donate Now')}</a></li>
                                     <li class="mb-2">{Lang::T('Click on Get Started to continue')}</li>
                                 </ol>
                             </div>
@@ -1610,8 +1657,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <a href="https://www.paypal.com/paypalme/focuslinkstech" target="_blank" class="btn btn-primary"><i class="fa fa-paypal"></i> {Lang::T('Donate')}</a>
-                <button type="button" class="btn btn-success" data-dismiss="modal"><i class="fa fa-check-circle"></i> {Lang::T('Get Started')}</button>
+                <a href="https://www.paypal.com/paypalme/focuslinkstech" target="_blank" class="btn btn-primary"><i
+                        class="fa fa-paypal"></i> {Lang::T('Donate')}</a>
+                <button type="button" class="btn btn-success" data-dismiss="modal"><i class="fa fa-check-circle"></i>
+                    {Lang::T('Get Started')}</button>
             </div>
         </div>
     </div>
@@ -2144,7 +2193,7 @@
     function loadAssetLocations() {
         // Use currentAssets array instead of making a separate AJAX call
         let hasLocations = false;
-        
+
         // Check if we have assets in the currentAssets array
         if (Array.isArray(currentAssets) && currentAssets.length > 0) {
             currentAssets.forEach(function (asset) {
@@ -2896,16 +2945,16 @@
 
     // Return customer equipment
     function returnEquipment(assetId) {
-                    if (confirm('Mark this equipment as returned?')) {
-                        alert('Equipment ' + assetId + ' marked as returned');
-                        loadAssets();
-                    }
-                }
+        if (confirm('Mark this equipment as returned?')) {
+            alert('Equipment ' + assetId + ' marked as returned');
+            loadAssets();
+        }
+    }
 
     // Export assets
     function exportAssets() {
-                    window.location.href = '?_route=plugin/asset_export';
-                }
+        window.location.href = '?_route=plugin/asset_export';
+    }
 
     // Load assets data
     function loadAssets() {
@@ -2916,10 +2965,10 @@
                 if (response.success) {
                     currentAssets = response.data;
                     //console.log('Loaded ' + currentAssets.length + ' assets from database');
-                    
+
                     // Update location and category counts
                     updateLocationCounts();
-                    
+
                     // Refresh the map if it's initialized
                     if (assetMap) {
                         // Clear existing markers
@@ -2928,7 +2977,7 @@
                                 assetMap.removeLayer(layer);
                             }
                         });
-                        
+
                         // Reload asset locations on the map
                         loadAssetLocations();
                     }
@@ -2940,12 +2989,12 @@
             }
         });
     }
-    
+
     // Calculate and update location counts
     function updateLocationCounts() {
         // Skip if no assets loaded
         if (!currentAssets || !currentAssets.length) return;
-        
+
         // Count assets by location
         const locationCounts = {};
         const categoryCounts = {
@@ -2955,14 +3004,14 @@
             'vehicles': 0,
             'tools': 0
         };
-        
+
         // Coverage zone tracking
         const coverageZones = {
             'zoneA': { count: 0, uptime: 0 },
             'zoneB': { count: 0, uptime: 0 },
             'zoneC': { count: 0, uptime: 0 }
         };
-        
+
         // Group the standard locations for display
         const locationMapping = {
             'main office': 'main-office',
@@ -2981,7 +3030,7 @@
             'mobile units': 'mobile',
             'vehicle': 'mobile'
         };
-        
+
         // Map for determining coverage zones based on location
         const coverageMapping = {
             'main-office': 'zoneA',
@@ -2991,9 +3040,9 @@
             'customer': 'zoneC',
             'mobile': 'zoneB'
         };
-        
+
         // Process each asset
-        currentAssets.forEach(function(asset) {
+        currentAssets.forEach(function (asset) {
             // Count by category
             let category = asset.category || 'other';
             if (category === 'network') categoryCounts['network']++;
@@ -3001,12 +3050,12 @@
             else if (category === 'infrastructure') categoryCounts['infrastructure']++;
             else if (category === 'vehicle') categoryCounts['vehicles']++;
             else if (category === 'tool') categoryCounts['tools']++;
-            
+
             // Count by location
             if (asset.location) {
                 const location = asset.location.toLowerCase();
                 let locationKey = 'other'; // default
-                
+
                 // Check if this location maps to one of our standard locations
                 for (const [keyword, key] of Object.entries(locationMapping)) {
                     if (location.includes(keyword)) {
@@ -3014,7 +3063,7 @@
                         break;
                     }
                 }
-                
+
                 // Initialize if not exist
                 if (!locationCounts[locationKey]) {
                     locationCounts[locationKey] = {
@@ -3023,21 +3072,21 @@
                         key: locationKey
                     };
                 }
-                
+
                 // Increment count
                 locationCounts[locationKey].count++;
-                
+
                 // Use the most frequent name variation as the display name
                 if (!locationCounts[locationKey].names) {
                     locationCounts[locationKey].names = {};
                 }
-                
+
                 if (!locationCounts[locationKey].names[asset.location]) {
                     locationCounts[locationKey].names[asset.location] = 1;
                 } else {
                     locationCounts[locationKey].names[asset.location]++;
                 }
-                
+
                 // Find the most frequent name
                 let maxCount = 0;
                 for (const [name, count] of Object.entries(locationCounts[locationKey].names)) {
@@ -3046,11 +3095,11 @@
                         maxCount = count;
                     }
                 }
-                
+
                 // Count for coverage zones
                 let zone = coverageMapping[locationKey] || 'zoneC';
                 coverageZones[zone].count++;
-                
+
                 if (asset.status === 'active') {
                     coverageZones[zone].uptime++;
                 }
@@ -3066,36 +3115,36 @@
                 locationCounts['unknown'].count++;
             }
         });
-        
+
         // Calculate coverage percentages
         const totalAssets = currentAssets.length;
-        const zoneAPercentage = coverageZones.zoneA.count > 0 ? 
+        const zoneAPercentage = coverageZones.zoneA.count > 0 ?
             Math.round((coverageZones.zoneA.uptime / coverageZones.zoneA.count) * 100) : 0;
-        const zoneBPercentage = coverageZones.zoneB.count > 0 ? 
+        const zoneBPercentage = coverageZones.zoneB.count > 0 ?
             Math.round((coverageZones.zoneB.uptime / coverageZones.zoneB.count) * 100) : 0;
-        const zoneCPercentage = coverageZones.zoneC.count > 0 ? 
+        const zoneCPercentage = coverageZones.zoneC.count > 0 ?
             Math.round((coverageZones.zoneC.uptime / coverageZones.zoneC.count) * 100) : 0;
-        
+
         // Calculate distribution percentages for the progress bar
         const zoneADistribution = totalAssets > 0 ? (coverageZones.zoneA.count / totalAssets) * 100 : 0;
         const zoneBDistribution = totalAssets > 0 ? (coverageZones.zoneB.count / totalAssets) * 100 : 0;
         const zoneCDistribution = totalAssets > 0 ? (coverageZones.zoneC.count / totalAssets) * 100 : 0;
-        
+
         // Update the coverage progress bar
         $('#coverage-progress .progress-bar-success').css('width', zoneADistribution + '%').attr('title', 'Zone A: ' + coverageZones.zoneA.count + ' assets');
         $('#coverage-progress .progress-bar-warning').css('width', zoneBDistribution + '%').attr('title', 'Zone B: ' + coverageZones.zoneB.count + ' assets');
         $('#coverage-progress .progress-bar-danger').css('width', zoneCDistribution + '%').attr('title', 'Zone C: ' + coverageZones.zoneC.count + ' assets');
-        
+
         // Update coverage legend
         $('#coverage-legend').html(
             '<span><i class="fa fa-circle text-success"></i> Zone A: ' + zoneAPercentage + '%</span>' +
             '<span><i class="fa fa-circle text-warning"></i> Zone B: ' + zoneBPercentage + '%</span>' +
             '<span><i class="fa fa-circle text-danger"></i> Zone C: ' + zoneCPercentage + '%</span>'
         );
-        
+
         // Generate HTML for locations
         let locationsHTML = '';
-        
+
         // Add standard locations first in a specific order
         const standardLocations = [
             { key: 'main-office', icon: 'building', color: 'primary', name: 'Main Office' },
@@ -3104,2803 +3153,2803 @@
             { key: 'customer', icon: 'users', color: 'success', name: 'Customer Premises' },
             { key: 'mobile', icon: 'truck', color: 'warning', name: 'Mobile Units' }
         ];
-        
+
         // Add standard locations with counts
-        standardLocations.forEach(function(loc) {
+        standardLocations.forEach(function (loc) {
             const count = locationCounts[loc.key] ? locationCounts[loc.key].count : 0;
             const name = locationCounts[loc.key] && locationCounts[loc.key].name ? locationCounts[loc.key].name : loc.name;
-            
-            locationsHTML += 
+
+            locationsHTML +=
                 '<div class="list-group-item location-item" data-location="' + loc.key + '" style="cursor: pointer;">' +
-                    '<div class="row">' +
-                        '<div class="col-xs-8">' +
-                            '<i class="fa fa-' + loc.icon + ' text-' + loc.color + '"></i> ' + name +
-                        '</div>' +
-                        '<div class="col-xs-4 text-right">' +
-                            '<span class="badge">' + count + '</span>' +
-                        '</div>' +
-                    '</div>' +
+                '<div class="row">' +
+                '<div class="col-xs-8">' +
+                '<i class="fa fa-' + loc.icon + ' text-' + loc.color + '"></i> ' + name +
+                '</div>' +
+                '<div class="col-xs-4 text-right">' +
+                '<span class="badge">' + count + '</span>' +
+                '</div>' +
+                '</div>' +
                 '</div>';
         });
-        
+
         // Add any other locations found in the data
         for (const [key, location] of Object.entries(locationCounts)) {
             // Skip already added standard locations
             if (standardLocations.some(std => std.key === key)) continue;
-            
+
             // Skip unknown for now
             if (key === 'unknown') continue;
-            
-            locationsHTML += 
+
+            locationsHTML +=
                 '<div class="list-group-item location-item" data-location="' + location.key + '" style="cursor: pointer;">' +
-                    '<div class="row">' +
-                        '<div class="col-xs-8">' +
-                            '<i class="fa fa-map-marker text-muted"></i> ' + location.name +
-                        '</div>' +
-                        '<div class="col-xs-4 text-right">' +
-                            '<span class="badge">' + location.count + '</span>' +
-                        '</div>' +
-                    '</div>' +
+                '<div class="row">' +
+                '<div class="col-xs-8">' +
+                '<i class="fa fa-map-marker text-muted"></i> ' + location.name +
+                '</div>' +
+                '<div class="col-xs-4 text-right">' +
+                '<span class="badge">' + location.count + '</span>' +
+                '</div>' +
+                '</div>' +
                 '</div>';
         }
-        
+
         // Add unknown location at the end if it exists
         if (locationCounts['unknown']) {
-            locationsHTML += 
+            locationsHTML +=
                 '<div class="list-group-item location-item" data-location="unknown" style="cursor: pointer;">' +
-                    '<div class="row">' +
-                        '<div class="col-xs-8">' +
-                            '<i class="fa fa-question-circle text-muted"></i> ' + locationCounts['unknown'].name +
-                        '</div>' +
-                        '<div class="col-xs-4 text-right">' +
-                            '<span class="badge">' + locationCounts['unknown'].count + '</span>' +
-                        '</div>' +
-                    '</div>' +
+                '<div class="row">' +
+                '<div class="col-xs-8">' +
+                '<i class="fa fa-question-circle text-muted"></i> ' + locationCounts['unknown'].name +
+                '</div>' +
+                '<div class="col-xs-4 text-right">' +
+                '<span class="badge">' + locationCounts['unknown'].count + '</span>' +
+                '</div>' +
+                '</div>' +
                 '</div>';
         }
-        
+
         // No locations case
         if (locationsHTML === '') {
             locationsHTML = '<div class="list-group-item text-center">' + '{Lang::T("No locations found")}' + '</div>';
         }
-        
+
         // Update locations list
         $('#locationsList').html(locationsHTML);
-        
+
         // Generate HTML for categories
-        let categoriesHTML = 
+        let categoriesHTML =
             '<div class="list-group-item category-item" data-category="network">' +
-                '<div class="row">' +
-                    '<div class="col-xs-8">' +
-                        '<i class="fa fa-wifi text-primary"></i> {Lang::T("Network Equipment")}' +
-                    '</div>' +
-                    '<div class="col-xs-4 text-right">' +
-                        '<span class="badge">' + categoryCounts['network'] + '</span>' +
-                    '</div>' +
-                '</div>' +
+            '<div class="row">' +
+            '<div class="col-xs-8">' +
+            '<i class="fa fa-wifi text-primary"></i> {Lang::T("Network Equipment")}' +
+            '</div>' +
+            '<div class="col-xs-4 text-right">' +
+            '<span class="badge">' + categoryCounts['network'] + '</span>' +
+            '</div>' +
+            '</div>' +
             '</div>' +
             '<div class="list-group-item category-item" data-category="infrastructure">' +
-                '<div class="row">' +
-                    '<div class="col-xs-8">' +
-                        '<i class="fa fa-building text-success"></i> {Lang::T("Infrastructure")}' +
-                    '</div>' +
-                    '<div class="col-xs-4 text-right">' +
-                        '<span class="badge">' + categoryCounts['infrastructure'] + '</span>' +
-                    '</div>' +
-                '</div>' +
+            '<div class="row">' +
+            '<div class="col-xs-8">' +
+            '<i class="fa fa-building text-success"></i> {Lang::T("Infrastructure")}' +
+            '</div>' +
+            '<div class="col-xs-4 text-right">' +
+            '<span class="badge">' + categoryCounts['infrastructure'] + '</span>' +
+            '</div>' +
+            '</div>' +
             '</div>' +
             '<div class="list-group-item category-item" data-category="vehicles">' +
-                '<div class="row">' +
-                    '<div class="col-xs-8">' +
-                        '<i class="fa fa-truck text-warning"></i> {Lang::T("Vehicles")}' +
-                    '</div>' +
-                    '<div class="col-xs-4 text-right">' +
-                        '<span class="badge">' + categoryCounts['vehicles'] + '</span>' +
-                    '</div>' +
-                '</div>' +
+            '<div class="row">' +
+            '<div class="col-xs-8">' +
+            '<i class="fa fa-truck text-warning"></i> {Lang::T("Vehicles")}' +
+            '</div>' +
+            '<div class="col-xs-4 text-right">' +
+            '<span class="badge">' + categoryCounts['vehicles'] + '</span>' +
+            '</div>' +
+            '</div>' +
             '</div>' +
             '<div class="list-group-item category-item" data-category="tools">' +
-                '<div class="row">' +
-                    '<div class="col-xs-8">' +
-                        '<i class="fa fa-wrench text-danger"></i> {Lang::T("Tools")}' +
-                    '</div>' +
-                    '<div class="col-xs-4 text-right">' +
-                        '<span class="badge">' + categoryCounts['tools'] + '</span>' +
-                    '</div>' +
-                '</div>' +
+            '<div class="row">' +
+            '<div class="col-xs-8">' +
+            '<i class="fa fa-wrench text-danger"></i> {Lang::T("Tools")}' +
+            '</div>' +
+            '<div class="col-xs-4 text-right">' +
+            '<span class="badge">' + categoryCounts['tools'] + '</span>' +
+            '</div>' +
+            '</div>' +
             '</div>';
-        
+
         // Update categories list
         $('#categoriesList').html(categoriesHTML);
     }
 
     // Load assets by category
     function loadAssetsByCategory(category) {
-                    $.ajax({
-                        url: '?_route=plugin/asset_list_by_category&category=' + category,
-                        method: 'GET',
-                        success: function (response) {
-                            if (response.success) {
-                                const assets = response.data;
-                                populateAssetTable(category, assets);
-                            }
-                        },
-                        error: function () {
-                            console.log('Error loading assets for category: ' + category);
-                        }
-                    });
+        $.ajax({
+            url: '?_route=plugin/asset_list_by_category&category=' + category,
+            method: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    const assets = response.data;
+                    populateAssetTable(category, assets);
                 }
+            },
+            error: function () {
+                console.log('Error loading assets for category: ' + category);
+            }
+        });
+    }
 
     // Populate asset table based on category
     function populateAssetTable(category, assets) {
-                    let tableId = '';
-                    let tableBodyHtml = '';
+        let tableId = '';
+        let tableBodyHtml = '';
 
-                    switch (category) {
-                        case 'network':
-                            tableId = '#networkEquipmentTable tbody';
-                            assets.forEach(function (asset) {
-                                const statusClass = asset.status === 'active' ? 'success' :
-                                    asset.status === 'maintenance' ? 'warning' : 'danger';
-                                tableBodyHtml +=
-                                    '<tr>' +
-                                    '<td>' + asset.asset_id + '</td>' +
-                                    '<td>' + asset.name + '</td>' +
-                                    '<td>' + (asset.brand_model || '-') + '</td>' +
-                                    '<td>' + (asset.serial_number || '-') + '</td>' +
-                                    '<td>' + (asset.location || '-') + '</td>' +
-                                    '<td><span class="label label-' + statusClass + '">' + asset.status + '</span></td>' +
-                                    '<td>' + (asset.ip_address || '-') + '</td>' +
-                                    '<td>' + (asset.maintenance || '-') + '</td>' +
-                                    '<td>' + (asset.assignments || '-') + '</td>' +
-                                    '<td>' +
-                                    '<button class="btn btn-xs btn-info" onclick="viewAsset(\'' + asset.asset_id + '\')">{Lang::T('View')}</button> ' +
-                                    '<button class="btn btn-xs btn-primary" onclick = "showMap(\'' + asset.asset_id + '\')" ><i class="fa fa-map-marker" aria-hidden="true"></i></button >' +
-                                    '<button class="btn btn-xs btn-warning" onclick="editAsset(\'' + asset.asset_id + '\')">{Lang::T('Edit')}</button> ' +
-                                    '<button class="btn btn-xs btn-danger" onclick="deleteAsset(\'' + asset.asset_id + '\')">{Lang::T('Delete')}</button>' +
+        switch (category) {
+            case 'network':
+                tableId = '#networkEquipmentTable tbody';
+                assets.forEach(function (asset) {
+                    const statusClass = asset.status === 'active' ? 'success' :
+                        asset.status === 'maintenance' ? 'warning' : 'danger';
+                    tableBodyHtml +=
+                        '<tr>' +
+                        '<td>' + asset.asset_id + '</td>' +
+                        '<td>' + asset.name + '</td>' +
+                        '<td>' + (asset.brand_model || '-') + '</td>' +
+                        '<td>' + (asset.serial_number || '-') + '</td>' +
+                        '<td>' + (asset.location || '-') + '</td>' +
+                        '<td><span class="label label-' + statusClass + '">' + asset.status + '</span></td>' +
+                        '<td>' + (asset.ip_address || '-') + '</td>' +
+                        '<td>' + (asset.maintenance || '-') + '</td>' +
+                        '<td>' + (asset.assignments || '-') + '</td>' +
+                        '<td>' +
+                        '<button class="btn btn-xs btn-info" onclick="viewAsset(\'' + asset.asset_id + '\')">{Lang::T('View')}</button> ' +
+                            '<button class="btn btn-xs btn-primary" onclick = "showMap(\'' + asset.asset_id + '\')" ><i class="fa fa-map-marker" aria-hidden="true"></i></button >' +
+                            '<button class="btn btn-xs btn-warning" onclick="editAsset(\'' + asset.asset_id + '\')">{Lang::T('Edit')}</button> ' +
+                                '<button class="btn btn-xs btn-danger" onclick="deleteAsset(\'' + asset.asset_id + '\')">{Lang::T('Delete')}</button>' +
                                     '</td>' +
                                     '</tr>';
-                            });
-                            break;
+                });
+                break;
 
-                        case 'customer':
-                            tableId = '#customerEquipmentTable tbody';
-                            assets.forEach(function (asset) {
-                                const statusClass = asset.status === 'active' ? 'success' :
-                                    asset.status === 'maintenance' ? 'warning' : 'danger';
-                                tableBodyHtml +=
-                                    '<tr>' +
-                                    '<td>' + asset.asset_id + '</td>' +
-                                    '<td>' + asset.name + '</td>' +
-                                    '<td>' + (asset.assigned_to || '-') + '</td>' +
-                                    '<td>' + (asset.serial_number || '-') + '</td>' +
-                                    '<td>' + (asset.location || '-') + '</td>' +
-                                    '<td>' + (asset.assignments || '-') + '</td>' +
-                                    '<td><span class="label label-' + statusClass + '">' + asset.status + '</span></td>' +
-                                    '<td>' + (asset.deployed_date || '-') + '</td>' +
-                                    '<td>' + (asset.warranty_expiry || '-') + '</td>' +
-                                    '<td>' +
-                                    '<button class="btn btn-xs btn-info" onclick="viewAsset(\'' + asset.asset_id + '\')">{Lang::T('View')}</button> ' +
-                                    '<button class="btn btn-xs btn-warning" onclick="editAsset(\'' + asset.asset_id + '\')">{Lang::T('Edit')}</button> ' +
-                                    '<button class="btn btn-xs btn-danger" onclick="deleteAsset(\'' + asset.asset_id + '\')">{Lang::T('Delete')}</button>' +
+            case 'customer':
+                tableId = '#customerEquipmentTable tbody';
+                assets.forEach(function (asset) {
+                    const statusClass = asset.status === 'active' ? 'success' :
+                        asset.status === 'maintenance' ? 'warning' : 'danger';
+                    tableBodyHtml +=
+                        '<tr>' +
+                        '<td>' + asset.asset_id + '</td>' +
+                        '<td>' + asset.name + '</td>' +
+                        '<td>' + (asset.assigned_to || '-') + '</td>' +
+                        '<td>' + (asset.serial_number || '-') + '</td>' +
+                        '<td>' + (asset.location || '-') + '</td>' +
+                        '<td>' + (asset.assignments || '-') + '</td>' +
+                        '<td><span class="label label-' + statusClass + '">' + asset.status + '</span></td>' +
+                        '<td>' + (asset.deployed_date || '-') + '</td>' +
+                        '<td>' + (asset.warranty_expiry || '-') + '</td>' +
+                        '<td>' +
+                        '<button class="btn btn-xs btn-info" onclick="viewAsset(\'' + asset.asset_id + '\')">{Lang::T('View')}</button> ' +
+                            '<button class="btn btn-xs btn-warning" onclick="editAsset(\'' + asset.asset_id + '\')">{Lang::T('Edit')}</button> ' +
+                                '<button class="btn btn-xs btn-danger" onclick="deleteAsset(\'' + asset.asset_id + '\')">{Lang::T('Delete')}</button>' +
                                     '<button class="btn btn-xs btn-primary" onclick = "showMap(\'' + asset.asset_id + '\')" ><i class="fa fa-map-marker" aria-hidden="true"></i></button >' +
                                     '</td>' +
                                     '</tr>';
-                            });
-                            break;
+                });
+                break;
 
-                        case 'infrastructure':
-                            tableId = '#infrastructure tbody';
-                            assets.forEach(function (asset) {
-                                const statusClass = asset.status === 'active' ? 'success' :
-                                    asset.status === 'maintenance' ? 'warning' : 'danger';
-                                tableBodyHtml +=
-                                    '<tr>' +
-                                    '<td>' + asset.asset_id + '</td>' +
-                                    '<td>' + asset.name + '</td>' +
-                                    '<td>' + (asset.location || '-') + '</td>' +
-                                    '<td>' + (asset.description || '-') + '</td>' +
-                                    '<td>' + (asset.purchase_date || '-') + '</td>' +
-                                    '<td><span class="label label-' + statusClass + '">' + asset.status + '</span></td>' +
-                                    '<td>' + (asset.maintenance || '-') + '</td>' +
-                                    '<td>' +
-                                    '<button class="btn btn-xs btn-info" onclick="viewAsset(\'' + asset.asset_id + '\')">View</button> ' +
-                                    '<button class="btn btn-xs btn-primary" onclick = "showMap(\'' + asset.asset_id + '\')" ><i class="fa fa-map-marker" aria-hidden="true"></i></button >' +
-                                    '<button class="btn btn-xs btn-warning" onclick="editAsset(\'' + asset.asset_id + '\')">{Lang::T('Edit')}</button> ' +
-                                    '<button class="btn btn-xs btn-danger" onclick="deleteAsset(\'' + asset.asset_id + '\')">{Lang::T('Delete')}</button>' +
-                                    '<button class="btn btn-xs btn-warning" data-toggle="modal" data-target="#scheduleMaintenanceModal">{Lang::T('Schedule Inspection')}</button>' +
+            case 'infrastructure':
+                tableId = '#infrastructure tbody';
+                assets.forEach(function (asset) {
+                    const statusClass = asset.status === 'active' ? 'success' :
+                        asset.status === 'maintenance' ? 'warning' : 'danger';
+                    tableBodyHtml +=
+                        '<tr>' +
+                        '<td>' + asset.asset_id + '</td>' +
+                        '<td>' + asset.name + '</td>' +
+                        '<td>' + (asset.location || '-') + '</td>' +
+                        '<td>' + (asset.description || '-') + '</td>' +
+                        '<td>' + (asset.purchase_date || '-') + '</td>' +
+                        '<td><span class="label label-' + statusClass + '">' + asset.status + '</span></td>' +
+                        '<td>' + (asset.maintenance || '-') + '</td>' +
+                        '<td>' +
+                        '<button class="btn btn-xs btn-info" onclick="viewAsset(\'' + asset.asset_id + '\')">View</button> ' +
+                        '<button class="btn btn-xs btn-primary" onclick = "showMap(\'' + asset.asset_id + '\')" ><i class="fa fa-map-marker" aria-hidden="true"></i></button >' +
+                        '<button class="btn btn-xs btn-warning" onclick="editAsset(\'' + asset.asset_id + '\')">{Lang::T('Edit')}</button> ' +
+                            '<button class="btn btn-xs btn-danger" onclick="deleteAsset(\'' + asset.asset_id + '\')">{Lang::T('Delete')}</button>' +
+                                '<button class="btn btn-xs btn-warning" data-toggle="modal" data-target="#scheduleMaintenanceModal">{Lang::T('Schedule Inspection')}</button>' +
                                     '</td>' +
                                     '</tr>';
-                            });
-                            break;
+                });
+                break;
 
-                        case 'vehicle':
-                            tableId = '#vehicles tbody';
-                            assets.forEach(function (asset) {
-                                const statusClass = asset.status === 'active' ? 'success' :
-                                    asset.status === 'maintenance' ? 'warning' : 'danger';
-                                tableBodyHtml +=
-                                    '<tr>' +
-                                    '<td>' + asset.asset_id + '</td>' +
-                                    '<td>' + asset.name + '</td>' +
-                                    '<td>' + (asset.brand_model || '-') + '</td>' +
-                                    '<td>' + (asset.assigned_to || '-') + '</td>' +
-                                    '<td>' + (asset.location || '-') + '</td>' +
-                                    '<td><span class="label label-' + statusClass + '">' + asset.status + '</span></td>' +
-                                    '<td>' +
-                                    '<button class="btn btn-xs btn-info" onclick="viewAsset(\'' + asset.asset_id + '\')">{Lang::T('View')}</button> ' +
-                                    '<button class="btn btn-xs btn-primary" onclick = "showMap(\'' + asset.asset_id + '\')" ><i class="fa fa-map-marker" aria-hidden="true"></i></button >' +
-                                    '<button class="btn btn-xs btn-warning" onclick="editAsset(\'' + asset.asset_id + '\')">{Lang::T('Edit')}</button> ' +
-                                    '<button class="btn btn-xs btn-danger" onclick="deleteAsset(\'' + asset.asset_id + '\')">{Lang::T('Delete')}</button>' +
+            case 'vehicle':
+                tableId = '#vehicles tbody';
+                assets.forEach(function (asset) {
+                    const statusClass = asset.status === 'active' ? 'success' :
+                        asset.status === 'maintenance' ? 'warning' : 'danger';
+                    tableBodyHtml +=
+                        '<tr>' +
+                        '<td>' + asset.asset_id + '</td>' +
+                        '<td>' + asset.name + '</td>' +
+                        '<td>' + (asset.brand_model || '-') + '</td>' +
+                        '<td>' + (asset.assigned_to || '-') + '</td>' +
+                        '<td>' + (asset.location || '-') + '</td>' +
+                        '<td><span class="label label-' + statusClass + '">' + asset.status + '</span></td>' +
+                        '<td>' +
+                        '<button class="btn btn-xs btn-info" onclick="viewAsset(\'' + asset.asset_id + '\')">{Lang::T('View')}</button> ' +
+                            '<button class="btn btn-xs btn-primary" onclick = "showMap(\'' + asset.asset_id + '\')" ><i class="fa fa-map-marker" aria-hidden="true"></i></button >' +
+                            '<button class="btn btn-xs btn-warning" onclick="editAsset(\'' + asset.asset_id + '\')">{Lang::T('Edit')}</button> ' +
+                                '<button class="btn btn-xs btn-danger" onclick="deleteAsset(\'' + asset.asset_id + '\')">{Lang::T('Delete')}</button>' +
                                     '<button class="btn btn-xs btn-warning" data-toggle="modal" data-target="#scheduleMaintenanceModal">{Lang::T('Schedule Maintenance')}</button>' +
-                                    '</td>' +
-                                    '</tr>';
-                                });
-                            break;
+                                        '</td>' +
+                                        '</tr>';
+                });
+                break;
 
-                        case 'tool':
-                            tableId = '#tools tbody';
-                            assets.forEach(function (asset) {
-                                const statusClass = asset.status === 'active' ? 'success' :
-                                    asset.status === 'maintenance' ? 'warning' : 'danger';
-                                tableBodyHtml +=
-                                    '<tr>' +
-                                    '<td>' + asset.asset_id + '</td>' +
-                                    '<td>' + asset.name + '</td>' +
-                                    '<td>' + (asset.brand_model || '-') + '</td>' +
-                                    '<td>' + (asset.location || '-') + '</td>' +
-                                    '<td>' + (asset.assigned_to || '-') + '</td>' +
-                                    '<td><span class="label label-' + statusClass + '">' + asset.status + '</span></td>' +
-                                    '<td>' +
-                                    '<button class="btn btn-xs btn-info" onclick="viewAsset(\'' + asset.asset_id + '\')">View</button> ' +
-                                    '<button class="btn btn-xs btn-warning" onclick="editAsset(\'' + asset.asset_id + '\')">{Lang::T('Edit')}</button> ' +
-                                        '<button class="btn btn-xs btn-danger" onclick="deleteAsset(\'' + asset.asset_id + '\')">{Lang::T('Delete')}</button>' +
-                                            '</td>' +
-                                            '</tr>';
-                            });
-                            break;
-                    }
+            case 'tool':
+                tableId = '#tools tbody';
+                assets.forEach(function (asset) {
+                    const statusClass = asset.status === 'active' ? 'success' :
+                        asset.status === 'maintenance' ? 'warning' : 'danger';
+                    tableBodyHtml +=
+                        '<tr>' +
+                        '<td>' + asset.asset_id + '</td>' +
+                        '<td>' + asset.name + '</td>' +
+                        '<td>' + (asset.brand_model || '-') + '</td>' +
+                        '<td>' + (asset.location || '-') + '</td>' +
+                        '<td>' + (asset.assigned_to || '-') + '</td>' +
+                        '<td><span class="label label-' + statusClass + '">' + asset.status + '</span></td>' +
+                        '<td>' +
+                        '<button class="btn btn-xs btn-info" onclick="viewAsset(\'' + asset.asset_id + '\')">View</button> ' +
+                        '<button class="btn btn-xs btn-warning" onclick="editAsset(\'' + asset.asset_id + '\')">{Lang::T('Edit')}</button> ' +
+                            '<button class="btn btn-xs btn-danger" onclick="deleteAsset(\'' + asset.asset_id + '\')">{Lang::T('Delete')}</button>' +
+                                '</td>' +
+                                '</tr>';
+                });
+                break;
+        }
 
-                    if (tableId) {
-                        if (assets.length === 0) {
-                            tableBodyHtml = '<tr><td colspan="10" class="text-center">' + '{Lang::T('No assets found in this category')}' + '</td></tr>';
-                        }
-                        $(tableId).html(tableBodyHtml);
-                    }
-                }
+        if (tableId) {
+            if (assets.length === 0) {
+                tableBodyHtml = '<tr><td colspan="10" class="text-center">' + '{Lang::T('No assets found in this category')}' + '</td></tr>';
+            }
+            $(tableId).html(tableBodyHtml);
+        }
+    }
 
     // Search functionality
     $('#searchNetworkEquipment').on('keyup', function () {
-                    const searchTerm = $(this).val().toLowerCase();
-                    $('#networkEquipmentTable tbody tr').filter(function () {
-                        $(this).toggle($(this).text().toLowerCase().indexOf(searchTerm) > -1);
-                    });
-                });
+        const searchTerm = $(this).val().toLowerCase();
+        $('#networkEquipmentTable tbody tr').filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(searchTerm) > -1);
+        });
+    });
 
-        $('#searchCustomerEquipment').on('keyup', function () {
-            const searchTerm = $(this).val().toLowerCase();
+    $('#searchCustomerEquipment').on('keyup', function () {
+        const searchTerm = $(this).val().toLowerCase();
+        $('#customerEquipmentTable tbody tr').filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(searchTerm) > -1);
+        });
+    });
+
+    // Filter functionality
+    $('#filterNetworkStatus').on('change', function () {
+        const status = $(this).val();
+        if (status === '') {
+            $('#networkEquipmentTable tbody tr').show();
+        } else {
+            $('#networkEquipmentTable tbody tr').hide();
+            $('#networkEquipmentTable tbody tr').filter(function () {
+                return $(this).find('.label').text().toLowerCase().indexOf(status) > -1;
+            }).show();
+        }
+    });
+
+    $('#filterCustomerStatus').on('change', function () {
+        const status = $(this).val();
+        if (status === '') {
+            $('#customerEquipmentTable tbody tr').show();
+        } else {
+            $('#customerEquipmentTable tbody tr').hide();
             $('#customerEquipmentTable tbody tr').filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(searchTerm) > -1);
+                return $(this).find('.label').text().toLowerCase().indexOf(status) > -1;
+            }).show();
+        }
+    });
+
+    var map;
+    var marker;
+
+    function showMap(assetId) {
+        // Find the asset by ID in the currentAssets array
+        const asset = currentAssets.find(a => a.asset_id === assetId);
+
+        if (!asset) {
+            Swal.fire({
+                title: "{Lang::T('Error')}",
+                text: "{Lang::T('Asset not found')}",
+                icon: 'error',
+                confirmButtonText: "{Lang::T('OK')}"
             });
-        });
-
-        // Filter functionality
-        $('#filterNetworkStatus').on('change', function () {
-            const status = $(this).val();
-            if (status === '') {
-                $('#networkEquipmentTable tbody tr').show();
-            } else {
-                $('#networkEquipmentTable tbody tr').hide();
-                $('#networkEquipmentTable tbody tr').filter(function () {
-                    return $(this).find('.label').text().toLowerCase().indexOf(status) > -1;
-                }).show();
-            }
-        });
-
-        $('#filterCustomerStatus').on('change', function () {
-            const status = $(this).val();
-            if (status === '') {
-                $('#customerEquipmentTable tbody tr').show();
-            } else {
-                $('#customerEquipmentTable tbody tr').hide();
-                $('#customerEquipmentTable tbody tr').filter(function () {
-                    return $(this).find('.label').text().toLowerCase().indexOf(status) > -1;
-                }).show();
-            }
-        });
-
-        var map;
-        var marker;
-
-        function showMap(assetId) {
-            // Find the asset by ID in the currentAssets array
-            const asset = currentAssets.find(a => a.asset_id === assetId);
-            
-            if (!asset) {
-                Swal.fire({
-                    title: "{Lang::T('Error')}",
-                    text: "{Lang::T('Asset not found')}",
-                    icon: 'error',
-                    confirmButtonText: "{Lang::T('OK')}"
-                });
-                return;
-            }
-            
-            // Convert to numbers and validate
-            const lat = parseFloat(asset.lat);
-            const lng = parseFloat(asset.lng);
-            
-            if (isNaN(lat) || isNaN(lng)) {
-                Swal.fire({
-                    title: "{Lang::T('Error')}",
-                    text: "{Lang::T('Invalid coordinates for this asset')}",
-                    icon: 'error',
-                    confirmButtonText: "{Lang::T('OK')}"
-                });
-                return;
-            }
-
-            if ($('#mapModal').length > 0) {
-                // Show modal first
-                $('#mapModal').modal('show').on('shown.bs.modal', function () {
-                    // Cleanup previous map
-                    if (map) {
-                        map.remove();
-                        map = null;
-                    }
-                    // Initialize new map
-                    map = L.map('mapContainer').setView([lat, lng], 13);
-    
-                    var s = String.fromCharCode(123) + 's' + String.fromCharCode(125);
-                    var z = String.fromCharCode(123) + 'z' + String.fromCharCode(125);
-                    var x = String.fromCharCode(123) + 'x' + String.fromCharCode(125);
-                    var y = String.fromCharCode(123) + 'y' + String.fromCharCode(125);
-                    var tileUrl = 'https://' + s + '.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';
-    
-                    L.tileLayer(tileUrl, {
-                        maxZoom: 19,
-                        attribution: '© OpenStreetMap contributors'
-                    }).addTo(map);
-            
-                    // Add the marker for this asset
-                    L.marker([lat, lng]).addTo(map);
-                });
-            } else {
-                    // Switch to location tab
-                    $('a[href="#location-view"]').tab('show');
-                    
-                    // If the map is already initialized, just pan to the location
-                    if (assetMap) {
-                        assetMap.setView([lat, lng], 15);
-                        
-                        // Flash the marker by creating a temporary highlighted marker
-                        const highlightMarker = L.marker([lat, lng], {
-                            icon: L.divIcon({
-                                className: 'highlight-marker',
-                                html: '<div style="animation: pulse 1.5s infinite; background-color: #ff7800; border-radius: 50%; width: 16px; height: 16px;"></div>',
-                                iconSize: [16, 16],
-                                iconAnchor: [8, 8]
-                            })
-                        }).addTo(assetMap);
-                        
-                        // Remove the highlight after 3 seconds
-                        setTimeout(function() {
-                            assetMap.removeLayer(highlightMarker);
-                        }, 3000);
-                    }
-                }
-            }
-        
-
-        // Maintenance scheduling functions
-        function loadMaintenanceSchedule() {
-            $.ajax({
-                url: '?_route=plugin/asset_maintenance_list',
-                method: 'GET',
-                data: { status: 'all' },
-                success: function (response) {
-                    console.log('Maintenance schedule loaded: ' + response);
-                    if (response.success) {
-                        populateMaintenanceTable(response.data);
-                        updateMaintenanceStats();
-                        loadMaintenanceAlerts();
-                    } else {
-                        console.error('Error loading maintenance schedule:', response.message);
-                    }
-                },
-                error: function () {
-                    console.error('Failed to load maintenance schedule');
-                }
-            });
+            return;
         }
 
-        function populateMaintenanceTable(maintenanceData) {
-            let tableHtml = '';
+        // Convert to numbers and validate
+        const lat = parseFloat(asset.lat);
+        const lng = parseFloat(asset.lng);
 
-            if (maintenanceData.length === 0) {
-                tableHtml = '<tr><td colspan="8" class="text-center">' + '{Lang::T('No scheduled maintenance found')}' + '</td></tr>';
-            } else {
-                maintenanceData.forEach(function (maintenance) {
-                    const priorityClass = {
-                        'low': 'info',
-                        'medium': 'warning',
-                        'high': 'danger',
-                        'critical': 'danger'
-                    };
+        if (isNaN(lat) || isNaN(lng)) {
+            Swal.fire({
+                title: "{Lang::T('Error')}",
+                text: "{Lang::T('Invalid coordinates for this asset')}",
+                icon: 'error',
+                confirmButtonText: "{Lang::T('OK')}"
+            });
+            return;
+        }
 
-                    const statusClass = {
-                        'scheduled': 'warning',
-                        'in_progress': 'info',
-                        'completed': 'success',
-                        'overdue': 'danger'
-                    };
+        if ($('#mapModal').length > 0) {
+            // Show modal first
+            $('#mapModal').modal('show').on('shown.bs.modal', function () {
+                // Cleanup previous map
+                if (map) {
+                    map.remove();
+                    map = null;
+                }
+                // Initialize new map
+                map = L.map('mapContainer').setView([lat, lng], 13);
 
-                    const isOverdue = new Date(maintenance.scheduled_date) < new Date() && maintenance.status === 'scheduled';
-                    const currentStatus = isOverdue ? 'overdue' : maintenance.status;
+                var s = String.fromCharCode(123) + 's' + String.fromCharCode(125);
+                var z = String.fromCharCode(123) + 'z' + String.fromCharCode(125);
+                var x = String.fromCharCode(123) + 'x' + String.fromCharCode(125);
+                var y = String.fromCharCode(123) + 'y' + String.fromCharCode(125);
+                var tileUrl = 'https://' + s + '.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';
 
+                L.tileLayer(tileUrl, {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                // Add the marker for this asset
+                L.marker([lat, lng]).addTo(map);
+            });
+        } else {
+            // Switch to location tab
+            $('a[href="#location-view"]').tab('show');
+
+            // If the map is already initialized, just pan to the location
+            if (assetMap) {
+                assetMap.setView([lat, lng], 15);
+
+                // Flash the marker by creating a temporary highlighted marker
+                const highlightMarker = L.marker([lat, lng], {
+                    icon: L.divIcon({
+                        className: 'highlight-marker',
+                        html: '<div style="animation: pulse 1.5s infinite; background-color: #ff7800; border-radius: 50%; width: 16px; height: 16px;"></div>',
+                        iconSize: [16, 16],
+                        iconAnchor: [8, 8]
+                    })
+                }).addTo(assetMap);
+
+                // Remove the highlight after 3 seconds
+                setTimeout(function () {
+                    assetMap.removeLayer(highlightMarker);
+                }, 3000);
+            }
+        }
+    }
+
+
+    // Maintenance scheduling functions
+    function loadMaintenanceSchedule() {
+        $.ajax({
+            url: '?_route=plugin/asset_maintenance_list',
+            method: 'GET',
+            data: { status: 'all' },
+            success: function (response) {
+                console.log('Maintenance schedule loaded: ' + response);
+                if (response.success) {
+                    populateMaintenanceTable(response.data);
+                    updateMaintenanceStats();
+                    loadMaintenanceAlerts();
+                } else {
+                    console.error('Error loading maintenance schedule:', response.message);
+                }
+            },
+            error: function () {
+                console.error('Failed to load maintenance schedule');
+            }
+        });
+    }
+
+    function populateMaintenanceTable(maintenanceData) {
+        let tableHtml = '';
+
+        if (maintenanceData.length === 0) {
+            tableHtml = '<tr><td colspan="8" class="text-center">' + '{Lang::T('No scheduled maintenance found')}' + '</td></tr>';
+        } else {
+            maintenanceData.forEach(function (maintenance) {
+                const priorityClass = {
+                    'low': 'info',
+                    'medium': 'warning',
+                    'high': 'danger',
+                    'critical': 'danger'
+                };
+
+                const statusClass = {
+                    'scheduled': 'warning',
+                    'in_progress': 'info',
+                    'completed': 'success',
+                    'overdue': 'danger'
+                };
+
+                const isOverdue = new Date(maintenance.scheduled_date) < new Date() && maintenance.status === 'scheduled';
+                const currentStatus = isOverdue ? 'overdue' : maintenance.status;
+
+                tableHtml +=
+                    '<tr class="' + (isOverdue ? 'danger' : '') + '">' +
+                    '<td>' +
+                    '<strong>' + maintenance.asset_id + '</strong><br>' +
+                    '<small class="text-muted">' + (maintenance.asset_name || '') + '</small>' +
+                    '</td>' +
+                    '<td>' + maintenance.maintenance_type + '</td>' +
+                    '<td>' + maintenance.scheduled_date + '</td>' +
+                    '<td><span class="label label-' + (priorityClass[maintenance.priority] || 'default') + '">' +
+                    maintenance.priority + '</span></td>' +
+                    '<td>' + (maintenance.technician || '-') + '</td>' +
+                    '<td>' + currencyCode + (maintenance.cost || '0') + '</td>' +
+                    '<td><span class="label label-' + (statusClass[currentStatus] || 'default') + '">' +
+                    (isOverdue ? 'Overdue' : maintenance.status) + '</span></td>' +
+                    '<td>' +
+                    '<div class="btn-group">' +
+                    '<button class="btn btn-xs btn-info" onclick="viewMaintenanceDetails(' + maintenance.id + ')" title="View Details">' +
+                    '<i class="fa fa-eye"></i>' +
+                    '</button>';
+
+                if (maintenance.status === 'scheduled') {
                     tableHtml +=
-                        '<tr class="' + (isOverdue ? 'danger' : '') + '">' +
-                        '<td>' +
-                        '<strong>' + maintenance.asset_id + '</strong><br>' +
-                        '<small class="text-muted">' + (maintenance.asset_name || '') + '</small>' +
-                        '</td>' +
-                        '<td>' + maintenance.maintenance_type + '</td>' +
-                        '<td>' + maintenance.scheduled_date + '</td>' +
-                        '<td><span class="label label-' + (priorityClass[maintenance.priority] || 'default') + '">' +
-                        maintenance.priority + '</span></td>' +
-                        '<td>' + (maintenance.technician || '-') + '</td>' +
-                        '<td>' + currencyCode + (maintenance.cost || '0') + '</td>' +
-                        '<td><span class="label label-' + (statusClass[currentStatus] || 'default') + '">' +
-                        (isOverdue ? 'Overdue' : maintenance.status) + '</span></td>' +
-                        '<td>' +
-                        '<div class="btn-group">' +
-                        '<button class="btn btn-xs btn-info" onclick="viewMaintenanceDetails(' + maintenance.id + ')" title="View Details">' +
-                        '<i class="fa fa-eye"></i>' +
+                        '<button class="btn btn-xs btn-success" onclick="startMaintenance(' + maintenance.id + ')" title="Start">' +
+                        '<i class="fa fa-play"></i>' +
+                        '</button>' +
+                        '<button class="btn btn-xs btn-primary" onclick="completeMaintenance(' + maintenance.id + ')" title="Complete">' +
+                        '<i class="fa fa-check"></i>' +
+                        '</button>' +
+                        '<button class="btn btn-xs btn-warning" onclick="editMaintenanceSchedule(' + maintenance.id + ')" title="Edit">' +
+                        '<i class="fa fa-edit"></i>' +
+                        '</button>' +
+                        '<button class="btn btn-xs btn-danger" onclick="deleteMaintenanceSchedule(' + maintenance.id + ')" title="Delete">' +
+                        '<i class="fa fa-trash"></i>' +
                         '</button>';
+                }
 
-                    if (maintenance.status === 'scheduled') {
-                        tableHtml +=
-                            '<button class="btn btn-xs btn-success" onclick="startMaintenance(' + maintenance.id + ')" title="Start">' +
-                            '<i class="fa fa-play"></i>' +
-                            '</button>' +
-                            '<button class="btn btn-xs btn-primary" onclick="completeMaintenance(' + maintenance.id + ')" title="Complete">' +
-                            '<i class="fa fa-check"></i>' +
-                            '</button>' +
-                            '<button class="btn btn-xs btn-warning" onclick="editMaintenanceSchedule(' + maintenance.id + ')" title="Edit">' +
-                            '<i class="fa fa-edit"></i>' +
-                            '</button>' +
-                            '<button class="btn btn-xs btn-danger" onclick="deleteMaintenanceSchedule(' + maintenance.id + ')" title="Delete">' +
-                            '<i class="fa fa-trash"></i>' +
-                            '</button>';
-                    }
+                tableHtml += '</div></td></tr>';
+            });
+        }
 
-                    tableHtml += '</div></td></tr>';
-                });
+        $('#maintenanceScheduleTable tbody').html(tableHtml);
+    }
+
+    function loadMaintenanceAlerts() {
+        $.ajax({
+            url: '?_route=plugin/asset_upcoming_maintenance',
+            method: 'GET',
+            data: { days: 7 },
+            success: function (response) {
+                console.log('Maintenance alerts loaded: ' + response.data);
+                if (response.success) {
+                    displayMaintenanceAlerts(response.data);
+                    loadOverdueMaintenance();
+                }
+            },
+            error: function () {
+                console.error('Failed to load maintenance alerts');
             }
-
-            $('#maintenanceScheduleTable tbody').html(tableHtml);
-        }
-
-        function loadMaintenanceAlerts() {
-            $.ajax({
-                url: '?_route=plugin/asset_upcoming_maintenance',
-                method: 'GET',
-                data: { days: 7 },
-                success: function (response) {
-                    console.log('Maintenance alerts loaded: ' + response.data);
-                    if (response.success) {
-                        displayMaintenanceAlerts(response.data);
-                        loadOverdueMaintenance();
-                    }
-                },
-                error: function () {
-                    console.error('Failed to load maintenance alerts');
-                }
-            });
-        }
-
-        function displayMaintenanceAlerts(upcomingMaintenance) {
-            let alertsHtml = '';
-
-            if (upcomingMaintenance.length === 0) {
-                alertsHtml =
-                    '<div class="col-md-12">' +
-                    '<div class="alert alert-success">' +
-                    '<i class="fa fa-check-circle"></i> {Lang::T('No maintenance scheduled for the next 7 days')}' +
-                        '</div>' +
-                        '</div>';
-            } else {
-                // Group by urgency
-                const today = new Date();
-                const tomorrow = new Date(today);
-                tomorrow.setDate(tomorrow.getDate() + 1);
-
-                const urgent = upcomingMaintenance.filter(m => new Date(m.scheduled_date) <= tomorrow);
-                const upcoming = upcomingMaintenance.filter(m => new Date(m.scheduled_date) > tomorrow);
-
-                if (urgent.length > 0) {
-                    alertsHtml +=
-                        '<div class="col-md-6">' +
-                        '<div class="alert alert-danger">' +
-                        '<h5><i class="fa fa-exclamation-triangle"></i> {Lang::T('Upcoming Urgent Maintenance')}</h5>' +
-                            '<ul>';
-                    urgent.forEach(function (m) {
-                        alertsHtml += '<li>' + m.asset_id + ' - ' + m.maintenance_type + ' (' + m.scheduled_date + ')</li>';
-                    });
-                    alertsHtml += '</ul></div></div>';
-                }
-
-                if (upcoming.length > 0) {
-                    alertsHtml +=
-                        '<div class="col-md-6">' +
-                        '<div class="alert alert-warning">' +
-                        '<h5><i class="fa fa-clock-o"></i> {Lang::T('Upcoming This Week')}</h5>' +
-                            '<ul>';
-                    upcoming.slice(0, 5).forEach(function (m) {
-                        alertsHtml += '<li>' + m.asset_id + ' - ' + m.maintenance_type + ' (' + m.scheduled_date + ')</li>';
-                    });
-                    if (upcoming.length > 5) {
-                        alertsHtml += '<li><em>... and ' + (upcoming.length - 5) + ' more</em></li>';
-                    }
-                    alertsHtml += '</ul></div></div>';
-                }
-            }
-
-            $('#maintenanceAlerts').html(alertsHtml);
-        }
-
-        function loadOverdueMaintenance() {
-            // Load overdue maintenance
-            $.ajax({
-                url: '?_route=plugin/asset_maintenance_list',
-                method: 'GET',
-                data: { status: 'scheduled' },
-                success: function (response) {
-                    if (response.success) {
-                        const today = new Date();
-                        const overdue = response.data.filter(m => new Date(m.scheduled_date) < today);
-                        displayOverdueMaintenance(overdue);
-                    }
-                }
-            });
-        }
-
-        function displayOverdueMaintenance(overdueItems) {
-            let overdueHtml = '';
-
-            if (overdueItems.length === 0) {
-                overdueHtml =
-                    '<div class="text-center text-success">' +
-                    '<i class="fa fa-check-circle fa-2x"></i>' +
-                    '<p>{Lang::T('No overdue maintenance!')}</p>' +
-                        '</div>';
-            } else {
-                overdueHtml = '<div class="list-group">';
-                overdueItems.forEach(function (item) {
-                    const daysOverdue = Math.floor((new Date() - new Date(item.scheduled_date)) / (1000 * 60 * 60 * 24));
-                    overdueHtml +=
-                        '<div class="list-group-item list-group-item-danger">' +
-                        '<h6>' + item.asset_id + '</h6>' +
-                        '<p>' + item.maintenance_type + '</p>' +
-                        '<small class="text-danger">' + daysOverdue + ' days overdue</small>' +
-                        '</div>';
-                });
-                overdueHtml += '</div>';
-            }
-
-            $('#overdueMaintenance').html(overdueHtml);
-        }
-
-        function updateMaintenanceStats() {
-            const currentMonth = new Date().getMonth() + 1;
-            const currentYear = new Date().getFullYear();
-
-            // Load this month's maintenance stats
-            $.ajax({
-                url: '?_route=plugin/asset_maintenance_list',
-                method: 'GET',
-                success: function (response) {
-                    if (response.success) {
-                        const allMaintenance = response.data;
-
-                        // This month scheduled
-                        const scheduledThisMonth = allMaintenance.filter(m => {
-                            const date = new Date(m.scheduled_date);
-                            return date.getMonth() + 1 === currentMonth &&
-                                date.getFullYear() === currentYear &&
-                                m.status === 'scheduled';
-                        }).length;
-
-                        // This month completed
-                        const completedThisMonth = allMaintenance.filter(m => {
-                            const date = new Date(m.maintenance_date || m.scheduled_date);
-                            return date.getMonth() + 1 === currentMonth &&
-                                date.getFullYear() === currentYear &&
-                                m.status === 'completed';
-                        }).length;
-
-                        // Next 7 days
-                        const nextWeek = new Date();
-                        nextWeek.setDate(nextWeek.getDate() + 7);
-                        const upcomingWeek = allMaintenance.filter(m => {
-                            const date = new Date(m.scheduled_date);
-                            return date >= new Date() &&
-                                date <= nextWeek &&
-                                m.status === 'scheduled';
-                        }).length;
-
-                        $('#scheduledThisMonth').text(scheduledThisMonth);
-                        $('#completedThisMonth').text(completedThisMonth);
-                        $('#upcomingWeek').text(upcomingWeek);
-                    }
-                }
-            });
-        }
-
-        function saveMaintenanceSchedule() {
-            const maintenanceData = {
-                asset_id: $('#maintenanceAssetId').val(),
-                maintenance_type: $('#maintenanceType').val(),
-                scheduled_date: $('#scheduledDate').val(),
-                priority: $('#maintenancePriority').val(),
-                technician: $('#maintenanceTechnician').val(),
-                estimated_cost: $('#estimatedCost').val() || 0,
-                description: $('#maintenanceDescription').val()
-            };
-
-            // Validate required fields
-            if (!maintenanceData.asset_id || !maintenanceData.maintenance_type ||
-                !maintenanceData.scheduled_date || !maintenanceData.description) {
-                Swal.fire({
-                    title: '{Lang::T('Validation Error')}',
-                    text: '{Lang::T('Please fill in all required fields')}',
-                    icon: 'warning',
-                    confirmButtonText: '{Lang::T('OK')}'
-            });
-                return;
-            }
-
-            $.ajax({
-                url: '?_route=plugin/asset_schedule_maintenance',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(maintenanceData),
-                success: function (response) {
-                    if (response.success) {
-                        $('#scheduleMaintenanceModal').modal('hide');
-                        Swal.fire({
-                            title: '{Lang::T('Success')}',
-                            text: '{Lang::T('Maintenance scheduled successfully!')}',
-                            icon: 'success',
-                            confirmButtonText: '{Lang::T('OK')}'
-                    });
-
-                        // Reset form and reload data
-                        $('#scheduleMaintenanceForm')[0].reset();
-                        loadMaintenanceSchedule();
-                    } else {
-                        Swal.fire({
-                            title: '{Lang::T('Error')}',
-                            text: response.message,
-                            icon: 'error',
-                            confirmButtonText: '{Lang::T('OK')}'
-                    });
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: '{Lang::T('Error')}',
-                        text: '{Lang::T('An error occurred while scheduling maintenance')}',
-                        icon: 'error',
-                        confirmButtonText: '{Lang::T('OK')}'
-                });
-                }
-            });
-        }
-
-        function completeMaintenance(maintenanceId) {
-            $('#completeMaintenanceId').val(maintenanceId);
-            $('#completionDate').val(new Date().toISOString().split('T')[0]);
-            $('#completeMaintenanceModal').modal('show');
-        }
-
-        function completeMaintenanceTask() {
-            const completionData = {
-                maintenance_id: $('#completeMaintenanceId').val(),
-                completion_date: $('#completionDate').val(),
-                actual_cost: $('#actualCost').val(),
-                technician: $('#completionTechnician').val(),
-                completion_notes: $('#completionNotes').val()
-            };
-
-            $.ajax({
-                url: '?_route=plugin/asset_complete_maintenance',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(completionData),
-                success: function (response) {
-                    if (response.success) {
-                        $('#completeMaintenanceModal').modal('hide');
-                        Swal.fire({
-                            title: '{Lang::T('Success')}',
-                            text: '{Lang::T('Maintenance marked as completed!')}',
-                            icon: 'success',
-                            confirmButtonText: '{Lang::T('OK')}'
-                    });
-
-                        // Reset form and reload data
-                        $('#completeMaintenanceForm')[0].reset();
-                        loadMaintenanceSchedule();
-                        loadAssetStatistics(); // Refresh overall stats
-                    } else {
-                        Swal.fire({
-                            title: '{Lang::T('Error')}',
-                            text: response.message,
-                            icon: 'error',
-                            confirmButtonText: '{Lang::T('OK')}'
-                    });
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: '{Lang::T('Error')}',
-                        text: '{Lang::T('An error occurred while completing maintenance')}',
-                        icon: 'error',
-                        confirmButtonText: '{Lang::T('OK')}'
-                });
-                }
-            });
-        }
-
-        function loadAssetList(action = 'add') {
-
-            if (action === 'edit') {
-                return;
-            }
-
-            $.ajax({
-                url: '?_route=plugin/asset_list',
-                method: 'GET',
-                success: function (response) {
-                    if (response.success) {
-                        let optionsHtml = '<option value="">' + '{Lang::T('Select Asset')}' + '</option>';
-                        response.data.forEach(function (asset) {
-                            optionsHtml += '<option value="' + asset.asset_id + '">' +
-                                asset.asset_id + ' - ' + asset.name + ' (' + asset.category + ')</option>';
-                        });
-                        $('#maintenanceAssetId').html(optionsHtml);
-                    }
-                }
-            });
-        }
-
-        function loadUpcomingMaintenance() {
-            $.ajax({
-                url: '?_route=plugin/asset_maintenance_list',
-                method: 'GET',
-                data: { status: 'scheduled' },
-                success: function (response) {
-                    if (response.success) {
-                        console.log('Upcoming maintenance loaded:', response.data);
-                        // Filter to only future dates
-                        const upcoming = response.data.filter(m => new Date(m.scheduled_date) >= new Date());
-                        populateMaintenanceTable(upcoming);
-                    }
-                }
-            });
-        }
-
-        function loadMaintenanceHistory() {
-            $.ajax({
-                url: '?_route=plugin/asset_maintenance_list',
-                method: 'GET',
-                data: { status: 'completed' },
-                success: function (response) {
-                    if (response.success) {
-                        populateMaintenanceTable(response.data);
-                    }
-                }
-            });
-        }
-
-        // Add event listener for maintenance schedule tab
-        $('a[href="#maintenance-schedule"]').on('shown.bs.tab', function () {
-            loadMaintenanceSchedule();
-            loadAssetList();
         });
+    }
 
-        // Schedule maintenance from asset view
-        function scheduleMaintenanceForAsset(assetId) {
-            $('#maintenanceAssetId').val(assetId);
-            $('#scheduleMaintenanceModal').modal('show');
-            loadAssetList();
+    function displayMaintenanceAlerts(upcomingMaintenance) {
+        let alertsHtml = '';
+
+        if (upcomingMaintenance.length === 0) {
+            alertsHtml =
+                '<div class="col-md-12">' +
+                '<div class="alert alert-success">' +
+                '<i class="fa fa-check-circle"></i> {Lang::T('No maintenance scheduled for the next 7 days')}' +
+                    '</div>' +
+                    '</div>';
+        } else {
+            // Group by urgency
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            const urgent = upcomingMaintenance.filter(m => new Date(m.scheduled_date) <= tomorrow);
+            const upcoming = upcomingMaintenance.filter(m => new Date(m.scheduled_date) > tomorrow);
+
+            if (urgent.length > 0) {
+                alertsHtml +=
+                    '<div class="col-md-6">' +
+                    '<div class="alert alert-danger">' +
+                    '<h5><i class="fa fa-exclamation-triangle"></i> {Lang::T('Upcoming Urgent Maintenance')}</h5>' +
+                        '<ul>';
+                urgent.forEach(function (m) {
+                    alertsHtml += '<li>' + m.asset_id + ' - ' + m.maintenance_type + ' (' + m.scheduled_date + ')</li>';
+                });
+                alertsHtml += '</ul></div></div>';
+            }
+
+            if (upcoming.length > 0) {
+                alertsHtml +=
+                    '<div class="col-md-6">' +
+                    '<div class="alert alert-warning">' +
+                    '<h5><i class="fa fa-clock-o"></i> {Lang::T('Upcoming This Week')}</h5>' +
+                        '<ul>';
+                upcoming.slice(0, 5).forEach(function (m) {
+                    alertsHtml += '<li>' + m.asset_id + ' - ' + m.maintenance_type + ' (' + m.scheduled_date + ')</li>';
+                });
+                if (upcoming.length > 5) {
+                    alertsHtml += '<li><em>... and ' + (upcoming.length - 5) + ' more</em></li>';
+                }
+                alertsHtml += '</ul></div></div>';
+            }
         }
 
-        function viewMaintenanceDetails(maintenanceId) {
-            $.ajax({
-                url: '?_route=plugin/asset_maintenance_list',
-                method: 'GET',
-                success: function (response) {
-                    if (response.success) {
-                        const maintenance = response.data.find(m => m.id == maintenanceId);
-                        if (maintenance) {
-                            showMaintenanceDetailsModal(maintenance);
-                        } else {
+        $('#maintenanceAlerts').html(alertsHtml);
+    }
+
+    function loadOverdueMaintenance() {
+        // Load overdue maintenance
+        $.ajax({
+            url: '?_route=plugin/asset_maintenance_list',
+            method: 'GET',
+            data: { status: 'scheduled' },
+            success: function (response) {
+                if (response.success) {
+                    const today = new Date();
+                    const overdue = response.data.filter(m => new Date(m.scheduled_date) < today);
+                    displayOverdueMaintenance(overdue);
+                }
+            }
+        });
+    }
+
+    function displayOverdueMaintenance(overdueItems) {
+        let overdueHtml = '';
+
+        if (overdueItems.length === 0) {
+            overdueHtml =
+                '<div class="text-center text-success">' +
+                '<i class="fa fa-check-circle fa-2x"></i>' +
+                '<p>{Lang::T('No overdue maintenance!')}</p>' +
+                    '</div>';
+        } else {
+            overdueHtml = '<div class="list-group">';
+            overdueItems.forEach(function (item) {
+                const daysOverdue = Math.floor((new Date() - new Date(item.scheduled_date)) / (1000 * 60 * 60 * 24));
+                overdueHtml +=
+                    '<div class="list-group-item list-group-item-danger">' +
+                    '<h6>' + item.asset_id + '</h6>' +
+                    '<p>' + item.maintenance_type + '</p>' +
+                    '<small class="text-danger">' + daysOverdue + ' days overdue</small>' +
+                    '</div>';
+            });
+            overdueHtml += '</div>';
+        }
+
+        $('#overdueMaintenance').html(overdueHtml);
+    }
+
+    function updateMaintenanceStats() {
+        const currentMonth = new Date().getMonth() + 1;
+        const currentYear = new Date().getFullYear();
+
+        // Load this month's maintenance stats
+        $.ajax({
+            url: '?_route=plugin/asset_maintenance_list',
+            method: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    const allMaintenance = response.data;
+
+                    // This month scheduled
+                    const scheduledThisMonth = allMaintenance.filter(m => {
+                        const date = new Date(m.scheduled_date);
+                        return date.getMonth() + 1 === currentMonth &&
+                            date.getFullYear() === currentYear &&
+                            m.status === 'scheduled';
+                    }).length;
+
+                    // This month completed
+                    const completedThisMonth = allMaintenance.filter(m => {
+                        const date = new Date(m.maintenance_date || m.scheduled_date);
+                        return date.getMonth() + 1 === currentMonth &&
+                            date.getFullYear() === currentYear &&
+                            m.status === 'completed';
+                    }).length;
+
+                    // Next 7 days
+                    const nextWeek = new Date();
+                    nextWeek.setDate(nextWeek.getDate() + 7);
+                    const upcomingWeek = allMaintenance.filter(m => {
+                        const date = new Date(m.scheduled_date);
+                        return date >= new Date() &&
+                            date <= nextWeek &&
+                            m.status === 'scheduled';
+                    }).length;
+
+                    $('#scheduledThisMonth').text(scheduledThisMonth);
+                    $('#completedThisMonth').text(completedThisMonth);
+                    $('#upcomingWeek').text(upcomingWeek);
+                }
+            }
+        });
+    }
+
+    function saveMaintenanceSchedule() {
+        const maintenanceData = {
+            asset_id: $('#maintenanceAssetId').val(),
+            maintenance_type: $('#maintenanceType').val(),
+            scheduled_date: $('#scheduledDate').val(),
+            priority: $('#maintenancePriority').val(),
+            technician: $('#maintenanceTechnician').val(),
+            estimated_cost: $('#estimatedCost').val() || 0,
+            description: $('#maintenanceDescription').val()
+        };
+
+        // Validate required fields
+        if (!maintenanceData.asset_id || !maintenanceData.maintenance_type ||
+            !maintenanceData.scheduled_date || !maintenanceData.description) {
+            Swal.fire({
+                title: '{Lang::T('Validation Error')}',
+                text: '{Lang::T('Please fill in all required fields')}',
+                icon: 'warning',
+                confirmButtonText: '{Lang::T('OK')}'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: '?_route=plugin/asset_schedule_maintenance',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(maintenanceData),
+            success: function (response) {
+                if (response.success) {
+                    $('#scheduleMaintenanceModal').modal('hide');
+                    Swal.fire({
+                        title: '{Lang::T('Success')}',
+                        text: '{Lang::T('Maintenance scheduled successfully!')}',
+                        icon: 'success',
+                        confirmButtonText: '{Lang::T('OK')}'
+                    });
+
+                    // Reset form and reload data
+                    $('#scheduleMaintenanceForm')[0].reset();
+                    loadMaintenanceSchedule();
+                } else {
+                    Swal.fire({
+                        title: '{Lang::T('Error')}',
+                        text: response.message,
+                        icon: 'error',
+                        confirmButtonText: '{Lang::T('OK')}'
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    title: '{Lang::T('Error')}',
+                    text: '{Lang::T('An error occurred while scheduling maintenance')}',
+                    icon: 'error',
+                    confirmButtonText: '{Lang::T('OK')}'
+                });
+            }
+        });
+    }
+
+    function completeMaintenance(maintenanceId) {
+        $('#completeMaintenanceId').val(maintenanceId);
+        $('#completionDate').val(new Date().toISOString().split('T')[0]);
+        $('#completeMaintenanceModal').modal('show');
+    }
+
+    function completeMaintenanceTask() {
+        const completionData = {
+            maintenance_id: $('#completeMaintenanceId').val(),
+            completion_date: $('#completionDate').val(),
+            actual_cost: $('#actualCost').val(),
+            technician: $('#completionTechnician').val(),
+            completion_notes: $('#completionNotes').val()
+        };
+
+        $.ajax({
+            url: '?_route=plugin/asset_complete_maintenance',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(completionData),
+            success: function (response) {
+                if (response.success) {
+                    $('#completeMaintenanceModal').modal('hide');
+                    Swal.fire({
+                        title: '{Lang::T('Success')}',
+                        text: '{Lang::T('Maintenance marked as completed!')}',
+                        icon: 'success',
+                        confirmButtonText: '{Lang::T('OK')}'
+                    });
+
+                    // Reset form and reload data
+                    $('#completeMaintenanceForm')[0].reset();
+                    loadMaintenanceSchedule();
+                    loadAssetStatistics(); // Refresh overall stats
+                } else {
+                    Swal.fire({
+                        title: '{Lang::T('Error')}',
+                        text: response.message,
+                        icon: 'error',
+                        confirmButtonText: '{Lang::T('OK')}'
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    title: '{Lang::T('Error')}',
+                    text: '{Lang::T('An error occurred while completing maintenance')}',
+                    icon: 'error',
+                    confirmButtonText: '{Lang::T('OK')}'
+                });
+            }
+        });
+    }
+
+    function loadAssetList(action = 'add') {
+
+        if (action === 'edit') {
+            return;
+        }
+
+        $.ajax({
+            url: '?_route=plugin/asset_list',
+            method: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    let optionsHtml = '<option value="">' + '{Lang::T('Select Asset')}' + '</option>';
+                    response.data.forEach(function (asset) {
+                        optionsHtml += '<option value="' + asset.asset_id + '">' +
+                            asset.asset_id + ' - ' + asset.name + ' (' + asset.category + ')</option>';
+                    });
+                    $('#maintenanceAssetId').html(optionsHtml);
+                }
+            }
+        });
+    }
+
+    function loadUpcomingMaintenance() {
+        $.ajax({
+            url: '?_route=plugin/asset_maintenance_list',
+            method: 'GET',
+            data: { status: 'scheduled' },
+            success: function (response) {
+                if (response.success) {
+                    console.log('Upcoming maintenance loaded:', response.data);
+                    // Filter to only future dates
+                    const upcoming = response.data.filter(m => new Date(m.scheduled_date) >= new Date());
+                    populateMaintenanceTable(upcoming);
+                }
+            }
+        });
+    }
+
+    function loadMaintenanceHistory() {
+        $.ajax({
+            url: '?_route=plugin/asset_maintenance_list',
+            method: 'GET',
+            data: { status: 'completed' },
+            success: function (response) {
+                if (response.success) {
+                    populateMaintenanceTable(response.data);
+                }
+            }
+        });
+    }
+
+    // Add event listener for maintenance schedule tab
+    $('a[href="#maintenance-schedule"]').on('shown.bs.tab', function () {
+        loadMaintenanceSchedule();
+        loadAssetList();
+    });
+
+    // Schedule maintenance from asset view
+    function scheduleMaintenanceForAsset(assetId) {
+        $('#maintenanceAssetId').val(assetId);
+        $('#scheduleMaintenanceModal').modal('show');
+        loadAssetList();
+    }
+
+    function viewMaintenanceDetails(maintenanceId) {
+        $.ajax({
+            url: '?_route=plugin/asset_maintenance_list',
+            method: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    const maintenance = response.data.find(m => m.id == maintenanceId);
+                    if (maintenance) {
+                        showMaintenanceDetailsModal(maintenance);
+                    } else {
+                        Swal.fire({
+                            title: '{Lang::T('Error')}',
+                            text: '{Lang::T('Maintenance record not found')}',
+                            icon: 'error',
+                            confirmButtonText: '{Lang::T('OK')}'
+                        });
+                    }
+                } else {
+                    Swal.fire({
+                        title: '{Lang::T('Error')}',
+                        text: response.message,
+                        icon: 'error',
+                        confirmButtonText: '{Lang::T('OK')}'
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    title: '{Lang::T('Error')}',
+                    text: '{Lang::T('Failed to load maintenance details')}',
+                    icon: 'error',
+                    confirmButtonText: '{Lang::T('OK')}'
+                });
+            }
+        });
+    }
+
+    function showMaintenanceDetailsModal(maintenance) {
+        const priorityBadge = {
+            'low': 'info',
+            'medium': 'warning',
+            'high': 'danger',
+            'critical': 'danger'
+        };
+
+        const statusBadge = {
+            'scheduled': 'warning',
+            'in_progress': 'info',
+            'completed': 'success',
+            'overdue': 'danger'
+        };
+
+        const isOverdue = new Date(maintenance.scheduled_date) < new Date() && maintenance.status === 'scheduled';
+        const displayStatus = isOverdue ? 'overdue' : maintenance.status;
+
+        let modalContent =
+            '<div class="modal fade" id="maintenanceDetailsModal" tabindex="-1" role="dialog">' +
+            '<div class="modal-dialog modal-lg" role="document">' +
+            '<div class="modal-content">' +
+            '<div class="modal-header">' +
+            '<h4 class="modal-title">' +
+            '<i class="fa fa-wrench"></i> {Lang::T('Maintenance Details')} - ' + maintenance.asset_id +
+                '</h4>' +
+                '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
+                '</div>' +
+                '<div class="modal-body">' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<table class="table table-bordered">' +
+                '<tr>' +
+                '<th>{Lang::T('Asset ID')}</th>' +
+                    '<td>' + maintenance.asset_id + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<th>{Lang::T('Asset Name')}</th>' +
+                        '<td>' + (maintenance.asset_name || '-') + '</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                        '<th>{Lang::T('Category')}</th>' +
+                            '<td>' + (maintenance.asset_category || '-') + '</td>' +
+                            '</tr>' +
+                            '<tr>' +
+                            '<th>{Lang::T('Maintenance Type')}</th>' +
+                                '<td>' + maintenance.maintenance_type + '</td>' +
+                                '</tr>' +
+                                '<tr>' +
+                                '<th>{Lang::T('Priority')}</th>' +
+                                    '<td><span class="label label-' + (priorityBadge[maintenance.priority] || 'default') + '">' + maintenance.priority + '</span></td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                    '<th>{Lang::T('Status')}</th>' +
+                                        '<td><span class="label label-' + (statusBadge[displayStatus] || 'default') + '">' + displayStatus + '</span></td>' +
+                                        '</tr>' +
+                                        '</table>' +
+                                        '</div>' +
+                                        '<div class="col-md-6">' +
+                                        '<table class="table table-bordered">' +
+                                        '<tr>' +
+                                        '<th>{Lang::T('Scheduled Date')}</th>' +
+                                            '<td>' + maintenance.scheduled_date + '</td>' +
+                                            '</tr>' +
+                                            '<tr>' +
+                                            '<th>{Lang::T('Completion Date')}</th>' +
+                                                '<td>' + (maintenance.maintenance_date || '-') + '</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                '<th>{Lang::T('Technician')}</th>' +
+                                                    '<td>' + (maintenance.technician || '-') + '</td>' +
+                                                    '</tr>' +
+                                                    '<tr>' +
+                                                    '<th>{Lang::T('Estimated Cost')}</th>' +
+                                                        '<td>' + currencyCode + (maintenance.cost || '0') + '</td>' +
+                                                        '</tr>' +
+                                                        '<tr>' +
+                                                        '<th>{Lang::T('Actual Cost')}</th>' +
+                                                            '<td>' + currencyCode + (maintenance.actual_cost || '-') + '</td>' +
+                                                            '</tr>' +
+                                                            '<tr>' +
+                                                            '<th>{Lang::T('Created')}</th>' +
+                                                                '<td>' + maintenance.created_at + '</td>' +
+                                                                '</tr>' +
+                                                                '</table>' +
+                                                                '</div>' +
+                                                                '</div>' +
+                                                                '<div class="row">' +
+                                                                '<div class="col-md-12">' +
+                                                                '<h5>{Lang::T('Description')}</h5>' +
+                                                                    '<p class="well">' + (maintenance.description || '-') + '</p>';
+
+        // Add completion notes if they exist
+        if (maintenance.completion_notes) {
+            modalContent +=
+                '<h5>{Lang::T('Completion Notes')}</h5>' +
+                    '<p class="well">' + maintenance.completion_notes + '</p>';
+        }
+
+        modalContent +=
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="modal-footer">';
+
+        // Add action buttons for scheduled maintenance
+        if (maintenance.status === 'scheduled') {
+            modalContent +=
+                '<button type="button" class="btn btn-success" onclick="completeMaintenance(' + maintenance.id + '); ' + "$('#maintenanceDetailsModal').modal('hide');" + '">' +
+                '<i class="fa fa-check"></i> {Lang::T('Mark Complete')}' +
+                    '</button>' +
+                    '<button type="button" class="btn btn-info" onclick="startMaintenance(' + maintenance.id + '); ' + "$('#maintenanceDetailsModal').modal('hide');" + '">' +
+                    '<i class="fa fa-play"></i> {Lang::T('Start Work')}' +
+                        '</button>';
+        }
+
+        modalContent +=
+            '<button type="button" class="btn btn-default" data-dismiss="modal">{Lang::T('Close')}</button>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+
+        // Remove existing modal if present
+        $('#maintenanceDetailsModal').remove();
+
+        // Add modal to body and show
+        $('body').append(modalContent);
+        $('#maintenanceDetailsModal').modal('show');
+    }
+
+    function startMaintenance(maintenanceId) {
+        Swal.fire({
+            title: '{Lang::T('Start Maintenance')}',
+            text: '{Lang::T('Mark this maintenance as in progress?')}',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: '{Lang::T('Yes, Start')}',
+            cancelButtonText: '{Lang::T('Cancel')}'
+        }).then((result) => {
+                if (result.isConfirmed) {
+                    // Update maintenance status to in_progress
+                    $.ajax({
+                        url: '?_route=plugin/asset_complete_maintenance',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            maintenance_id: maintenanceId,
+                            status: 'in_progress'
+                        }),
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: '{Lang::T('Success')}',
+                                    text: '{Lang::T('Maintenance started successfully!')}',
+                                    icon: 'success',
+                                    confirmButtonText: '{Lang::T('OK')}'
+                            });
+                                loadMaintenanceSchedule();
+                            } else {
+                                Swal.fire({
+                                    title: '{Lang::T('Error')}',
+                                    text: response.message,
+                                    icon: 'error',
+                                    confirmButtonText: '{Lang::T('OK')}'
+                            });
+                            }
+                        },
+                        error: function () {
                             Swal.fire({
                                 title: '{Lang::T('Error')}',
-                                text: '{Lang::T('Maintenance record not found')}',
+                                text: '{Lang::T('An error occurred while starting maintenance')}',
                                 icon: 'error',
                                 confirmButtonText: '{Lang::T('OK')}'
                         });
                         }
-                    } else {
-                        Swal.fire({
-                            title: '{Lang::T('Error')}',
-                            text: response.message,
-                            icon: 'error',
-                            confirmButtonText: '{Lang::T('OK')}'
                     });
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: '{Lang::T('Error')}',
-                        text: '{Lang::T('Failed to load maintenance details')}',
-                        icon: 'error',
-                        confirmButtonText: '{Lang::T('OK')}'
-                });
                 }
             });
-        }
+    }
 
-        function showMaintenanceDetailsModal(maintenance) {
-            const priorityBadge = {
-                'low': 'info',
-                'medium': 'warning',
-                'high': 'danger',
-                'critical': 'danger'
-            };
 
-            const statusBadge = {
-                'scheduled': 'warning',
-                'in_progress': 'info',
-                'completed': 'success',
-                'overdue': 'danger'
-            };
+    function editMaintenanceSchedule(maintenanceId) {
+        // Load maintenance details and populate edit form
+        $.ajax({
+            url: '?_route=plugin/asset_maintenance_list',
+            method: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    const maintenance = response.data.find(m => m.id == maintenanceId);
+                    if (maintenance) {
+                        // Populate the schedule form with existing data
+                        $('#maintenanceAssetId').val(maintenance.asset_id).prop('disabled', true);
+                        $('#maintenanceType').val(maintenance.maintenance_type);
+                        $('#scheduledDate').val(maintenance.scheduled_date);
+                        $('#maintenancePriority').val(maintenance.priority);
+                        $('#maintenanceTechnician').val(maintenance.technician);
+                        $('#estimatedCost').val(maintenance.cost);
+                        $('#maintenanceDescription').val(maintenance.description);
 
-            const isOverdue = new Date(maintenance.scheduled_date) < new Date() && maintenance.status === 'scheduled';
-            const displayStatus = isOverdue ? 'overdue' : maintenance.status;
+                        // Change modal title and button text for editing
+                        $('#scheduleMaintenanceModal .modal-title').text('{Lang::T('Edit Maintenance Schedule')}');
+                        $('#scheduleMaintenanceModal .btn-primary').text('{Lang::T('Update Schedule')}').attr('onclick', 'updateMaintenanceSchedule(' + maintenanceId + ')');
 
-            let modalContent =
-                '<div class="modal fade" id="maintenanceDetailsModal" tabindex="-1" role="dialog">' +
-                '<div class="modal-dialog modal-lg" role="document">' +
-                '<div class="modal-content">' +
-                '<div class="modal-header">' +
-                '<h4 class="modal-title">' +
-                '<i class="fa fa-wrench"></i> {Lang::T('Maintenance Details')} - ' + maintenance.asset_id +
-                    '</h4>' +
-                    '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
-                    '</div>' +
-                    '<div class="modal-body">' +
-                    '<div class="row">' +
-                    '<div class="col-md-6">' +
-                    '<table class="table table-bordered">' +
-                    '<tr>' +
-                    '<th>{Lang::T('Asset ID')}</th>' +
-                        '<td>' + maintenance.asset_id + '</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                        '<th>{Lang::T('Asset Name')}</th>' +
-                            '<td>' + (maintenance.asset_name || '-') + '</td>' +
-                            '</tr>' +
-                            '<tr>' +
-                            '<th>{Lang::T('Category')}</th>' +
-                                '<td>' + (maintenance.asset_category || '-') + '</td>' +
-                                '</tr>' +
-                                '<tr>' +
-                                '<th>{Lang::T('Maintenance Type')}</th>' +
-                                    '<td>' + maintenance.maintenance_type + '</td>' +
-                                    '</tr>' +
-                                    '<tr>' +
-                                    '<th>{Lang::T('Priority')}</th>' +
-                                        '<td><span class="label label-' + (priorityBadge[maintenance.priority] || 'default') + '">' + maintenance.priority + '</span></td>' +
-                                        '</tr>' +
-                                        '<tr>' +
-                                        '<th>{Lang::T('Status')}</th>' +
-                                            '<td><span class="label label-' + (statusBadge[displayStatus] || 'default') + '">' + displayStatus + '</span></td>' +
-                                            '</tr>' +
-                                            '</table>' +
-                                            '</div>' +
-                                            '<div class="col-md-6">' +
-                                            '<table class="table table-bordered">' +
-                                            '<tr>' +
-                                            '<th>{Lang::T('Scheduled Date')}</th>' +
-                                                '<td>' + maintenance.scheduled_date + '</td>' +
-                                                '</tr>' +
-                                                '<tr>' +
-                                                '<th>{Lang::T('Completion Date')}</th>' +
-                                                    '<td>' + (maintenance.maintenance_date || '-') + '</td>' +
-                                                    '</tr>' +
-                                                    '<tr>' +
-                                                    '<th>{Lang::T('Technician')}</th>' +
-                                                        '<td>' + (maintenance.technician || '-') + '</td>' +
-                                                        '</tr>' +
-                                                        '<tr>' +
-                                                        '<th>{Lang::T('Estimated Cost')}</th>' +
-                                                            '<td>' + currencyCode + (maintenance.cost || '0') + '</td>' +
-                                                            '</tr>' +
-                                                            '<tr>' +
-                                                            '<th>{Lang::T('Actual Cost')}</th>' +
-                                                                '<td>' + currencyCode + (maintenance.actual_cost || '-') + '</td>' +
-                                                                '</tr>' +
-                                                                '<tr>' +
-                                                                '<th>{Lang::T('Created')}</th>' +
-                                                                    '<td>' + maintenance.created_at + '</td>' +
-                                                                    '</tr>' +
-                                                                    '</table>' +
-                                                                    '</div>' +
-                                                                    '</div>' +
-                                                                    '<div class="row">' +
-                                                                    '<div class="col-md-12">' +
-                                                                    '<h5>{Lang::T('Description')}</h5>' +
-                                                                        '<p class="well">' + (maintenance.description || '-') + '</p>';
-
-            // Add completion notes if they exist
-            if (maintenance.completion_notes) {
-                modalContent +=
-                    '<h5>{Lang::T('Completion Notes')}</h5>' +
-                        '<p class="well">' + maintenance.completion_notes + '</p>';
+                        $('#scheduleMaintenanceModal').modal('show');
+                        loadAssetList('edit');
+                    }
+                }
             }
+        });
+    }
 
-            modalContent +=
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '<div class="modal-footer">';
+    function updateMaintenanceSchedule(maintenanceId) {
+        const maintenanceData = {
+            maintenance_id: maintenanceId,
+            asset_id: $('#maintenanceAssetId').val(),
+            maintenance_type: $('#maintenanceType').val(),
+            scheduled_date: $('#scheduledDate').val(),
+            priority: $('#maintenancePriority').val(),
+            technician: $('#maintenanceTechnician').val(),
+            cost: $('#estimatedCost').val() || 0,
+            description: $('#maintenanceDescription').val()
+        };
 
-            // Add action buttons for scheduled maintenance
-            if (maintenance.status === 'scheduled') {
-                modalContent +=
-                    '<button type="button" class="btn btn-success" onclick="completeMaintenance(' + maintenance.id + '); ' + "$('#maintenanceDetailsModal').modal('hide');" + '">' +
-                    '<i class="fa fa-check"></i> {Lang::T('Mark Complete')}' +
-                        '</button>' +
-                        '<button type="button" class="btn btn-info" onclick="startMaintenance(' + maintenance.id + '); ' + "$('#maintenanceDetailsModal').modal('hide');" + '">' +
-                        '<i class="fa fa-play"></i> {Lang::T('Start Work')}' +
-                            '</button>';
-            }
-
-            modalContent +=
-                '<button type="button" class="btn btn-default" data-dismiss="modal">{Lang::T('Close')}</button>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>';
-
-            // Remove existing modal if present
-            $('#maintenanceDetailsModal').remove();
-
-            // Add modal to body and show
-            $('body').append(modalContent);
-            $('#maintenanceDetailsModal').modal('show');
-        }
-
-        function startMaintenance(maintenanceId) {
+        // Validate required fields
+        if (!maintenanceData.asset_id || !maintenanceData.maintenance_type ||
+            !maintenanceData.scheduled_date || !maintenanceData.description) {
             Swal.fire({
-                title: '{Lang::T('Start Maintenance')}',
-                text: '{Lang::T('Mark this maintenance as in progress?')}',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: '{Lang::T('Yes, Start')}',
-                cancelButtonText: '{Lang::T('Cancel')}'
-        }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Update maintenance status to in_progress
-                        $.ajax({
-                            url: '?_route=plugin/asset_complete_maintenance',
-                            method: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify({
-                                maintenance_id: maintenanceId,
-                                status: 'in_progress'
-                            }),
-                            success: function (response) {
-                                if (response.success) {
-                                    Swal.fire({
-                                        title: '{Lang::T('Success')}',
-                                        text: '{Lang::T('Maintenance started successfully!')}',
-                                        icon: 'success',
-                                        confirmButtonText: '{Lang::T('OK')}'
-                            });
-                                    loadMaintenanceSchedule();
-                                } else {
-                                    Swal.fire({
-                                        title: '{Lang::T('Error')}',
-                                        text: response.message,
-                                        icon: 'error',
-                                        confirmButtonText: '{Lang::T('OK')}'
-                            });
-                                }
-                            },
-                            error: function () {
-                                Swal.fire({
-                                    title: '{Lang::T('Error')}',
-                                    text: '{Lang::T('An error occurred while starting maintenance')}',
-                                    icon: 'error',
-                                    confirmButtonText: '{Lang::T('OK')}'
-                        });
-                            }
-                        });
-                    }
-                });
-        }
-
-
-        function editMaintenanceSchedule(maintenanceId) {
-            // Load maintenance details and populate edit form
-            $.ajax({
-                url: '?_route=plugin/asset_maintenance_list',
-                method: 'GET',
-                success: function (response) {
-                    if (response.success) {
-                        const maintenance = response.data.find(m => m.id == maintenanceId);
-                        if (maintenance) {
-                            // Populate the schedule form with existing data
-                            $('#maintenanceAssetId').val(maintenance.asset_id).prop('disabled', true);
-                            $('#maintenanceType').val(maintenance.maintenance_type);
-                            $('#scheduledDate').val(maintenance.scheduled_date);
-                            $('#maintenancePriority').val(maintenance.priority);
-                            $('#maintenanceTechnician').val(maintenance.technician);
-                            $('#estimatedCost').val(maintenance.cost);
-                            $('#maintenanceDescription').val(maintenance.description);
-
-                            // Change modal title and button text for editing
-                            $('#scheduleMaintenanceModal .modal-title').text('{Lang::T('Edit Maintenance Schedule')}');
-                            $('#scheduleMaintenanceModal .btn-primary').text('{Lang::T('Update Schedule')}').attr('onclick', 'updateMaintenanceSchedule(' + maintenanceId + ')');
-
-                            $('#scheduleMaintenanceModal').modal('show');
-                            loadAssetList('edit');
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateMaintenanceSchedule(maintenanceId) {
-            const maintenanceData = {
-                maintenance_id: maintenanceId,
-                asset_id: $('#maintenanceAssetId').val(),
-                maintenance_type: $('#maintenanceType').val(),
-                scheduled_date: $('#scheduledDate').val(),
-                priority: $('#maintenancePriority').val(),
-                technician: $('#maintenanceTechnician').val(),
-                cost: $('#estimatedCost').val() || 0,
-                description: $('#maintenanceDescription').val()
-            };
-
-            // Validate required fields
-            if (!maintenanceData.asset_id || !maintenanceData.maintenance_type ||
-                !maintenanceData.scheduled_date || !maintenanceData.description) {
-                Swal.fire({
-                    title: '{Lang::T('Validation Error')}',
-                    text: '{Lang::T('Please fill in all required fields')}',
-                    icon: 'warning',
-                    confirmButtonText: '{Lang::T('OK')}'
-            });
-                return;
-            }
-
-            $.ajax({
-                url: '?_route=plugin/asset_update_maintenance',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(maintenanceData),
-                success: function (response) {
-                    if (response.success) {
-                        $('#scheduleMaintenanceModal').modal('hide');
-                        Swal.fire({
-                            title: '{Lang::T('Success')}',
-                            text: '{Lang::T('Maintenance schedule updated successfully!')}',
-                            icon: 'success',
-                            confirmButtonText: '{Lang::T('OK')}'
-                    });
-
-                        // Reset form and reload data
-                        resetMaintenanceForm();
-                        loadMaintenanceSchedule();
-                        refresh();
-                    } else {
-                        Swal.fire({
-                            title: '{Lang::T('Error')}',
-                            text: response.message,
-                            icon: 'error',
-                            confirmButtonText: '{Lang::T('OK')}'
-                    });
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: '{Lang::T('Error')}',
-                        text: '{Lang::T('An error occurred while updating maintenance')}',
-                        icon: 'error',
-                        confirmButtonText: '{Lang::T('OK')}'
-                });
-                }
-            });
-        }
-
-        function resetMaintenanceForm() {
-            // Reset form and modal for new entries
-            $('#scheduleMaintenanceForm')[0].reset();
-            $('#scheduleMaintenanceModal .modal-title').text('{Lang::T('Schedule Maintenance')}');
-            $('#scheduleMaintenanceModal .btn-primary').text('{Lang::T('Schedule Maintenance')}').attr('onclick', 'saveMaintenanceSchedule()');
-        }
-
-        function deleteMaintenanceSchedule(maintenanceId) {
-            Swal.fire({
-                title: '{Lang::T('Are you sure?')}',
-                text: '{Lang::T('This will permanently delete the maintenance schedule')}',
+                title: '{Lang::T('Validation Error')}',
+                text: '{Lang::T('Please fill in all required fields')}',
                 icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: '{Lang::T('Yes, delete it!')}',
-                cancelButtonText: '{Lang::T('Cancel')}'
+                confirmButtonText: '{Lang::T('OK')}'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: '?_route=plugin/asset_update_maintenance',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(maintenanceData),
+            success: function (response) {
+                if (response.success) {
+                    $('#scheduleMaintenanceModal').modal('hide');
+                    Swal.fire({
+                        title: '{Lang::T('Success')}',
+                        text: '{Lang::T('Maintenance schedule updated successfully!')}',
+                        icon: 'success',
+                        confirmButtonText: '{Lang::T('OK')}'
+                    });
+
+                    // Reset form and reload data
+                    resetMaintenanceForm();
+                    loadMaintenanceSchedule();
+                    refresh();
+                } else {
+                    Swal.fire({
+                        title: '{Lang::T('Error')}',
+                        text: response.message,
+                        icon: 'error',
+                        confirmButtonText: '{Lang::T('OK')}'
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    title: '{Lang::T('Error')}',
+                    text: '{Lang::T('An error occurred while updating maintenance')}',
+                    icon: 'error',
+                    confirmButtonText: '{Lang::T('OK')}'
+                });
+            }
+        });
+    }
+
+    function resetMaintenanceForm() {
+        // Reset form and modal for new entries
+        $('#scheduleMaintenanceForm')[0].reset();
+        $('#scheduleMaintenanceModal .modal-title').text('{Lang::T('Schedule Maintenance')}');
+        $('#scheduleMaintenanceModal .btn-primary').text('{Lang::T('Schedule Maintenance')}').attr('onclick', 'saveMaintenanceSchedule()');
+    }
+
+    function deleteMaintenanceSchedule(maintenanceId) {
+        Swal.fire({
+            title: '{Lang::T('Are you sure?')}',
+            text: '{Lang::T('This will permanently delete the maintenance schedule')}',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '{Lang::T('Yes, delete it!')}',
+            cancelButtonText: '{Lang::T('Cancel')}'
         }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: '?_route=plugin/asset_delete_maintenance',
-                            method: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify({ maintenance_id: maintenanceId }),
-                            success: function (response) {
-                                if (response.success) {
-                                    Swal.fire({
-                                        title: '{Lang::T('Deleted!')}',
-                                        text: '{Lang::T('Maintenance schedule has been deleted')}',
-                                        icon: 'success',
-                                        confirmButtonText: '{Lang::T('OK')}'
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '?_route=plugin/asset_delete_maintenance',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ maintenance_id: maintenanceId }),
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: '{Lang::T('Deleted!')}',
+                                    text: '{Lang::T('Maintenance schedule has been deleted')}',
+                                    icon: 'success',
+                                    confirmButtonText: '{Lang::T('OK')}'
                             });
-                                    loadMaintenanceSchedule();
-                                } else {
-                                    Swal.fire({
-                                        title: '{Lang::T('Error')}',
-                                        text: response.message,
-                                        icon: 'error',
-                                        confirmButtonText: '{Lang::T('OK')}'
-                            });
-                                }
-                            },
-                            error: function () {
+                                loadMaintenanceSchedule();
+                            } else {
                                 Swal.fire({
                                     title: '{Lang::T('Error')}',
-                                    text: '{Lang::T('An error occurred while deleting maintenance')}',
+                                    text: response.message,
                                     icon: 'error',
                                     confirmButtonText: '{Lang::T('OK')}'
-                        });
+                            });
                             }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                title: '{Lang::T('Error')}',
+                                text: '{Lang::T('An error occurred while deleting maintenance')}',
+                                icon: 'error',
+                                confirmButtonText: '{Lang::T('OK')}'
                         });
-                    }
-                });
-        }
-
-        // Add to asset view modal - Schedule maintenance button
-        function addScheduleButtonToAssetView(assetId) {
-            const buttonHtml =
-                '<button class="btn btn-primary btn-sm" onclick="scheduleMaintenanceForAsset(\'' + assetId + '\')">' +
-                '<i class="fa fa-calendar-plus-o"></i> {Lang::T('Schedule Maintenance')}' +
-                    '</button>';
-
-            // Append button to asset view modal footer
-            $('#assetViewModal .modal-footer').append(buttonHtml);
-        }
-
-        // Initialize maintenance schedule tab when shown
-        $('a[href="#maintenance-schedule"]').on('shown.bs.tab', function () {
-            if (!maintenanceScheduleInitialized) {
-                loadMaintenanceSchedule();
-                loadAssetList();
-                maintenanceScheduleInitialized = true;
-            }
-        });
-
-        // Reset maintenance form when modal is hidden
-        $('#scheduleMaintenanceModal').on('hidden.bs.modal', function () {
-            resetMaintenanceForm();
-        });
-
-        // Global variable to track initialization
-        let maintenanceScheduleInitialized = false;
-
-        function refresh() {
-            location.reload();
-        }
-
-        // Function to filter location list
-        function filterLocations() {
-            const filterText = $('#locationSearchInput').val().toLowerCase();
-            $('.location-item').each(function() {
-                const locationName = $(this).find('.col-xs-8').text().toLowerCase();
-                if (locationName.includes(filterText)) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
+                        }
+                    });
                 }
             });
+    }
+
+    // Add to asset view modal - Schedule maintenance button
+    function addScheduleButtonToAssetView(assetId) {
+        const buttonHtml =
+            '<button class="btn btn-primary btn-sm" onclick="scheduleMaintenanceForAsset(\'' + assetId + '\')">' +
+            '<i class="fa fa-calendar-plus-o"></i> {Lang::T('Schedule Maintenance')}' +
+                '</button>';
+
+        // Append button to asset view modal footer
+        $('#assetViewModal .modal-footer').append(buttonHtml);
+    }
+
+    // Initialize maintenance schedule tab when shown
+    $('a[href="#maintenance-schedule"]').on('shown.bs.tab', function () {
+        if (!maintenanceScheduleInitialized) {
+            loadMaintenanceSchedule();
+            loadAssetList();
+            maintenanceScheduleInitialized = true;
         }
-        
-        // Function to reset map view to show all markers
-        function resetMapView() {
-            if (!assetMap) return;
-            
-            // Find all markers and create a bounds object
-            const bounds = L.latLngBounds([]);
-            let hasValidMarkers = false;
-            
-            assetMap.eachLayer(function(layer) {
-                if (layer instanceof L.Marker) {
-                    bounds.extend(layer.getLatLng());
-                    hasValidMarkers = true;
-                }
-            });
-            
-            // If we have markers, fit the map to show all of them
-            if (hasValidMarkers) {
-                assetMap.fitBounds(bounds, {
-                    padding: [50, 50],
-                    maxZoom: 15
-                });
+    });
+
+    // Reset maintenance form when modal is hidden
+    $('#scheduleMaintenanceModal').on('hidden.bs.modal', function () {
+        resetMaintenanceForm();
+    });
+
+    // Global variable to track initialization
+    let maintenanceScheduleInitialized = false;
+
+    function refresh() {
+        location.reload();
+    }
+
+    // Function to filter location list
+    function filterLocations() {
+        const filterText = $('#locationSearchInput').val().toLowerCase();
+        $('.location-item').each(function () {
+            const locationName = $(this).find('.col-xs-8').text().toLowerCase();
+            if (locationName.includes(filterText)) {
+                $(this).show();
             } else {
-                // If no markers, reset to default view
-                assetMap.setView([40.7128, -74.0060], 10);
+                $(this).hide();
             }
-        }
-        
-        // Function to toggle map layer visibility
-        function toggleMapLayer(layerType) {
-            // First, make all markers visible
-            if (assetMap) {
-                assetMap.eachLayer(function(layer) {
-                    if (layer instanceof L.Marker) {
-                        // Hide all markers first
-                        assetMap.removeLayer(layer);
-                    }
-                });
-                
-                // Then reload only the markers for the selected category
-                if (layerType === 'all') {
-                    loadAssetLocations();
-                } else {
-                    // Filter currentAssets by category and add markers
-                    const filteredAssets = currentAssets.filter(asset => asset.category === layerType);
-                    addMarkersFromAssets(filteredAssets);
-                }
-                
-                // Highlight the active button
-                $('.map-layer-btn').removeClass('active');
-                $('#layer-' + layerType).addClass('active');
-            }
-        }
-        
-        // Function to add markers from filtered assets
-        function addMarkersFromAssets(assets) {
-            if (!assetMap || !assets || !assets.length) return;
-            
-            assets.forEach(function(asset) {
-                if (asset.lat && asset.lng && !isNaN(parseFloat(asset.lat)) && !isNaN(parseFloat(asset.lng))) {
-                    const lat = parseFloat(asset.lat);
-                    const lng = parseFloat(asset.lng);
-                    
-                    const statusClass = asset.status === 'active' ? 'success' :
-                        asset.status === 'maintenance' ? 'warning' : 'danger';
-                    
-                    const marker = L.marker([lat, lng]).addTo(assetMap);
-                    marker.bindPopup(
-                        '<div class="location-info">' +
-                        '<h5>' + asset.name + '</h5>' +
-                        '<p><strong>ID:</strong> ' + asset.asset_id + '</p>' +
-                        '<p><strong>Type:</strong> ' + asset.category + '</p>' +
-                        '<p><strong>Location:</strong> ' + (asset.location || '-') + '</p>' +
-                        '<p><strong>Status:</strong> <span class="label label-' + statusClass + '">' + asset.status + '</span></p>' +
-                        '</div>'
-                    );
-                }
-            });
-        }
-        
-        // Initialize location panel interactivity
-        $(document).ready(function() {
-            // Event listener for location search input
-            $('#locationSearchInput').on('keyup', function() {
-                filterLocations();
-            });
-            
-            // Make location items clickable to center map on location
-            $(document).on('click', '.location-item', function() {
-                const locationName = $(this).find('.col-xs-8').text().trim();
-                
-                // Find assets at this location
-                const assetsAtLocation = currentAssets.filter(asset => 
-                    asset.location && asset.location.toLowerCase().includes(locationName.toLowerCase())
-                );
-                
-                // Switch to location tab if not already active
-                $('a[href="#location-view"]').tab('show');
-                
-                // If we have assets with coordinates at this location
-                if (assetsAtLocation.length > 0) {
-                    // Try to find asset with valid coordinates
-                    const assetWithCoords = assetsAtLocation.find(asset => 
-                        asset.lat && asset.lng && !isNaN(parseFloat(asset.lat)) && !isNaN(parseFloat(asset.lng))
-                    );
-                    
-                    if (assetWithCoords) {
-                        const lat = parseFloat(assetWithCoords.lat);
-                        const lng = parseFloat(assetWithCoords.lng);
-                        
-                        // Center map on this location
-                        if (assetMap) {
-                            assetMap.setView([lat, lng], 15);
-                            
-                            // Highlight the area
-                            const highlightCircle = L.circle([lat, lng], {
-                                color: '#3388ff',
-                                fillColor: '#3388ff',
-                                fillOpacity: 0.2,
-                                radius: 500
-                            }).addTo(assetMap);
-                            
-                            // Remove highlight after 3 seconds
-                            setTimeout(function() {
-                                assetMap.removeLayer(highlightCircle);
-                            }, 3000);
-                        }
-                        
-                        // Highlight the clicked location item
-                        $('.location-item').removeClass('active');
-                        $(this).addClass('active');
-                    }
-                }
-            });
-            
-            // Make category items clickable to filter map
-            $(document).on('click', '.category-item', function() {
-                const category = $(this).data('category');
-                toggleMapLayer(category);
-                
-                // Switch to location tab
-                $('a[href="#location-view"]').tab('show');
-                
-                // Highlight the clicked category item
-                $('.category-item').removeClass('active');
-                $(this).addClass('active');
-            });
         });
-            // Variables to store report data and state
-            let currentReportType = 'inventory';
-            let reportChart = null;
-            let reportInitialized = false;
-            
-            // Initialize reports tab
-            function initializeReports() {
-                if (!reportInitialized) {
-                    // Populate location dropdown for reports
-                    populateReportLocations();
-                    
-                    // Set up date range change event
-                    $('#report-date-range').change(function() {
-                        if ($(this).val() === 'custom') {
-                            $('.custom-date-range').show();
-                        } else {
-                            $('.custom-date-range').hide();
-                        }
-                    });
-                    
-                    // Generate initial report
-                    generateReport();
-                    
-                    reportInitialized = true;
-                }
+    }
+
+    // Function to reset map view to show all markers
+    function resetMapView() {
+        if (!assetMap) return;
+
+        // Find all markers and create a bounds object
+        const bounds = L.latLngBounds([]);
+        let hasValidMarkers = false;
+
+        assetMap.eachLayer(function (layer) {
+            if (layer instanceof L.Marker) {
+                bounds.extend(layer.getLatLng());
+                hasValidMarkers = true;
             }
-            
-            // Populate location dropdown with all locations from assets
-            function populateReportLocations() {
-                const locationSelect = $('#report-location');
-                const locations = new Set();
-                
-                // Clear existing options except the first one
-                locationSelect.find('option:not(:first)').remove();
-                
-                // Extract unique locations
-                if (currentAssets && currentAssets.length > 0) {
-                    currentAssets.forEach(function(asset) {
-                        if (asset.location) {
-                            locations.add(asset.location);
-                        }
-                    });
-                    
-                    // Add locations to dropdown
-                    locations.forEach(function(location) {
-                        locationSelect.append('<option value="' + location + '">' + location + '</option>');
-                    });
+        });
+
+        // If we have markers, fit the map to show all of them
+        if (hasValidMarkers) {
+            assetMap.fitBounds(bounds, {
+                padding: [50, 50],
+                maxZoom: 15
+            });
+        } else {
+            // If no markers, reset to default view
+            assetMap.setView([40.7128, -74.0060], 10);
+        }
+    }
+
+    // Function to toggle map layer visibility
+    function toggleMapLayer(layerType) {
+        // First, make all markers visible
+        if (assetMap) {
+            assetMap.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {
+                    // Hide all markers first
+                    assetMap.removeLayer(layer);
                 }
+            });
+
+            // Then reload only the markers for the selected category
+            if (layerType === 'all') {
+                loadAssetLocations();
+            } else {
+                // Filter currentAssets by category and add markers
+                const filteredAssets = currentAssets.filter(asset => asset.category === layerType);
+                addMarkersFromAssets(filteredAssets);
             }
-            
-            // Change report type
-            function changeReport(reportType) {
-                // Update active state in sidebar
-                $('.list-group-item').removeClass('active');
-                $('.list-group-item[data-report="' + reportType + '"]').addClass('active');
-                
-                // Update report title
-                let title = '';
-                let icon = '';
-                
-                switch(reportType) {
-                    case 'inventory':
-                        title = '{Lang::T("Asset Inventory Report")}';
-                        icon = 'fa-list';
-                        break;
-                    case 'value':
-                        title = '{Lang::T("Asset Value Report")}';
-                        icon = 'fa-money';
-                        break;
-                    case 'maintenance':
-                        title = '{Lang::T("Maintenance History Report")}';
-                        icon = 'fa-wrench';
-                        break;
-                    case 'depreciation':
-                        title = '{Lang::T("Depreciation Report")}';
-                        icon = 'fa-line-chart';
-                        break;
-                    case 'status':
-                        title = '{Lang::T("Asset Status Report")}';
-                        icon = 'fa-check-circle';
-                        break;
-                }
-                
-                $('#report-title').html('<i class="fa ' + icon + '"></i> ' + title);
-                currentReportType = reportType;
-                
-                // Generate the new report
-                generateReport();
-            }
-            
-            // Generate report based on current settings
-            function generateReport() {
-                // Show loading state
-                $('#report-table-body').html('<tr><td colspan="10" class="text-center"><i class="fa fa-spinner fa-spin"></i> {Lang::T("Generating report...")}</td></tr>');
-                
-                // Get filter parameters
-                const dateRange = $('#report-date-range').val();
-                const category = $('#report-category').val();
-                const location = $('#report-location').val();
-                const status = $('#report-status').val();
-                
-                // Custom date range
-                let startDate = null;
-                let endDate = null;
-                
-                if (dateRange === 'custom') {
-                    startDate = $('#report-start-date').val();
-                    endDate = $('#report-end-date').val();
-                }
-                
-                // Filter assets based on criteria
-                let filteredAssets = filterAssets(currentAssets, dateRange, category, location, status, startDate, endDate);
-                
-                // Generate different report types
-                switch (currentReportType) {
-                    case 'inventory':
-                        generateInventoryReport(filteredAssets);
-                        break;
-                    case 'value':
-                        generateValueReport(filteredAssets);
-                        break;
-                    case 'maintenance':
-                        generateMaintenanceReport(filteredAssets);
-                        break;
-                    case 'depreciation':
-                        generateDepreciationReport(filteredAssets);
-                        break;
-                    case 'status':
-                        generateStatusReport(filteredAssets);
-                        break;
-                }
-            }
-            
-            // Filter assets based on criteria
-            function filterAssets(assets, dateRange, category, location, status, startDate, endDate) {
-                if (!assets) return [];
-                
-                return assets.filter(function(asset) {
-                    // Category filter
-                    if (category !== 'all' && asset.category !== category) {
-                        return false;
-                    }
-                    
-                    // Location filter
-                    if (location !== 'all' && asset.location !== location) {
-                        return false;
-                    }
-                    
-                    // Status filter
-                    if (status !== 'all' && asset.status !== status) {
-                        return false;
-                    }
-                    
-                    // Date filter
-                    if (dateRange !== 'all') {
-                        const purchaseDate = asset.purchase_date ? new Date(asset.purchase_date) : null;
-                        
-                        if (!purchaseDate) return false;
-                        
-                        const today = new Date();
-                        const thisYear = today.getFullYear();
-                        const thisMonth = today.getMonth();
-                        
-                        if (dateRange === 'today') {
-                            // Check if purchase date is today
-                            return (
-                                purchaseDate.getDate() === today.getDate() &&
-                                purchaseDate.getMonth() === today.getMonth() &&
-                                purchaseDate.getFullYear() === today.getFullYear()
-                            );
-                        } else if (dateRange === 'week') {
-                            // Get start of week (Sunday)
-                            const startOfWeek = new Date(today);
-                            startOfWeek.setDate(today.getDate() - today.getDay());
-                            startOfWeek.setHours(0, 0, 0, 0);
-                            
-                            return purchaseDate >= startOfWeek;
-                        } else if (dateRange === 'month') {
-                            // Check if purchase date is this month
-                            return (
-                                purchaseDate.getMonth() === thisMonth &&
-                                purchaseDate.getFullYear() === thisYear
-                            );
-                        } else if (dateRange === 'year') {
-                            // Check if purchase date is this year
-                            return purchaseDate.getFullYear() === thisYear;
-                        } else if (dateRange === 'custom') {
-                            // Check custom date range
-                            if (startDate && endDate) {
-                                const startDateObj = new Date(startDate);
-                                const endDateObj = new Date(endDate);
-                                endDateObj.setHours(23, 59, 59, 999); // Set to end of day
-                                
-                                return purchaseDate >= startDateObj && purchaseDate <= endDateObj;
-                            }
-                        }
-                    }
-                    
-                    return true;
-                });
-            }
-            
-            // Generate Asset Inventory Report
-            function generateInventoryReport(assets) {
-                // Set up table headers
-                $('#report-table-head').html(
-                    '<tr>' +
-                        '<th>' + '{Lang::T('Asset ID')}' + '</th>' +
-                        '<th>' + '{Lang::T('Name')}' + '</th>' +
-                        '<th>' + '{Lang::T('Category')}' + '</th>' +
-                        '<th>' + '{Lang::T('Brand/Model')}' + '</th>' +
-                        '<th>' + '{Lang::T('Serial Number')}' + '</th>' +
-                        '<th>' + '{Lang::T('Location')}' + '</th>' +
-                        '<th>' + '{Lang::T('Status')}' + '</th>' +
-                        '<th>' + '{Lang::T('Purchase Date')}' + '</th>' +
-                        '<th>' + '{Lang::T('Purchase Cost')}' + '</th>' +
-                    '</tr>'
+
+            // Highlight the active button
+            $('.map-layer-btn').removeClass('active');
+            $('#layer-' + layerType).addClass('active');
+        }
+    }
+
+    // Function to add markers from filtered assets
+    function addMarkersFromAssets(assets) {
+        if (!assetMap || !assets || !assets.length) return;
+
+        assets.forEach(function (asset) {
+            if (asset.lat && asset.lng && !isNaN(parseFloat(asset.lat)) && !isNaN(parseFloat(asset.lng))) {
+                const lat = parseFloat(asset.lat);
+                const lng = parseFloat(asset.lng);
+
+                const statusClass = asset.status === 'active' ? 'success' :
+                    asset.status === 'maintenance' ? 'warning' : 'danger';
+
+                const marker = L.marker([lat, lng]).addTo(assetMap);
+                marker.bindPopup(
+                    '<div class="location-info">' +
+                    '<h5>' + asset.name + '</h5>' +
+                    '<p><strong>ID:</strong> ' + asset.asset_id + '</p>' +
+                    '<p><strong>Type:</strong> ' + asset.category + '</p>' +
+                    '<p><strong>Location:</strong> ' + (asset.location || '-') + '</p>' +
+                    '<p><strong>Status:</strong> <span class="label label-' + statusClass + '">' + asset.status + '</span></p>' +
+                    '</div>'
                 );
-                
-                // Generate table rows
-                let tableRows = '';
-                
-                if (assets.length === 0) {
-                    tableRows = '<tr><td colspan="9" class="text-center">' + '{Lang::T('No assets found matching the criteria')}' + '</td></tr>';
+            }
+        });
+    }
+
+    // Initialize location panel interactivity
+    $(document).ready(function () {
+        // Event listener for location search input
+        $('#locationSearchInput').on('keyup', function () {
+            filterLocations();
+        });
+
+        // Make location items clickable to center map on location
+        $(document).on('click', '.location-item', function () {
+            const locationName = $(this).find('.col-xs-8').text().trim();
+
+            // Find assets at this location
+            const assetsAtLocation = currentAssets.filter(asset =>
+                asset.location && asset.location.toLowerCase().includes(locationName.toLowerCase())
+            );
+
+            // Switch to location tab if not already active
+            $('a[href="#location-view"]').tab('show');
+
+            // If we have assets with coordinates at this location
+            if (assetsAtLocation.length > 0) {
+                // Try to find asset with valid coordinates
+                const assetWithCoords = assetsAtLocation.find(asset =>
+                    asset.lat && asset.lng && !isNaN(parseFloat(asset.lat)) && !isNaN(parseFloat(asset.lng))
+                );
+
+                if (assetWithCoords) {
+                    const lat = parseFloat(assetWithCoords.lat);
+                    const lng = parseFloat(assetWithCoords.lng);
+
+                    // Center map on this location
+                    if (assetMap) {
+                        assetMap.setView([lat, lng], 15);
+
+                        // Highlight the area
+                        const highlightCircle = L.circle([lat, lng], {
+                            color: '#3388ff',
+                            fillColor: '#3388ff',
+                            fillOpacity: 0.2,
+                            radius: 500
+                        }).addTo(assetMap);
+
+                        // Remove highlight after 3 seconds
+                        setTimeout(function () {
+                            assetMap.removeLayer(highlightCircle);
+                        }, 3000);
+                    }
+
+                    // Highlight the clicked location item
+                    $('.location-item').removeClass('active');
+                    $(this).addClass('active');
+                }
+            }
+        });
+
+        // Make category items clickable to filter map
+        $(document).on('click', '.category-item', function () {
+            const category = $(this).data('category');
+            toggleMapLayer(category);
+
+            // Switch to location tab
+            $('a[href="#location-view"]').tab('show');
+
+            // Highlight the clicked category item
+            $('.category-item').removeClass('active');
+            $(this).addClass('active');
+        });
+    });
+    // Variables to store report data and state
+    let currentReportType = 'inventory';
+    let reportChart = null;
+    let reportInitialized = false;
+
+    // Initialize reports tab
+    function initializeReports() {
+        if (!reportInitialized) {
+            // Populate location dropdown for reports
+            populateReportLocations();
+
+            // Set up date range change event
+            $('#report-date-range').change(function () {
+                if ($(this).val() === 'custom') {
+                    $('.custom-date-range').show();
                 } else {
-                    assets.forEach(function(asset) {
-                        const purchaseDate = asset.purchase_date ? new Date(asset.purchase_date).toLocaleDateString() : '-';
-                        const purchaseCost = asset.purchase_cost ? currencyCode + parseFloat(asset.purchase_cost).toFixed(2) : '-';
-                        
-                        tableRows += 
-                            '<tr>' +
-                                '<td>' + (asset.asset_id || '-') + '</td>' +
-                                '<td>' + (asset.name || '-') + '</td>' +
-                                '<td>' + (formatCategory(asset.category) || '-') + '</td>' +
-                                '<td>' + (asset.brand_model || '-') + '</td>' +
-                                '<td>' + (asset.serial_number || '-') + '</td>' +
-                                '<td>' + (asset.location || '-') + '</td>' +
-                                '<td>' + (formatStatus(asset.status) || '-') + '</td>' +
-                                '<td>' + purchaseDate + '</td>' +
-                                '<td>' + purchaseCost + '</td>' +
-                            '</tr>';
-                    });
+                    $('.custom-date-range').hide();
                 }
-                
-                $('#report-table-body').html(tableRows);
-                
-                // Generate summary
-                const categoryCounts = countByCategory(assets);
-                let categoryText = '';
-                
-                if (categoryCounts.network > 0) {
-                    categoryText += '{Lang::T('Network')}' + ': ' + categoryCounts.network + ' | ';
+            });
+
+            // Generate initial report
+            generateReport();
+
+            reportInitialized = true;
+        }
+    }
+
+    // Populate location dropdown with all locations from assets
+    function populateReportLocations() {
+        const locationSelect = $('#report-location');
+        const locations = new Set();
+
+        // Clear existing options except the first one
+        locationSelect.find('option:not(:first)').remove();
+
+        // Extract unique locations
+        if (currentAssets && currentAssets.length > 0) {
+            currentAssets.forEach(function (asset) {
+                if (asset.location) {
+                    locations.add(asset.location);
                 }
-                if (categoryCounts.customer > 0) {
-                    categoryText += '{Lang::T('Customer')}' + ': ' + categoryCounts.customer + ' | ';
-                }
-                if (categoryCounts.infrastructure > 0) {
-                    categoryText += '{Lang::T('Infrastructure')}' + ': ' + categoryCounts.infrastructure + ' | ';
-                }
-                if (categoryCounts.vehicle > 0) {
-                    categoryText += '{Lang::T('Vehicles')}' + ': ' + categoryCounts.vehicle + ' | ';
-                }
-                if (categoryCounts.tool > 0) {
-                    categoryText += '{Lang::T('Tools')}' + ': ' + categoryCounts.tool;
-                }
-                
-                $('#report-summary').html(
-                    '<h4>' + '{Lang::T('Inventory Summary')}' + '</h4>' +
-                    '<p><strong>' + '{Lang::T('Total Assets')}' + ':</strong> ' + assets.length + '</p>' +
-                    '<p><strong>' + '{Lang::T('By Category')}' + ':</strong> ' + categoryText + '</p>'
-                );
-                
-                // Create visualization
-                createCategoryPieChart(categoryCounts);
+            });
+
+            // Add locations to dropdown
+            locations.forEach(function (location) {
+                locationSelect.append('<option value="' + location + '">' + location + '</option>');
+            });
+        }
+    }
+
+    // Change report type
+    function changeReport(reportType) {
+        // Update active state in sidebar
+        $('.list-group-item').removeClass('active');
+        $('.list-group-item[data-report="' + reportType + '"]').addClass('active');
+
+        // Update report title
+        let title = '';
+        let icon = '';
+
+        switch (reportType) {
+            case 'inventory':
+                title = '{Lang::T("Asset Inventory Report")}';
+                icon = 'fa-list';
+                break;
+            case 'value':
+                title = '{Lang::T("Asset Value Report")}';
+                icon = 'fa-money';
+                break;
+            case 'maintenance':
+                title = '{Lang::T("Maintenance History Report")}';
+                icon = 'fa-wrench';
+                break;
+            case 'depreciation':
+                title = '{Lang::T("Depreciation Report")}';
+                icon = 'fa-line-chart';
+                break;
+            case 'status':
+                title = '{Lang::T("Asset Status Report")}';
+                icon = 'fa-check-circle';
+                break;
+        }
+
+        $('#report-title').html('<i class="fa ' + icon + '"></i> ' + title);
+        currentReportType = reportType;
+
+        // Generate the new report
+        generateReport();
+    }
+
+    // Generate report based on current settings
+    function generateReport() {
+        // Show loading state
+        $('#report-table-body').html('<tr><td colspan="10" class="text-center"><i class="fa fa-spinner fa-spin"></i> {Lang::T("Generating report...")}</td></tr>');
+
+        // Get filter parameters
+        const dateRange = $('#report-date-range').val();
+        const category = $('#report-category').val();
+        const location = $('#report-location').val();
+        const status = $('#report-status').val();
+
+        // Custom date range
+        let startDate = null;
+        let endDate = null;
+
+        if (dateRange === 'custom') {
+            startDate = $('#report-start-date').val();
+            endDate = $('#report-end-date').val();
+        }
+
+        // Filter assets based on criteria
+        let filteredAssets = filterAssets(currentAssets, dateRange, category, location, status, startDate, endDate);
+
+        // Generate different report types
+        switch (currentReportType) {
+            case 'inventory':
+                generateInventoryReport(filteredAssets);
+                break;
+            case 'value':
+                generateValueReport(filteredAssets);
+                break;
+            case 'maintenance':
+                generateMaintenanceReport(filteredAssets);
+                break;
+            case 'depreciation':
+                generateDepreciationReport(filteredAssets);
+                break;
+            case 'status':
+                generateStatusReport(filteredAssets);
+                break;
+        }
+    }
+
+    // Filter assets based on criteria
+    function filterAssets(assets, dateRange, category, location, status, startDate, endDate) {
+        if (!assets) return [];
+
+        return assets.filter(function (asset) {
+            // Category filter
+            if (category !== 'all' && asset.category !== category) {
+                return false;
             }
-            
-            // Generate Asset Value Report
-            function generateValueReport(assets) {
-                // Set up table headers
-                $('#report-table-head').html(
-                    '<tr>' +
-                        '<th>' + '{Lang::T('Category')}' + '</th>' +
-                        '<th>' + '{Lang::T('Total Assets')}' + '</th>' +
-                        '<th>' + '{Lang::T('Total Purchase Value')}' + '</th>' +
-                        '<th>' + '{Lang::T('Average Age (days)')}' + '</th>' +
-                        '<th>' + '{Lang::T('Estimated Current Value')}' + '</th>' +
-                        '<th>' + '{Lang::T('Depreciation')}' + '</th>' +
-                    '</tr>'
-                );
-                
-                // Calculate values by category
-                const categories = ['network', 'customer', 'infrastructure', 'vehicle', 'tool'];
-                const valueData = {};
-                let totalPurchaseValue = 0;
-                let totalCurrentValue = 0;
-                let tableRows = '';
-                
-                categories.forEach(function(category) {
-                    const categoryAssets = assets.filter(asset => asset.category === category);
-                    
-                    if (categoryAssets.length > 0) {
-                        // Calculate purchase value
-                        const purchaseValue = categoryAssets.reduce(function(sum, asset) {
-                            return sum + (parseFloat(asset.purchase_cost) || 0);
-                        }, 0);
-                        
-                        // Calculate average age in days
-                        const today = new Date();
-                        let totalAgeDays = 0;
-                        
-                        categoryAssets.forEach(function(asset) {
-                            if (asset.purchase_date) {
-                                const purchaseDate = new Date(asset.purchase_date);
-                                const ageDays = Math.floor((today - purchaseDate) / (1000 * 60 * 60 * 24));
-                                totalAgeDays += ageDays;
-                            }
-                        });
-                        
-                        const avgAgeDays = Math.round(totalAgeDays / categoryAssets.length);
-                        
-                        // Calculate estimated current value (simple linear depreciation)
-                        // Network equipment: 20% per year
-                        // Customer equipment: 30% per year
-                        // Infrastructure: 10% per year
-                        // Vehicles: 15% per year
-                        // Tools: 25% per year
-                        const depreciationRates = {
-                            'network': 0.20,
-                            'customer': 0.30,
-                            'infrastructure': 0.10,
-                            'vehicle': 0.15,
-                            'tool': 0.25
-                        };
-                        
-                        const depreciationRate = depreciationRates[category];
-                        const avgAgeYears = avgAgeDays / 365;
-                        
-                        // Apply maximum 5 years of depreciation (assuming min 20% salvage value)
-                        const depreciationFactor = Math.min(avgAgeYears * depreciationRate, 0.8);
-                        const currentValue = purchaseValue * (1 - depreciationFactor);
-                        const depreciation = purchaseValue - currentValue;
-                        
-                        // Store data for the chart
-                        valueData[category] = {
-                            purchaseValue: purchaseValue,
-                            currentValue: currentValue,
-                            depreciation: depreciation
-                        };
-                        
-                        totalPurchaseValue += purchaseValue;
-                        totalCurrentValue += currentValue;
-                        
-                        // Add table row
-                        tableRows += 
-                            '<tr>' +
-                                '<td>' + formatCategory(category) + '</td>' +
-                                '<td>' + categoryAssets.length + '</td>' +
-                                '<td>' + currencyCode + purchaseValue.toFixed(2) + '</td>' +
-                                '<td>' + avgAgeDays + '</td>' +
-                                '<td>' + currencyCode + currentValue.toFixed(2) + '</td>' +
-                                '<td>' + currencyCode + depreciation.toFixed(2) + ' (' + Math.round(depreciationFactor * 100) + '%)</td>' +
-                            '</tr>';
-                    }
-                });
-                
-                if (tableRows === '') {
-                    tableRows = '<tr><td colspan="6" class="text-center">' + '{Lang::T('No assets found with purchase value information')}' + '</td></tr>';
-                } else {
-                    // Add total row
-                    const totalDepreciation = totalPurchaseValue - totalCurrentValue;
-                    const totalDepreciationPercentage = totalPurchaseValue > 0 ? (totalDepreciation / totalPurchaseValue * 100) : 0;
-                    
-                    tableRows += 
-                        '<tr class="info">' +
-                            '<td><strong>' + '{Lang::T('Total')}' + '</strong></td>' +
-                            '<td><strong>' + assets.length + '</strong></td>' +
-                            '<td><strong>' + currencyCode + totalPurchaseValue.toFixed(2) + '</strong></td>' +
-                            '<td>-</td>' +
-                            '<td><strong>' + currencyCode + totalCurrentValue.toFixed(2) + '</strong></td>' +
-                            '<td><strong>' + currencyCode + totalDepreciation.toFixed(2) + ' (' + Math.round(totalDepreciationPercentage) + '%)</strong></td>' +
-                        '</tr>';
-                }
-                
-                $('#report-table-body').html(tableRows);
-                
-                // Generate summary
-                $('#report-summary').html(
-                    '<h4>' + '{Lang::T('Value Summary')}' + '</h4>' +
-                    '<p><strong>' + '{Lang::T('Total Purchase Value')}' + ':</strong> ' + currencyCode + totalPurchaseValue.toFixed(2) + '</p>' +
-                    '<p><strong>' + '{Lang::T('Total Current Value')}' + ':</strong> ' + currencyCode + totalCurrentValue.toFixed(2) + '</p>' +
-                    '<p><strong>' + '{Lang::T('Total Depreciation')}' + ':</strong> ' + currencyCode + (totalPurchaseValue - totalCurrentValue).toFixed(2) + '</p>'
-                );
-                
-                // Create visualization
-                createValueBarChart(valueData);
+
+            // Location filter
+            if (location !== 'all' && asset.location !== location) {
+                return false;
             }
-            
-            // Generate Maintenance History Report
-            function generateMaintenanceReport(assets) {
-                // Set up table headers
-                $('#report-table-head').html(
-                    '<tr>' +
-                        '<th>' + '{Lang::T('Asset')}' + '</th>' +
-                        '<th>' + '{Lang::T('Category')}' + '</th>' +
-                        '<th>' + '{Lang::T('Maintenance Type')}' + '</th>' +
-                        '<th>' + '{Lang::T('Date')}' + '</th>' +
-                        '<th>' + '{Lang::T('Technician')}' + '</th>' +
-                        '<th>' + '{Lang::T('Cost')}' + '</th>' +
-                        '<th>' + '{Lang::T('Status')}' + '</th>' +
-                    '</tr>'
-                );
-                
-                // Request maintenance history from the server
-                $.ajax({
-                    url: '?_route=plugin/asset_maintenance_list',
-                    method: 'GET',
-                    success: function(response) {
-                        if (response.success) {
-                            const maintenanceRecords = response.data;
-                            
-                            // Filter maintenance records for the selected assets
-                            const assetIds = assets.map(asset => asset.asset_id);
-                            const filteredRecords = maintenanceRecords.filter(record => 
-                                assetIds.includes(record.asset_id)
-                            );
-                            
-                            // Generate table rows
-                            let tableRows = '';
-                            let totalCost = 0;
-                            
-                            if (filteredRecords.length === 0) {
-                                tableRows = '<tr><td colspan="7" class="text-center">' + '{Lang::T('No maintenance records found for the selected assets')}' + '</td></tr>';
-                            } else {
-                                // Sort records by date (newest first)
-                                filteredRecords.sort((a, b) => new Date(b.scheduled_date) - new Date(a.scheduled_date));
-                                
-                                filteredRecords.forEach(function(record) {
-                                    // Find associated asset
-                                    const asset = assets.find(a => a.asset_id === record.asset_id) || {};
-                                    const recordCost = parseFloat(record.cost) || 0;
-                                    totalCost += recordCost;
-                                    
-                                    tableRows += 
-                                        '<tr>' +
-                                            '<td>' + (asset.name || record.asset_id) + '</td>' +
-                                            '<td>' + (formatCategory(asset.category) || '-') + '</td>' +
-                                            '<td>' + formatMaintenanceType(record.maintenance_type) + '</td>' +
-                                            '<td>' + new Date(record.scheduled_date).toLocaleDateString() + '</td>' +
-                                            '<td>' + (record.technician || '-') + '</td>' +
-                                            '<td>' + currencyCode + recordCost.toFixed(2) + '</td>' +
-                                            '<td>' + formatMaintenanceStatus(record.status) + '</td>' +
-                                        '</tr>';
-                                });
-                            }
-                            
-                            $('#report-table-body').html(tableRows);
-                            
-                            // Generate summary
-                            if (filteredRecords.length > 0) {
-                                // Count by maintenance type
-                                const typeCounts = {};
-                                filteredRecords.forEach(function(record) {
-                                    const type = record.maintenance_type || 'unknown';
-                                    typeCounts[type] = (typeCounts[type] || 0) + 1;
-                                });
-                                
-                                // Count by status
-                                const statusCounts = {};
-                                filteredRecords.forEach(function(record) {
-                                    const status = record.status || 'unknown';
-                                    statusCounts[status] = (statusCounts[status] || 0) + 1;
-                                });
-                                
-                                let typeCountsText = '';
-                                for (const [type, count] of Object.entries(typeCounts)) {
-                                    typeCountsText += formatMaintenanceType(type) + ': ' + count + ' | ';
-                                }
-                                typeCountsText = typeCountsText.substring(0, typeCountsText.length - 3);
-                                
-                                let statusCountsText = '';
-                                for (const [status, count] of Object.entries(statusCounts)) {
-                                    statusCountsText += formatMaintenanceStatus(status) + ': ' + count + ' | ';
-                                }
-                                statusCountsText = statusCountsText.substring(0, statusCountsText.length - 3);
-                                
-                                $('#report-summary').html(
-                                    '<h4>' + '{Lang::T('Maintenance Summary')}' + '</h4>' +
-                                    '<p><strong>' + '{Lang::T('Total Records')}' + ':</strong> ' + filteredRecords.length + '</p>' +
-                                    '<p><strong>' + '{Lang::T('Total Cost')}' + ':</strong> ' + currencyCode + totalCost.toFixed(2) + '</p>' +
-                                    '<p><strong>' + '{Lang::T('By Type')}' + ':</strong> ' + typeCountsText + '</p>' +
-                                    '<p><strong>' + '{Lang::T('By Status')}' + ':</strong> ' + statusCountsText + '</p>'
-                                );
-                                
-                                // Create visualization
-                                createMaintenanceBarChart(filteredRecords);
-                            } else {
-                                $('#report-summary').html(
-                                    '<h4>' + '{Lang::T("Maintenance Summary")}' + '</h4>' +
-                                    '<p>' + '{Lang::T("No maintenance records found for the selected assets")}' + '</p>'
-                                );
-                                
-                                // Clear chart
-                                if (reportChart) {
-                                    reportChart.destroy();
-                                    reportChart = null;
-                                }
-                                $('#reportChart').hide();
-                            }
-                        } else {
-                            $('#report-table-body').html('<tr><td colspan="7" class="text-center">{Lang::T('Error loading maintenance records')}</td></tr>');
-                            
-                            $('#report-summary').html(
-                                '<h4>' + '{Lang::T("Maintenance Summary")}' + '</h4>' +
-                                '<p>' + '{Lang::T("Error loading maintenance records")}' + '</p>'
-                            );
-                        }
-                    },
-                    error: function() {
-                        $('#report-table-body').html('<tr><td colspan="7" class="text-center">{Lang::T('Error loading maintenance records')}</td></tr>');
-                        
-                        $('#report-summary').html(
-                            '<h4>' + '{Lang::T("Maintenance Summary")}' + '</h4>' +
-                            '<p>' + '{Lang::T("Error loading maintenance records")}' + '</p>'
-                        );
-                    }
-                });
+
+            // Status filter
+            if (status !== 'all' && asset.status !== status) {
+                return false;
             }
-            
-            // Generate Depreciation Report
-            function generateDepreciationReport(assets) {
-                // Set up table headers
-                $('#report-table-head').html(
-                    '<tr>' +
-                        '<th>' + '{Lang::T("Asset ID")}' + '</th>' +
-                        '<th>' + '{Lang::T("Name")}' + '</th>' +
-                        '<th>' + '{Lang::T("Category")}' + '</th>' +
-                        '<th>' + '{Lang::T("Purchase Date")}' + '</th>' +
-                        '<th>' + '{Lang::T("Age (days)")}' + '</th>' +
-                        '<th>' + '{Lang::T("Purchase Cost")}' + '</th>' +
-                        '<th>' + '{Lang::T("Current Value")}' + '</th>' +
-                        '<th>' + '{Lang::T("Depreciation %")}' + '</th>' +
-                    '</tr>'
-                );
-                
-                // Only include assets with purchase cost and date
-                const assetsWithCost = assets.filter(asset => 
-                    asset.purchase_cost && 
-                    parseFloat(asset.purchase_cost) > 0 && 
-                    asset.purchase_date
-                );
-                
-                // Calculate depreciation for each asset
-                let tableRows = '';
-                let totalPurchaseCost = 0;
-                let totalCurrentValue = 0;
+
+            // Date filter
+            if (dateRange !== 'all') {
+                const purchaseDate = asset.purchase_date ? new Date(asset.purchase_date) : null;
+
+                if (!purchaseDate) return false;
+
                 const today = new Date();
-                
-                // Define depreciation rates by category (annual)
-                const depreciationRates = {
-                    'network': 0.20,      // 20% per year
-                    'customer': 0.30,     // 30% per year
-                    'infrastructure': 0.10, // 10% per year
-                    'vehicle': 0.15,      // 15% per year
-                    'tool': 0.25,         // 25% per year
-                    'default': 0.20       // Default: 20% per year
-                };
-                
-                if (assetsWithCost.length === 0) {
-                    tableRows = '<tr><td colspan="8" class="text-center">' + '{Lang::T('No assets found with purchase cost and date information')}' + '</td></tr>';
-                } else {
-                    // Sort by highest depreciation first
-                    assetsWithCost.sort((a, b) => {
-                        const aAge = new Date() - new Date(a.purchase_date);
-                        const bAge = new Date() - new Date(b.purchase_date);
-                        return bAge - aAge; // Oldest first
-                    });
-                    
-                    assetsWithCost.forEach(function(asset) {
+                const thisYear = today.getFullYear();
+                const thisMonth = today.getMonth();
+
+                if (dateRange === 'today') {
+                    // Check if purchase date is today
+                    return (
+                        purchaseDate.getDate() === today.getDate() &&
+                        purchaseDate.getMonth() === today.getMonth() &&
+                        purchaseDate.getFullYear() === today.getFullYear()
+                    );
+                } else if (dateRange === 'week') {
+                    // Get start of week (Sunday)
+                    const startOfWeek = new Date(today);
+                    startOfWeek.setDate(today.getDate() - today.getDay());
+                    startOfWeek.setHours(0, 0, 0, 0);
+
+                    return purchaseDate >= startOfWeek;
+                } else if (dateRange === 'month') {
+                    // Check if purchase date is this month
+                    return (
+                        purchaseDate.getMonth() === thisMonth &&
+                        purchaseDate.getFullYear() === thisYear
+                    );
+                } else if (dateRange === 'year') {
+                    // Check if purchase date is this year
+                    return purchaseDate.getFullYear() === thisYear;
+                } else if (dateRange === 'custom') {
+                    // Check custom date range
+                    if (startDate && endDate) {
+                        const startDateObj = new Date(startDate);
+                        const endDateObj = new Date(endDate);
+                        endDateObj.setHours(23, 59, 59, 999); // Set to end of day
+
+                        return purchaseDate >= startDateObj && purchaseDate <= endDateObj;
+                    }
+                }
+            }
+
+            return true;
+        });
+    }
+
+    // Generate Asset Inventory Report
+    function generateInventoryReport(assets) {
+        // Set up table headers
+        $('#report-table-head').html(
+            '<tr>' +
+            '<th>' + '{Lang::T('Asset ID')}' + '</th>' +
+            '<th>' + '{Lang::T('Name')}' + '</th>' +
+            '<th>' + '{Lang::T('Category')}' + '</th>' +
+            '<th>' + '{Lang::T('Brand / Model')}' + '</th>' +
+            '<th>' + '{Lang::T('Serial Number')}' + '</th>' +
+            '<th>' + '{Lang::T('Location')}' + '</th>' +
+            '<th>' + '{Lang::T('Status')}' + '</th>' +
+            '<th>' + '{Lang::T('Purchase Date')}' + '</th>' +
+            '<th>' + '{Lang::T('Purchase Cost')}' + '</th>' +
+        '</tr>'
+        );
+
+        // Generate table rows
+        let tableRows = '';
+
+        if (assets.length === 0) {
+            tableRows = '<tr><td colspan="9" class="text-center">' + '{Lang::T('No assets found matching the criteria')}' + '</td></tr>';
+        } else {
+            assets.forEach(function (asset) {
+                const purchaseDate = asset.purchase_date ? new Date(asset.purchase_date).toLocaleDateString() : '-';
+                const purchaseCost = asset.purchase_cost ? currencyCode + parseFloat(asset.purchase_cost).toFixed(2) : '-';
+
+                tableRows +=
+                    '<tr>' +
+                    '<td>' + (asset.asset_id || '-') + '</td>' +
+                    '<td>' + (asset.name || '-') + '</td>' +
+                    '<td>' + (formatCategory(asset.category) || '-') + '</td>' +
+                    '<td>' + (asset.brand_model || '-') + '</td>' +
+                    '<td>' + (asset.serial_number || '-') + '</td>' +
+                    '<td>' + (asset.location || '-') + '</td>' +
+                    '<td>' + (formatStatus(asset.status) || '-') + '</td>' +
+                    '<td>' + purchaseDate + '</td>' +
+                    '<td>' + purchaseCost + '</td>' +
+                    '</tr>';
+            });
+        }
+
+        $('#report-table-body').html(tableRows);
+
+        // Generate summary
+        const categoryCounts = countByCategory(assets);
+        let categoryText = '';
+
+        if (categoryCounts.network > 0) {
+            categoryText += '{Lang::T('Network')}' + ': ' + categoryCounts.network + ' | ';
+        }
+        if (categoryCounts.customer > 0) {
+            categoryText += '{Lang::T('Customer')}' + ': ' + categoryCounts.customer + ' | ';
+        }
+        if (categoryCounts.infrastructure > 0) {
+            categoryText += '{Lang::T('Infrastructure')}' + ': ' + categoryCounts.infrastructure + ' | ';
+        }
+        if (categoryCounts.vehicle > 0) {
+            categoryText += '{Lang::T('Vehicles')}' + ': ' + categoryCounts.vehicle + ' | ';
+        }
+        if (categoryCounts.tool > 0) {
+            categoryText += '{Lang::T('Tools')}' + ': ' + categoryCounts.tool;
+        }
+
+        $('#report-summary').html(
+            '<h4>' + '{Lang::T('Inventory Summary')}' + '</h4>' +
+            '<p><strong>' + '{Lang::T('Total Assets')}' + ':</strong> ' + assets.length + '</p>' +
+            '<p><strong>' + '{Lang::T('By Category')}' + ':</strong> ' + categoryText + '</p>'
+        );
+
+        // Create visualization
+        createCategoryPieChart(categoryCounts);
+    }
+
+    // Generate Asset Value Report
+    function generateValueReport(assets) {
+        // Set up table headers
+        $('#report-table-head').html(
+            '<tr>' +
+            '<th>' + '{Lang::T('Category')}' + '</th>' +
+            '<th>' + '{Lang::T('Total Assets')}' + '</th>' +
+            '<th>' + '{Lang::T('Total Purchase Value')}' + '</th>' +
+            '<th>' + '{Lang::T('Average Age(days)')}' + '</th>' +
+            '<th>' + '{Lang::T('Estimated Current Value')}' + '</th>' +
+            '<th>' + '{Lang::T('Depreciation')}' + '</th>' +
+        '</tr>'
+        );
+
+        // Calculate values by category
+        const categories = ['network', 'customer', 'infrastructure', 'vehicle', 'tool'];
+        const valueData = {};
+        let totalPurchaseValue = 0;
+        let totalCurrentValue = 0;
+        let tableRows = '';
+
+        categories.forEach(function (category) {
+            const categoryAssets = assets.filter(asset => asset.category === category);
+
+            if (categoryAssets.length > 0) {
+                // Calculate purchase value
+                const purchaseValue = categoryAssets.reduce(function (sum, asset) {
+                    return sum + (parseFloat(asset.purchase_cost) || 0);
+                }, 0);
+
+                // Calculate average age in days
+                const today = new Date();
+                let totalAgeDays = 0;
+
+                categoryAssets.forEach(function (asset) {
+                    if (asset.purchase_date) {
                         const purchaseDate = new Date(asset.purchase_date);
                         const ageDays = Math.floor((today - purchaseDate) / (1000 * 60 * 60 * 24));
-                        const ageYears = ageDays / 365;
-                        
-                        const purchaseCost = parseFloat(asset.purchase_cost);
-                        const depreciationRate = depreciationRates[asset.category] || depreciationRates.default;
-                        
-                        // Apply maximum 5 years of depreciation (assuming min 20% salvage value)
-                        const depreciationFactor = Math.min(ageYears * depreciationRate, 0.8);
-                        const currentValue = purchaseCost * (1 - depreciationFactor);
-                        const depreciationPercentage = depreciationFactor * 100;
-                        
-                        totalPurchaseCost += purchaseCost;
-                        totalCurrentValue += currentValue;
-                        
-                        tableRows += 
-                            '<tr>' +
-                                '<td>' + (asset.asset_id || '-') + '</td>' +
-                                '<td>' + (asset.name || '-') + '</td>' +
-                                '<td>' + (formatCategory(asset.category) || '-') + '</td>' +
-                                '<td>' + purchaseDate.toLocaleDateString() + '</td>' +
-                                '<td>' + ageDays + '</td>' +
-                                '<td>' + currencyCode + purchaseCost.toFixed(2) + '</td>' +
-                                '<td>' + currencyCode + currentValue.toFixed(2) + '</td>' +
-                                '<td>' + depreciationPercentage.toFixed(1) + '%</td>' +
-                            '</tr>';
-                    });
-                    
-                    // Add total row
-                    const totalDepreciation = totalPurchaseCost - totalCurrentValue;
-                    const totalDepreciationPercentage = (totalDepreciation / totalPurchaseCost) * 100;
-                    
-                    tableRows += 
-                        '<tr class="info">' +
-                            '<td colspan="5"><strong>' + '{Lang::T('Total')}' + '</strong></td>' +
-                            '<td><strong>' + currencyCode + totalPurchaseCost.toFixed(2) + '</strong></td>' +
-                            '<td><strong>' + currencyCode + totalCurrentValue.toFixed(2) + '</strong></td>' +
-                            '<td><strong>' + totalDepreciationPercentage.toFixed(1) + '%</strong></td>' +
-                        '</tr>';
-                }
-                
-                $('#report-table-body').html(tableRows);
-                
-                // Generate summary
-                if (assetsWithCost.length > 0) {
-                    $('#report-summary').html(
-                        '<h4>' + '{Lang::T('Depreciation Summary')}' + '</h4>' +
-                        '<p><strong>' + '{Lang::T('Total Assets Analyzed')}' + ':</strong> ' + assetsWithCost.length + '</p>' +
-                        '<p><strong>' + '{Lang::T('Total Purchase Cost')}' + ':</strong> ' + currencyCode + totalPurchaseCost.toFixed(2) + '</p>' +
-                        '<p><strong>' + '{Lang::T('Total Current Value')}' + ':</strong> ' + currencyCode + totalCurrentValue.toFixed(2) + '</p>' +
-                        '<p><strong>' + '{Lang::T('Total Depreciation')}' + ':</strong> ' + currencyCode + (totalPurchaseCost - totalCurrentValue).toFixed(2) + '</p>' +
-                        '<p><small>' + '{Lang::T('Note: Depreciation calculated using standard rates: Network: 20%/year, Customer: 30%/year, Infrastructure: 10%/year, Vehicles: 15%/year, Tools: 25%/year')}' + '</small></p>'
-                    );
-                    
-                    // Create visualization
-                    createDepreciationChart(assetsWithCost);
-                } else {
-                    $('#report-summary').html(
-                        '<h4>' + '{Lang::T("Depreciation Summary")}' + '</h4>' +
-                        '<p>' + '{Lang::T("No assets found with purchase cost and date information")}' + '</p>'
-                    );
-                    
-                    // Clear chart
-                    if (reportChart) {
-                        reportChart.destroy();
-                        reportChart = null;
-                    }
-                    $('#reportChart').hide();
-                }
-            }
-            
-            // Generate Asset Status Report
-            function generateStatusReport(assets) {
-                // Set up table headers
-                $('#report-table-head').html(
-                    '<tr>' +
-                        '<th>' + '{Lang::T("Status")}' + '</th>' +
-                        '<th>' + '{Lang::T("Count")}' + '</th>' +
-                        '<th>' + '{Lang::T("Percentage")}' + '</th>' +
-                        '<th>' + '{Lang::T("Total Value")}' + '</th>' +
-                        '<th>' + '{Lang::T("Categories")}' + '</th>' +
-                    '</tr>'
-                );
-                
-                // Count assets by status
-                const statusCounts = {};
-                const statusValues = {};
-                const statusCategories = {};
-                
-                assets.forEach(function(asset) {
-                    const status = asset.status || 'unknown';
-                    
-                    // Count
-                    statusCounts[status] = (statusCounts[status] || 0) + 1;
-                    
-                    // Sum values
-                    const cost = parseFloat(asset.purchase_cost) || 0;
-                    statusValues[status] = (statusValues[status] || 0) + cost;
-                    
-                    // Categories
-                    if (!statusCategories[status]) {
-                        statusCategories[status] = {};
-                    }
-                    
-                    const category = asset.category || 'unknown';
-                    statusCategories[status][category] = (statusCategories[status][category] || 0) + 1;
-                });
-                
-                // Generate table rows
-                let tableRows = '';
-                const totalAssets = assets.length;
-                
-                if (Object.keys(statusCounts).length === 0) {
-                    tableRows = '<tr><td colspan="5" class="text-center">' + '{Lang::T('No assets found')}' + '</td></tr>';
-                } else {
-                    // Sort by count (highest first)
-                    const sortedStatuses = Object.keys(statusCounts).sort((a, b) => statusCounts[b] - statusCounts[a]);
-                    
-                    sortedStatuses.forEach(function(status) {
-                        const count = statusCounts[status];
-                        const percentage = (count / totalAssets * 100).toFixed(1);
-                        const value = statusValues[status] || 0;
-                        
-                        // Format categories
-                        let categoryText = '';
-                        const categories = statusCategories[status];
-                        
-                        if (categories) {
-                            for (const [category, catCount] of Object.entries(categories)) {
-                                if (catCount > 0) {
-                                    categoryText += formatCategory(category) + ': ' + catCount + ', ';
-                                }
-                            }
-                            categoryText = categoryText.substring(0, categoryText.length - 2); // Remove trailing comma and space
-                        }
-                        
-                        tableRows += 
-                            '<tr>' +
-                                '<td>' + formatStatus(status) + '</td>' +
-                                '<td>' + count + '</td>' +
-                                '<td>' + percentage + '%</td>' +
-                                '<td>' + currencyCode + value.toFixed(2) + '</td>' +
-                                '<td>' + categoryText + '</td>' +
-                            '</tr>';
-                    });
-                }
-                
-                $('#report-table-body').html(tableRows);
-                
-                // Generate summary
-                $('#report-summary').html(
-                    '<h4>' + '{Lang::T('Status Summary')}' + '</h4>' +
-                    '<p><strong>' + '{Lang::T('Total Assets')}' + ':</strong> ' + totalAssets + '</p>' +
-                    '<p><strong>' + '{Lang::T('Active Assets')}' + ':</strong> ' + (statusCounts['active'] || 0) + ' (' + (totalAssets > 0 ? ((statusCounts['active'] || 0) / totalAssets * 100).toFixed(1) : 0) + '%)</p>' +
-                    '<p><strong>' + '{Lang::T('Maintenance Assets')}' + ':</strong> ' + (statusCounts['maintenance'] || 0) + ' (' + (totalAssets > 0 ? ((statusCounts['maintenance'] || 0) / totalAssets * 100).toFixed(1) : 0) + '%)</p>'
-                );
-                
-                // Create visualization
-                createStatusPieChart(statusCounts);
-            }
-            
-            // Helper function to count assets by category
-            function countByCategory(assets) {
-                const counts = {
-                    'network': 0,
-                    'customer': 0,
-                    'infrastructure': 0,
-                    'vehicle': 0,
-                    'tool': 0,
-                    'unknown': 0
-                };
-                
-                assets.forEach(function(asset) {
-                    const category = asset.category || 'unknown';
-                    counts[category] = (counts[category] || 0) + 1;
-                });
-                
-                return counts;
-            }
-            
-            // Create category pie chart
-            function createCategoryPieChart(categoryCounts) {
-                // Destroy previous chart if exists
-                if (reportChart) {
-                    reportChart.destroy();
-                }
-                
-                const ctx = document.getElementById('reportChart').getContext('2d');
-                $('#reportChart').show();
-                
-                reportChart = new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: [
-                            '{Lang::T("Network Equipment")}',
-                            '{Lang::T("Customer Equipment")}',
-                            '{Lang::T("Infrastructure")}',
-                            '{Lang::T("Vehicles")}',
-                            '{Lang::T("Tools")}',
-                            '{Lang::T("Unknown")}'
-                        ],
-                        datasets: [{
-                            data: [
-                                categoryCounts.network || 0,
-                                categoryCounts.customer || 0,
-                                categoryCounts.infrastructure || 0,
-                                categoryCounts.vehicle || 0,
-                                categoryCounts.tool || 0,
-                                categoryCounts.unknown || 0
-                            ],
-                            backgroundColor: [
-                                '#5cb85c', // Network - Green
-                                '#428bca', // Customer - Blue
-                                '#f0ad4e', // Infrastructure - Orange
-                                '#d9534f', // Vehicles - Red
-                                '#5bc0de', // Tools - Light Blue
-                                '#777777'  // Unknown - Gray
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'right',
-                            },
-                            title: {
-                                display: true,
-                                text: '{Lang::T("Assets by Category")}'
-                            }
-                        }
+                        totalAgeDays += ageDays;
                     }
                 });
-            }
-            
-            // Create value bar chart
-            function createValueBarChart(valueData) {
-                // Destroy previous chart if exists
-                if (reportChart) {
-                    reportChart.destroy();
-                }
-                
-                const ctx = document.getElementById('reportChart').getContext('2d');
-                $('#reportChart').show();
-                
-                // Prepare data
-                const categories = [
-                    '{Lang::T("Network")}',
-                    '{Lang::T("Customer")}',
-                    '{Lang::T("Infrastructure")}',
-                    '{Lang::T("Vehicles")}',
-                    '{Lang::T("Tools")}'
-                ];
-                
-                const purchaseValues = [
-                    valueData.network ? valueData.network.purchaseValue : 0,
-                    valueData.customer ? valueData.customer.purchaseValue : 0,
-                    valueData.infrastructure ? valueData.infrastructure.purchaseValue : 0,
-                    valueData.vehicle ? valueData.vehicle.purchaseValue : 0,
-                    valueData.tool ? valueData.tool.purchaseValue : 0
-                ];
-                
-                const currentValues = [
-                    valueData.network ? valueData.network.currentValue : 0,
-                    valueData.customer ? valueData.customer.currentValue : 0,
-                    valueData.infrastructure ? valueData.infrastructure.currentValue : 0,
-                    valueData.vehicle ? valueData.vehicle.currentValue : 0,
-                    valueData.tool ? valueData.tool.currentValue : 0
-                ];
-                
-                reportChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: categories,
-                        datasets: [
-                            {
-                                label: '{Lang::T("Purchase Value")}',
-                                data: purchaseValues,
-                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                                borderColor: 'rgb(54, 162, 235)',
-                                borderWidth: 1
-                            },
-                            {
-                                label: '{Lang::T("Current Value")}',
-                                data: currentValues,
-                                backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                                borderColor: 'rgb(255, 99, 132)',
-                                borderWidth: 1
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: '{Lang::T("Value")} (' + currencyCode + ')'
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return currencyCode + value;
-                                    }
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'top'
-                            },
-                            title: {
-                                display: true,
-                                text: '{Lang::T("Asset Values by Category")}'
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Create maintenance bar chart
-            function createMaintenanceBarChart(records) {
-                // Destroy previous chart if exists
-                if (reportChart) {
-                    reportChart.destroy();
-                }
-                
-                const ctx = document.getElementById('reportChart').getContext('2d');
-                $('#reportChart').show();
-                
-                // Group by month and type
-                const monthlyData = {};
-                const maintenanceTypes = new Set();
-                
-                records.forEach(function(record) {
-                    const date = new Date(record.scheduled_date);
-                    const monthYear = (date.getMonth() + 1) + '/' + date.getFullYear();
-                    
-                    if (!monthlyData[monthYear]) {
-                        monthlyData[monthYear] = {};
-                    }
-                    
-                    const type = record.maintenance_type || 'unknown';
-                    maintenanceTypes.add(type);
-                    
-                    monthlyData[monthYear][type] = (monthlyData[monthYear][type] || 0) + 1;
-                });
-                
-                // Sort months chronologically
-                const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
-                    const [aMonth, aYear] = a.split('/').map(Number);
-                    const [bMonth, bYear] = b.split('/').map(Number);
-                    
-                    if (aYear !== bYear) {
-                        return aYear - bYear;
-                    }
-                    return aMonth - bMonth;
-                });
-                
-                // Prepare datasets
-                const datasets = [];
-                const colors = [
-                    'rgba(54, 162, 235, 0.7)', // Blue
-                    'rgba(255, 99, 132, 0.7)', // Red
-                    'rgba(75, 192, 192, 0.7)', // Green
-                    'rgba(255, 206, 86, 0.7)', // Yellow
-                    'rgba(153, 102, 255, 0.7)' // Purple
-                ];
-                
-                // Convert maintenance types to array and sort
-                const typesArray = Array.from(maintenanceTypes);
-                
-                typesArray.forEach(function(type, index) {
-                    const data = sortedMonths.map(month => monthlyData[month][type] || 0);
-                    
-                    datasets.push({
-                        label: formatMaintenanceType(type),
-                        data: data,
-                        backgroundColor: colors[index % colors.length],
-                        borderColor: colors[index % colors.length].replace('0.7', '1'),
-                        borderWidth: 1
-                    });
-                });
-                
-                // Create the chart
-                reportChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: sortedMonths,
-                        datasets: datasets
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: '{Lang::T("Number of Maintenance Records")}'
-                                },
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'top'
-                            },
-                            title: {
-                                display: true,
-                                text: '{Lang::T("Maintenance Records by Month")}'
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Create depreciation chart
-            function createDepreciationChart(assets) {
-                // Destroy previous chart if exists
-                if (reportChart) {
-                    reportChart.destroy();
-                }
-                
-                const ctx = document.getElementById('reportChart').getContext('2d');
-                $('#reportChart').show();
-                
-                // Group by age range
-                const ageRanges = {
-                    '<1': { purchase: 0, current: 0 },
-                    '1-2': { purchase: 0, current: 0 },
-                    '2-3': { purchase: 0, current: 0 },
-                    '3-4': { purchase: 0, current: 0 },
-                    '4+': { purchase: 0, current: 0 }
-                };
-                
-                // Define depreciation rates by category (annual)
+
+                const avgAgeDays = Math.round(totalAgeDays / categoryAssets.length);
+
+                // Calculate estimated current value (simple linear depreciation)
+                // Network equipment: 20% per year
+                // Customer equipment: 30% per year
+                // Infrastructure: 10% per year
+                // Vehicles: 15% per year
+                // Tools: 25% per year
                 const depreciationRates = {
-                    'network': 0.20,      // 20% per year
-                    'customer': 0.30,     // 30% per year
-                    'infrastructure': 0.10, // 10% per year
-                    'vehicle': 0.15,      // 15% per year
-                    'tool': 0.25,         // 25% per year
-                    'default': 0.20       // Default: 20% per year
+                    'network': 0.20,
+                    'customer': 0.30,
+                    'infrastructure': 0.10,
+                    'vehicle': 0.15,
+                    'tool': 0.25
                 };
-                
-                const today = new Date();
-                
-                assets.forEach(function(asset) {
-                    const purchaseDate = new Date(asset.purchase_date);
-                    const ageYears = (today - purchaseDate) / (1000 * 60 * 60 * 24 * 365);
-                    const purchaseCost = parseFloat(asset.purchase_cost);
-                    
-                    const depreciationRate = depreciationRates[asset.category] || depreciationRates.default;
-                    const depreciationFactor = Math.min(ageYears * depreciationRate, 0.8);
-                    const currentValue = purchaseCost * (1 - depreciationFactor);
-                    
-                    let rangeKey;
-                    if (ageYears < 1) rangeKey = '<1';
-                    else if (ageYears < 2) rangeKey = '1-2';
-                    else if (ageYears < 3) rangeKey = '2-3';
-                    else if (ageYears < 4) rangeKey = '3-4';
-                    else rangeKey = '4+';
-                    
-                    ageRanges[rangeKey].purchase += purchaseCost;
-                    ageRanges[rangeKey].current += currentValue;
-                });
-                
-                // Prepare data
-                const labels = Object.keys(ageRanges);
-                const purchaseData = labels.map(key => ageRanges[key].purchase);
-                const currentData = labels.map(key => ageRanges[key].current);
-                
-                // Create the chart
-                reportChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels.map(l => l + ' {Lang::T("years")}'),
-                        datasets: [
-                            {
-                                label: '{Lang::T("Purchase Value")}',
-                                data: purchaseData,
-                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                                borderColor: 'rgb(54, 162, 235)',
-                                borderWidth: 1
-                            },
-                            {
-                                label: '{Lang::T("Current Value")}',
-                                data: currentData,
-                                backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                                borderColor: 'rgb(255, 99, 132)',
-                                borderWidth: 1
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: '{Lang::T("Value")} (' + currencyCode + ')'
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return currencyCode + value;
-                                    }
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: '{Lang::T("Asset Age")}'
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'top'
-                            },
-                            title: {
-                                display: true,
-                                text: '{Lang::T("Asset Value Depreciation by Age")}'
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Create status pie chart
-            function createStatusPieChart(statusCounts) {
-                // Destroy previous chart if exists
-                if (reportChart) {
-                    reportChart.destroy();
-                }
-                
-                const ctx = document.getElementById('reportChart').getContext('2d');
-                $('#reportChart').show();
-                
-                // Prepare data
-                const statuses = Object.keys(statusCounts);
-                const data = statuses.map(status => statusCounts[status]);
-                const backgroundColors = statuses.map(status => {
-                    switch (status) {
-                        case 'active': return 'rgba(92, 184, 92, 0.7)'; // Green
-                        case 'maintenance': return 'rgba(240, 173, 78, 0.7)'; // Orange
-                        case 'retired': return 'rgba(217, 83, 79, 0.7)'; // Red
-                        case 'storage': return 'rgba(91, 192, 222, 0.7)'; // Blue
-                        default: return 'rgba(119, 119, 119, 0.7)'; // Gray
-                    }
-                });
-                
-                // Create the chart
-                reportChart = new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: statuses.map(status => formatStatus(status)),
-                        datasets: [{
-                            data: data,
-                            backgroundColor: backgroundColors,
-                            borderColor: backgroundColors.map(color => color.replace('0.7', '1')),
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'right'
-                            },
-                            title: {
-                                display: true,
-                                text: '{Lang::T("Assets by Status")}'
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Helper function to format category names
-            function formatCategory(category) {
-                if (!category) return '{Lang::T("Unknown")}';
-                
-                switch (category) {
-                    case 'network': return '{Lang::T("Network Equipment")}';
-                    case 'customer': return '{Lang::T("Customer Equipment")}';
-                    case 'infrastructure': return '{Lang::T("Infrastructure")}';
-                    case 'vehicle': return '{Lang::T("Vehicle")}';
-                    case 'tool': return '{Lang::T("Tool & Equipment")}';
-                    default: return category;
-                }
-            }
-            
-            // Helper function to format status
-            function formatStatus(status) {
-                if (!status) return '{Lang::T("Unknown")}';
-                
-                switch (status) {
-                    case 'active': return '{Lang::T("Active")}';
-                    case 'maintenance': return '{Lang::T("Under Maintenance")}';
-                    case 'retired': return '{Lang::T("Retired/Disposed")}';
-                    case 'storage': return '{Lang::T("In Storage")}';
-                    default: return status.charAt(0).toUpperCase() + status.slice(1);
-                }
-            }
-            
-            // Helper function to format maintenance type
-            function formatMaintenanceType(type) {
-                if (!type) return '{Lang::T("Unknown")}';
-                
-                switch (type) {
-                    case 'preventive': return '{Lang::T("Preventive Maintenance")}';
-                    case 'corrective': return '{Lang::T("Corrective Maintenance")}';
-                    case 'emergency': return '{Lang::T("Emergency Repair")}';
-                    case 'inspection': return '{Lang::T("Inspection")}';
-                    case 'calibration': return '{Lang::T("Calibration")}';
-                    case 'upgrade': return '{Lang::T("Upgrade")}';
-                    default: return type.charAt(0).toUpperCase() + type.slice(1);
-                }
-            }
-            
-            // Helper function to format maintenance status
-            function formatMaintenanceStatus(status) {
-                if (!status) return '{Lang::T("Unknown")}';
-                
-                switch (status) {
-                    case 'scheduled': return '{Lang::T("Scheduled")}';
-                    case 'in_progress': return '{Lang::T("In Progress")}';
-                    case 'completed': return '{Lang::T("Completed")}';
-                    case 'cancelled': return '{Lang::T("Cancelled")}';
-                    case 'overdue': return '{Lang::T("Overdue")}';
-                    default: return status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
-                }
-            }
-            
-            // Export report as PDF
-            function exportReportPDF() {
-                // Show loading message
-                Swal.fire({
-                    title: '{Lang::T("Exporting Report")}',
-                    text: '{Lang::T("Preparing PDF export...")}',
-                    allowOutsideClick: false,
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-                
-                // Collect report data
-                const reportData = {
-                    reportType: currentReportType, // Changed from type to reportType to match PHP backend expectations
-                    title: $('#report-title').text(),
-                    dateRange: $('#report-date-range').val(),
-                    category: $('#report-category').val(),
-                    location: $('#report-location').val(),
-                    status: $('#report-status').val(),
-                    filters: {
-                        dateRange: $('#report-date-range option:selected').text(),
-                        category: $('#report-category option:selected').text(),
-                        location: $('#report-location option:selected').text(),
-                        status: $('#report-status option:selected').text()
-                    },
-                    customDateRange: {
-                        startDate: $('#report-start-date').val(),
-                        endDate: $('#report-end-date').val()
-                    },
-                    tableHTML: (function() {
-                        // Build a complete table including both head and body
-                        let fullTableHtml = '<table border="1" cellpadding="8" cellspacing="0" width="100%">';
-                        
-                        // Get the header row
-                        fullTableHtml += '<thead>';
-                        fullTableHtml += $('#report-table-head').html();
-                        fullTableHtml += '</thead>';
-                        
-                        // Get the body rows
-                        fullTableHtml += '<tbody>';
-                        fullTableHtml += $('#report-table-body').html();
-                        fullTableHtml += '</tbody>';
-                        
-                        fullTableHtml += '</table>';
-                        
-                        return fullTableHtml;
-                    })(),
-                    summaryHTML: $('#report-summary').html()
+
+                const depreciationRate = depreciationRates[category];
+                const avgAgeYears = avgAgeDays / 365;
+
+                // Apply maximum 5 years of depreciation (assuming min 20% salvage value)
+                const depreciationFactor = Math.min(avgAgeYears * depreciationRate, 0.8);
+                const currentValue = purchaseValue * (1 - depreciationFactor);
+                const depreciation = purchaseValue - currentValue;
+
+                // Store data for the chart
+                valueData[category] = {
+                    purchaseValue: purchaseValue,
+                    currentValue: currentValue,
+                    depreciation: depreciation
                 };
-                
-                // Send to server for PDF generation
-                $.ajax({
-                    url: '?_route=plugin/asset_report_export',
-                    method: 'POST',
-                    data: {
-                        format: 'pdf',
-                        reportData: JSON.stringify(reportData)
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.close();
-                            
-                            // Download the PDF
-                            const link = document.createElement('a');
-                            link.href = response.fileUrl;
-                            link.download = response.fileName || 'asset-report.pdf';
-                            link.click();
-                        } else {
-                            Swal.fire({
-                                title: '{Lang::T("Export Failed")}',
-                                text: response.message || '{Lang::T("Failed to generate PDF report")}',
-                                icon: 'error',
-                                confirmButtonText: '{Lang::T("OK")}'
-                            });
-                        }
-                    },
-                    error: function() {
-                        Swal.fire({
-                            title: '{Lang::T("Export Failed")}',
-                            text: '{Lang::T("An error occurred while exporting to PDF")}',
-                            icon: 'error',
-                            confirmButtonText: '{Lang::T("OK")}'
+
+                totalPurchaseValue += purchaseValue;
+                totalCurrentValue += currentValue;
+
+                // Add table row
+                tableRows +=
+                    '<tr>' +
+                    '<td>' + formatCategory(category) + '</td>' +
+                    '<td>' + categoryAssets.length + '</td>' +
+                    '<td>' + currencyCode + purchaseValue.toFixed(2) + '</td>' +
+                    '<td>' + avgAgeDays + '</td>' +
+                    '<td>' + currencyCode + currentValue.toFixed(2) + '</td>' +
+                    '<td>' + currencyCode + depreciation.toFixed(2) + ' (' + Math.round(depreciationFactor * 100) + '%)</td>' +
+                    '</tr>';
+            }
+        });
+
+        if (tableRows === '') {
+            tableRows = '<tr><td colspan="6" class="text-center">' + '{Lang::T('No assets found with purchase value information')}' + '</td></tr>';
+        } else {
+            // Add total row
+            const totalDepreciation = totalPurchaseValue - totalCurrentValue;
+            const totalDepreciationPercentage = totalPurchaseValue > 0 ? (totalDepreciation / totalPurchaseValue * 100) : 0;
+
+            tableRows +=
+                '<tr class="info">' +
+                '<td><strong>' + '{Lang::T('Total')}' + '</strong></td>' +
+                    '<td><strong>' + assets.length + '</strong></td>' +
+                    '<td><strong>' + currencyCode + totalPurchaseValue.toFixed(2) + '</strong></td>' +
+                    '<td>-</td>' +
+                    '<td><strong>' + currencyCode + totalCurrentValue.toFixed(2) + '</strong></td>' +
+                    '<td><strong>' + currencyCode + totalDepreciation.toFixed(2) + ' (' + Math.round(totalDepreciationPercentage) + '%)</strong></td>' +
+                    '</tr>';
+        }
+
+        $('#report-table-body').html(tableRows);
+
+        // Generate summary
+        $('#report-summary').html(
+            '<h4>' + '{Lang::T('Value Summary')}' + '</h4>' +
+            '<p><strong>' + '{Lang::T('Total Purchase Value')}' + ':</strong> ' + currencyCode + totalPurchaseValue.toFixed(2) + '</p>' +
+            '<p><strong>' + '{Lang::T('Total Current Value')}' + ':</strong> ' + currencyCode + totalCurrentValue.toFixed(2) + '</p>' +
+            '<p><strong>' + '{Lang::T('Total Depreciation')}' + ':</strong> ' + currencyCode + (totalPurchaseValue - totalCurrentValue).toFixed(2) + '</p>'
+        );
+
+        // Create visualization
+        createValueBarChart(valueData);
+    }
+
+    // Generate Maintenance History Report
+    function generateMaintenanceReport(assets) {
+        // Set up table headers
+        $('#report-table-head').html(
+            '<tr>' +
+            '<th>' + '{Lang::T('Asset')}' + '</th>' +
+            '<th>' + '{Lang::T('Category')}' + '</th>' +
+            '<th>' + '{Lang::T('Maintenance Type')}' + '</th>' +
+            '<th>' + '{Lang::T('Date')}' + '</th>' +
+            '<th>' + '{Lang::T('Technician')}' + '</th>' +
+            '<th>' + '{Lang::T('Cost')}' + '</th>' +
+            '<th>' + '{Lang::T('Status')}' + '</th>' +
+        '</tr>'
+        );
+
+        // Request maintenance history from the server
+        $.ajax({
+            url: '?_route=plugin/asset_maintenance_list',
+            method: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    const maintenanceRecords = response.data;
+
+                    // Filter maintenance records for the selected assets
+                    const assetIds = assets.map(asset => asset.asset_id);
+                    const filteredRecords = maintenanceRecords.filter(record =>
+                        assetIds.includes(record.asset_id)
+                    );
+
+                    // Generate table rows
+                    let tableRows = '';
+                    let totalCost = 0;
+
+                    if (filteredRecords.length === 0) {
+                        tableRows = '<tr><td colspan="7" class="text-center">' + '{Lang::T('No maintenance records found for the selected assets')}' + '</td></tr>';
+                    } else {
+                        // Sort records by date (newest first)
+                        filteredRecords.sort((a, b) => new Date(b.scheduled_date) - new Date(a.scheduled_date));
+
+                        filteredRecords.forEach(function (record) {
+                            // Find associated asset
+                            const asset = assets.find(a => a.asset_id === record.asset_id) || {};
+                            const recordCost = parseFloat(record.cost) || 0;
+                            totalCost += recordCost;
+
+                            tableRows +=
+                                '<tr>' +
+                                '<td>' + (asset.name || record.asset_id) + '</td>' +
+                                '<td>' + (formatCategory(asset.category) || '-') + '</td>' +
+                                '<td>' + formatMaintenanceType(record.maintenance_type) + '</td>' +
+                                '<td>' + new Date(record.scheduled_date).toLocaleDateString() + '</td>' +
+                                '<td>' + (record.technician || '-') + '</td>' +
+                                '<td>' + currencyCode + recordCost.toFixed(2) + '</td>' +
+                                '<td>' + formatMaintenanceStatus(record.status) + '</td>' +
+                                '</tr>';
                         });
                     }
-                });
-            }
-            
-            // Export report as CSV
-            function exportReportCSV() {
-                // Get table data
-                const headers = [];
-                const data = [];
-                
-                // Extract headers
-                $('#report-table-head th').each(function() {
-                    headers.push($(this).text());
-                });
-                
-                // Extract rows
-                $('#report-table-body tr').each(function() {
-                    const row = [];
-                    $(this).find('td').each(function() {
-                        row.push($(this).text());
-                    });
-                    if (row.length > 0) {
-                        data.push(row);
+
+                    $('#report-table-body').html(tableRows);
+
+                    // Generate summary
+                    if (filteredRecords.length > 0) {
+                        // Count by maintenance type
+                        const typeCounts = {};
+                        filteredRecords.forEach(function (record) {
+                            const type = record.maintenance_type || 'unknown';
+                            typeCounts[type] = (typeCounts[type] || 0) + 1;
+                        });
+
+                        // Count by status
+                        const statusCounts = {};
+                        filteredRecords.forEach(function (record) {
+                            const status = record.status || 'unknown';
+                            statusCounts[status] = (statusCounts[status] || 0) + 1;
+                        });
+
+                        let typeCountsText = '';
+                        for (const [type, count] of Object.entries(typeCounts)) {
+                            typeCountsText += formatMaintenanceType(type) + ': ' + count + ' | ';
+                        }
+                        typeCountsText = typeCountsText.substring(0, typeCountsText.length - 3);
+
+                        let statusCountsText = '';
+                        for (const [status, count] of Object.entries(statusCounts)) {
+                            statusCountsText += formatMaintenanceStatus(status) + ': ' + count + ' | ';
+                        }
+                        statusCountsText = statusCountsText.substring(0, statusCountsText.length - 3);
+
+                        $('#report-summary').html(
+                            '<h4>' + '{Lang::T('Maintenance Summary')}' + '</h4>' +
+                            '<p><strong>' + '{Lang::T('Total Records')}' + ':</strong> ' + filteredRecords.length + '</p>' +
+                            '<p><strong>' + '{Lang::T('Total Cost')}' + ':</strong> ' + currencyCode + totalCost.toFixed(2) + '</p>' +
+                            '<p><strong>' + '{Lang::T('By Type')}' + ':</strong> ' + typeCountsText + '</p>' +
+                            '<p><strong>' + '{Lang::T('By Status')}' + ':</strong> ' + statusCountsText + '</p>'
+                        );
+
+                        // Create visualization
+                        createMaintenanceBarChart(filteredRecords);
+                    } else {
+                        $('#report-summary').html(
+                            '<h4>' + '{Lang::T("Maintenance Summary")}' + '</h4>' +
+                            '<p>' + '{Lang::T("No maintenance records found for the selected assets")}' + '</p>'
+                        );
+
+                        // Clear chart
+                        if (reportChart) {
+                            reportChart.destroy();
+                            reportChart = null;
+                        }
+                        $('#reportChart').hide();
                     }
-                });
-                
-                // Create CSV content
-                let csvContent = headers.join(',') + '\n';
-                
-                data.forEach(function(row) {
-                    let csvRow = row.map(function(cell) {
-                        // Escape quotes and wrap in quotes if contains comma
-                        const escaped = cell.replace(/"/g, '""');
-                        return (cell.indexOf(',') > -1) ? '"' + escaped + '"' : escaped;
-                    }).join(',');
-                    
-                    csvContent += csvRow + '\n';
-                });
-                
-                // Create and trigger download
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                
-                const link = document.createElement('a');
-                const timestamp = new Date().toISOString().slice(0, 10);
-                const reportTypeText = currentReportType.charAt(0).toUpperCase() + currentReportType.slice(1);
-                
-                link.href = url;
-                link.download = 'asset-' + currentReportType + '-report-' + timestamp + '.csv';
-                link.click();
-                
-                // Clean up
-                URL.revokeObjectURL(url);
+                } else {
+                    $('#report-table-body').html('<tr><td colspan="7" class="text-center">{Lang::T('Error loading maintenance records')}</td></tr>');
+
+                    $('#report-summary').html(
+                        '<h4>' + '{Lang::T("Maintenance Summary")}' + '</h4>' +
+                        '<p>' + '{Lang::T("Error loading maintenance records")}' + '</p>'
+                    );
+                }
+            },
+            error: function () {
+                $('#report-table-body').html('<tr><td colspan="7" class="text-center">{Lang::T('Error loading maintenance records')}</td></tr>');
+
+                $('#report-summary').html(
+                    '<h4>' + '{Lang::T("Maintenance Summary")}' + '</h4>' +
+                    '<p>' + '{Lang::T("Error loading maintenance records")}' + '</p>'
+                );
             }
-            
-            // Print report
-            function printReport() {
-                // Clone the report content
-                const reportTitle = $('#report-title').clone();
-                const reportContent = $('.report-content').clone();
-                
-                // Add filters info
-                const filtersInfo = $('<div class="report-filters"></div>');
-                filtersInfo.append('<p><strong>{Lang::T("Filters")}:</strong> ' + 
-                    '{Lang::T("Date Range")}: ' + $('#report-date-range option:selected').text() + ', ' +
-                    '{Lang::T("Category")}: ' + $('#report-category option:selected').text() + ', ' +
-                    '{Lang::T("Location")}: ' + $('#report-location option:selected').text() + ', ' +
-                    '{Lang::T("Status")}: ' + $('#report-status option:selected').text() + '</p>'
-                );
-                
-                // Create print window
-                const printWindow = window.open('', '_blank');
-                printWindow.document.write(
-                    '<html>' +
-                    '<head>' +
-                        '<title>' + reportTitle.text() + '</title>' +
-                        '<style>' +
-                            'body { font-family: Arial, sans-serif; padding: 20px; }' +
-                            'h1 { color: #337ab7; }' +
-                            'table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }' +
-                            '{literal}th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }{/literal}' +
-                            '{literal}th { background-color: #f5f5f5; }{/literal}' +
-                            '{literal}.report-filters { margin-bottom: 20px; font-size: 12px; color: #777; }{/literal}' +
-                            '{literal}.report-summary { background-color: #f9f9f9; padding: 15px; border: 1px solid #ddd; }{/literal}' +
-                            '{literal}canvas { max-width: 100%; height: auto !important; }{/literal}' +
-                            '{literal}@media print {{/literal}' +
-                                '{literal}.no-print { display: none; }{/literal}' +
-                                '{literal}body { padding: 0; }{/literal}' +
-                            '{literal}}{/literal}' +
-                        '</style>' +
-                    '</head>' +
-                    '<body>' +
-                        '<h1>' + reportTitle.html() + '</h1>' +
-                        '<div {literal}class="no-print"{/literal}>' +
-                            '<p>This report has been prepared for printing. Use your browser\'s print function to print this report.</p>' +
-                            '<button {literal}onclick="window.print()"{/literal}>Print</button>' +
-                            '<button {literal}onclick="window.close()"{/literal}>Close</button>' +
-                            '<hr>' +
-                        '</div>' +
-                        filtersInfo.prop('outerHTML') +
-                        reportContent.html() +
-                        '<div {literal}class="no-print"{/literal}>' +
-                            '<hr>' +
-                            '<p>Generated on: ' + new Date().toLocaleString() + '</p>' +
-                        '</div>' +
-                    '</body>' +
-                    '</html>'
-                );
-                
-                // Add the chart
-                if (reportChart) {
-                    const canvas = printWindow.document.createElement('canvas');
-                    canvas.id = 'printChart';
-                    printWindow.document.body.querySelector('.report-content').insertBefore(canvas, printWindow.document.body.querySelector('.table-responsive'));
-                    
-                    // Clone the chart in the print window
-                    const printCtx = canvas.getContext('2d');
-                    const printChart = new Chart(printCtx, {
-                        type: reportChart.config.type,
-                        data: JSON.parse(JSON.stringify(reportChart.data)),
-                        options: JSON.parse(JSON.stringify(reportChart.options))
+        });
+    }
+
+    // Generate Depreciation Report
+    function generateDepreciationReport(assets) {
+        // Set up table headers
+        $('#report-table-head').html(
+            '<tr>' +
+            '<th>' + '{Lang::T("Asset ID")}' + '</th>' +
+            '<th>' + '{Lang::T("Name")}' + '</th>' +
+            '<th>' + '{Lang::T("Category")}' + '</th>' +
+            '<th>' + '{Lang::T("Purchase Date")}' + '</th>' +
+            '<th>' + '{Lang::T("Age (days)")}' + '</th>' +
+            '<th>' + '{Lang::T("Purchase Cost")}' + '</th>' +
+            '<th>' + '{Lang::T("Current Value")}' + '</th>' +
+            '<th>' + '{Lang::T("Depreciation %")}' + '</th>' +
+            '</tr>'
+        );
+
+        // Only include assets with purchase cost and date
+        const assetsWithCost = assets.filter(asset =>
+            asset.purchase_cost &&
+            parseFloat(asset.purchase_cost) > 0 &&
+            asset.purchase_date
+        );
+
+        // Calculate depreciation for each asset
+        let tableRows = '';
+        let totalPurchaseCost = 0;
+        let totalCurrentValue = 0;
+        const today = new Date();
+
+        // Define depreciation rates by category (annual)
+        const depreciationRates = {
+            'network': 0.20,      // 20% per year
+            'customer': 0.30,     // 30% per year
+            'infrastructure': 0.10, // 10% per year
+            'vehicle': 0.15,      // 15% per year
+            'tool': 0.25,         // 25% per year
+            'default': 0.20       // Default: 20% per year
+        };
+
+        if (assetsWithCost.length === 0) {
+            tableRows = '<tr><td colspan="8" class="text-center">' + '{Lang::T('No assets found with purchase cost and date information')}' + '</td></tr>';
+        } else {
+            // Sort by highest depreciation first
+            assetsWithCost.sort((a, b) => {
+                const aAge = new Date() - new Date(a.purchase_date);
+                const bAge = new Date() - new Date(b.purchase_date);
+                return bAge - aAge; // Oldest first
+            });
+
+            assetsWithCost.forEach(function (asset) {
+                const purchaseDate = new Date(asset.purchase_date);
+                const ageDays = Math.floor((today - purchaseDate) / (1000 * 60 * 60 * 24));
+                const ageYears = ageDays / 365;
+
+                const purchaseCost = parseFloat(asset.purchase_cost);
+                const depreciationRate = depreciationRates[asset.category] || depreciationRates.default;
+
+                // Apply maximum 5 years of depreciation (assuming min 20% salvage value)
+                const depreciationFactor = Math.min(ageYears * depreciationRate, 0.8);
+                const currentValue = purchaseCost * (1 - depreciationFactor);
+                const depreciationPercentage = depreciationFactor * 100;
+
+                totalPurchaseCost += purchaseCost;
+                totalCurrentValue += currentValue;
+
+                tableRows +=
+                    '<tr>' +
+                    '<td>' + (asset.asset_id || '-') + '</td>' +
+                    '<td>' + (asset.name || '-') + '</td>' +
+                    '<td>' + (formatCategory(asset.category) || '-') + '</td>' +
+                    '<td>' + purchaseDate.toLocaleDateString() + '</td>' +
+                    '<td>' + ageDays + '</td>' +
+                    '<td>' + currencyCode + purchaseCost.toFixed(2) + '</td>' +
+                    '<td>' + currencyCode + currentValue.toFixed(2) + '</td>' +
+                    '<td>' + depreciationPercentage.toFixed(1) + '%</td>' +
+                    '</tr>';
+            });
+
+            // Add total row
+            const totalDepreciation = totalPurchaseCost - totalCurrentValue;
+            const totalDepreciationPercentage = (totalDepreciation / totalPurchaseCost) * 100;
+
+            tableRows +=
+                '<tr class="info">' +
+                '<td colspan="5"><strong>' + '{Lang::T('Total')}' + '</strong></td>' +
+                    '<td><strong>' + currencyCode + totalPurchaseCost.toFixed(2) + '</strong></td>' +
+                    '<td><strong>' + currencyCode + totalCurrentValue.toFixed(2) + '</strong></td>' +
+                    '<td><strong>' + totalDepreciationPercentage.toFixed(1) + '%</strong></td>' +
+                    '</tr>';
+        }
+
+        $('#report-table-body').html(tableRows);
+
+        // Generate summary
+        if (assetsWithCost.length > 0) {
+            $('#report-summary').html(
+                '<h4>' + '{Lang::T('Depreciation Summary')}' + '</h4>' +
+                '<p><strong>' + '{Lang::T('Total Assets Analyzed')}' + ':</strong> ' + assetsWithCost.length + '</p>' +
+                '<p><strong>' + '{Lang::T('Total Purchase Cost')}' + ':</strong> ' + currencyCode + totalPurchaseCost.toFixed(2) + '</p>' +
+                '<p><strong>' + '{Lang::T('Total Current Value')}' + ':</strong> ' + currencyCode + totalCurrentValue.toFixed(2) + '</p>' +
+                '<p><strong>' + '{Lang::T('Total Depreciation')}' + ':</strong> ' + currencyCode + (totalPurchaseCost - totalCurrentValue).toFixed(2) + '</p>' +
+                '<p><small>' + '{Lang::T('Note: Depreciation calculated using standard rates: Network: 20 % /year, Customer: 30%/year, Infrastructure: 10 % /year, Vehicles: 15%/year, Tools: 25 % /year')}' + '</small ></p > '
+            );
+
+            // Create visualization
+            createDepreciationChart(assetsWithCost);
+        } else {
+            $('#report-summary').html(
+                '<h4>' + '{Lang::T("Depreciation Summary")}' + '</h4>' +
+                '<p>' + '{Lang::T("No assets found with purchase cost and date information")}' + '</p>'
+            );
+
+            // Clear chart
+            if (reportChart) {
+                reportChart.destroy();
+                reportChart = null;
+            }
+            $('#reportChart').hide();
+        }
+    }
+
+    // Generate Asset Status Report
+    function generateStatusReport(assets) {
+        // Set up table headers
+        $('#report-table-head').html(
+            '<tr>' +
+            '<th>' + '{Lang::T("Status")}' + '</th>' +
+            '<th>' + '{Lang::T("Count")}' + '</th>' +
+            '<th>' + '{Lang::T("Percentage")}' + '</th>' +
+            '<th>' + '{Lang::T("Total Value")}' + '</th>' +
+            '<th>' + '{Lang::T("Categories")}' + '</th>' +
+            '</tr>'
+        );
+
+        // Count assets by status
+        const statusCounts = {};
+        const statusValues = {};
+        const statusCategories = {};
+
+        assets.forEach(function (asset) {
+            const status = asset.status || 'unknown';
+
+            // Count
+            statusCounts[status] = (statusCounts[status] || 0) + 1;
+
+            // Sum values
+            const cost = parseFloat(asset.purchase_cost) || 0;
+            statusValues[status] = (statusValues[status] || 0) + cost;
+
+            // Categories
+            if (!statusCategories[status]) {
+                statusCategories[status] = {};
+            }
+
+            const category = asset.category || 'unknown';
+            statusCategories[status][category] = (statusCategories[status][category] || 0) + 1;
+        });
+
+        // Generate table rows
+        let tableRows = '';
+        const totalAssets = assets.length;
+
+        if (Object.keys(statusCounts).length === 0) {
+            tableRows = '<tr><td colspan="5" class="text-center">' + '{Lang::T('No assets found')}' + '</td></tr>';
+        } else {
+            // Sort by count (highest first)
+            const sortedStatuses = Object.keys(statusCounts).sort((a, b) => statusCounts[b] - statusCounts[a]);
+
+            sortedStatuses.forEach(function (status) {
+                const count = statusCounts[status];
+                const percentage = (count / totalAssets * 100).toFixed(1);
+                const value = statusValues[status] || 0;
+
+                // Format categories
+                let categoryText = '';
+                const categories = statusCategories[status];
+
+                if (categories) {
+                    for (const [category, catCount] of Object.entries(categories)) {
+                        if (catCount > 0) {
+                            categoryText += formatCategory(category) + ': ' + catCount + ', ';
+                        }
+                    }
+                    categoryText = categoryText.substring(0, categoryText.length - 2); // Remove trailing comma and space
+                }
+
+                tableRows +=
+                    '<tr>' +
+                    '<td>' + formatStatus(status) + '</td>' +
+                    '<td>' + count + '</td>' +
+                    '<td>' + percentage + '%</td>' +
+                    '<td>' + currencyCode + value.toFixed(2) + '</td>' +
+                    '<td>' + categoryText + '</td>' +
+                    '</tr>';
+            });
+        }
+
+        $('#report-table-body').html(tableRows);
+
+        // Generate summary
+        $('#report-summary').html(
+            '<h4>' + '{Lang::T('Status Summary')}' + '</h4>' +
+            '<p><strong>' + '{Lang::T('Total Assets')}' + ':</strong> ' + totalAssets + '</p>' +
+            '<p><strong>' + '{Lang::T('Active Assets')}' + ':</strong> ' + (statusCounts['active'] || 0) + ' (' + (totalAssets > 0 ? ((statusCounts['active'] || 0) / totalAssets * 100).toFixed(1) : 0) + '%)</p>' +
+            '<p><strong>' + '{Lang::T('Maintenance Assets')}' + ':</strong> ' + (statusCounts['maintenance'] || 0) + ' (' + (totalAssets > 0 ? ((statusCounts['maintenance'] || 0) / totalAssets * 100).toFixed(1) : 0) + '%)</p>'
+        );
+
+        // Create visualization
+        createStatusPieChart(statusCounts);
+    }
+
+    // Helper function to count assets by category
+    function countByCategory(assets) {
+        const counts = {
+            'network': 0,
+            'customer': 0,
+            'infrastructure': 0,
+            'vehicle': 0,
+            'tool': 0,
+            'unknown': 0
+        };
+
+        assets.forEach(function (asset) {
+            const category = asset.category || 'unknown';
+            counts[category] = (counts[category] || 0) + 1;
+        });
+
+        return counts;
+    }
+
+    // Create category pie chart
+    function createCategoryPieChart(categoryCounts) {
+        // Destroy previous chart if exists
+        if (reportChart) {
+            reportChart.destroy();
+        }
+
+        const ctx = document.getElementById('reportChart').getContext('2d');
+        $('#reportChart').show();
+
+        reportChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [
+                    '{Lang::T("Network Equipment")}',
+                    '{Lang::T("Customer Equipment")}',
+                    '{Lang::T("Infrastructure")}',
+                    '{Lang::T("Vehicles")}',
+                    '{Lang::T("Tools")}',
+                    '{Lang::T("Unknown")}'
+                ],
+                datasets: [{
+                    data: [
+                        categoryCounts.network || 0,
+                        categoryCounts.customer || 0,
+                        categoryCounts.infrastructure || 0,
+                        categoryCounts.vehicle || 0,
+                        categoryCounts.tool || 0,
+                        categoryCounts.unknown || 0
+                    ],
+                    backgroundColor: [
+                        '#5cb85c', // Network - Green
+                        '#428bca', // Customer - Blue
+                        '#f0ad4e', // Infrastructure - Orange
+                        '#d9534f', // Vehicles - Red
+                        '#5bc0de', // Tools - Light Blue
+                        '#777777'  // Unknown - Gray
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    title: {
+                        display: true,
+                        text: '{Lang::T("Assets by Category")}'
+                    }
+                }
+            }
+        });
+    }
+
+    // Create value bar chart
+    function createValueBarChart(valueData) {
+        // Destroy previous chart if exists
+        if (reportChart) {
+            reportChart.destroy();
+        }
+
+        const ctx = document.getElementById('reportChart').getContext('2d');
+        $('#reportChart').show();
+
+        // Prepare data
+        const categories = [
+            '{Lang::T("Network")}',
+            '{Lang::T("Customer")}',
+            '{Lang::T("Infrastructure")}',
+            '{Lang::T("Vehicles")}',
+            '{Lang::T("Tools")}'
+        ];
+
+        const purchaseValues = [
+            valueData.network ? valueData.network.purchaseValue : 0,
+            valueData.customer ? valueData.customer.purchaseValue : 0,
+            valueData.infrastructure ? valueData.infrastructure.purchaseValue : 0,
+            valueData.vehicle ? valueData.vehicle.purchaseValue : 0,
+            valueData.tool ? valueData.tool.purchaseValue : 0
+        ];
+
+        const currentValues = [
+            valueData.network ? valueData.network.currentValue : 0,
+            valueData.customer ? valueData.customer.currentValue : 0,
+            valueData.infrastructure ? valueData.infrastructure.currentValue : 0,
+            valueData.vehicle ? valueData.vehicle.currentValue : 0,
+            valueData.tool ? valueData.tool.currentValue : 0
+        ];
+
+        reportChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: categories,
+                datasets: [
+                    {
+                        label: '{Lang::T("Purchase Value")}',
+                        data: purchaseValues,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: '{Lang::T("Current Value")}',
+                        data: currentValues,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '{Lang::T("Value")} (' + currencyCode + ')'
+                        },
+                        ticks: {
+                            callback: function (value) {
+                                return currencyCode + value;
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: '{Lang::T("Asset Values by Category")}'
+                    }
+                }
+            }
+        });
+    }
+
+    // Create maintenance bar chart
+    function createMaintenanceBarChart(records) {
+        // Destroy previous chart if exists
+        if (reportChart) {
+            reportChart.destroy();
+        }
+
+        const ctx = document.getElementById('reportChart').getContext('2d');
+        $('#reportChart').show();
+
+        // Group by month and type
+        const monthlyData = {};
+        const maintenanceTypes = new Set();
+
+        records.forEach(function (record) {
+            const date = new Date(record.scheduled_date);
+            const monthYear = (date.getMonth() + 1) + '/' + date.getFullYear();
+
+            if (!monthlyData[monthYear]) {
+                monthlyData[monthYear] = {};
+            }
+
+            const type = record.maintenance_type || 'unknown';
+            maintenanceTypes.add(type);
+
+            monthlyData[monthYear][type] = (monthlyData[monthYear][type] || 0) + 1;
+        });
+
+        // Sort months chronologically
+        const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
+            const [aMonth, aYear] = a.split('/').map(Number);
+            const [bMonth, bYear] = b.split('/').map(Number);
+
+            if (aYear !== bYear) {
+                return aYear - bYear;
+            }
+            return aMonth - bMonth;
+        });
+
+        // Prepare datasets
+        const datasets = [];
+        const colors = [
+            'rgba(54, 162, 235, 0.7)', // Blue
+            'rgba(255, 99, 132, 0.7)', // Red
+            'rgba(75, 192, 192, 0.7)', // Green
+            'rgba(255, 206, 86, 0.7)', // Yellow
+            'rgba(153, 102, 255, 0.7)' // Purple
+        ];
+
+        // Convert maintenance types to array and sort
+        const typesArray = Array.from(maintenanceTypes);
+
+        typesArray.forEach(function (type, index) {
+            const data = sortedMonths.map(month => monthlyData[month][type] || 0);
+
+            datasets.push({
+                label: formatMaintenanceType(type),
+                data: data,
+                backgroundColor: colors[index % colors.length],
+                borderColor: colors[index % colors.length].replace('0.7', '1'),
+                borderWidth: 1
+            });
+        });
+
+        // Create the chart
+        reportChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: sortedMonths,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '{Lang::T("Number of Maintenance Records")}'
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: '{Lang::T("Maintenance Records by Month")}'
+                    }
+                }
+            }
+        });
+    }
+
+    // Create depreciation chart
+    function createDepreciationChart(assets) {
+        // Destroy previous chart if exists
+        if (reportChart) {
+            reportChart.destroy();
+        }
+
+        const ctx = document.getElementById('reportChart').getContext('2d');
+        $('#reportChart').show();
+
+        // Group by age range
+        const ageRanges = {
+            '<1': { purchase: 0, current: 0 },
+            '1-2': { purchase: 0, current: 0 },
+            '2-3': { purchase: 0, current: 0 },
+            '3-4': { purchase: 0, current: 0 },
+            '4+': { purchase: 0, current: 0 }
+        };
+
+        // Define depreciation rates by category (annual)
+        const depreciationRates = {
+            'network': 0.20,      // 20% per year
+            'customer': 0.30,     // 30% per year
+            'infrastructure': 0.10, // 10% per year
+            'vehicle': 0.15,      // 15% per year
+            'tool': 0.25,         // 25% per year
+            'default': 0.20       // Default: 20% per year
+        };
+
+        const today = new Date();
+
+        assets.forEach(function (asset) {
+            const purchaseDate = new Date(asset.purchase_date);
+            const ageYears = (today - purchaseDate) / (1000 * 60 * 60 * 24 * 365);
+            const purchaseCost = parseFloat(asset.purchase_cost);
+
+            const depreciationRate = depreciationRates[asset.category] || depreciationRates.default;
+            const depreciationFactor = Math.min(ageYears * depreciationRate, 0.8);
+            const currentValue = purchaseCost * (1 - depreciationFactor);
+
+            let rangeKey;
+            if (ageYears < 1) rangeKey = '<1';
+            else if (ageYears < 2) rangeKey = '1-2';
+            else if (ageYears < 3) rangeKey = '2-3';
+            else if (ageYears < 4) rangeKey = '3-4';
+            else rangeKey = '4+';
+
+            ageRanges[rangeKey].purchase += purchaseCost;
+            ageRanges[rangeKey].current += currentValue;
+        });
+
+        // Prepare data
+        const labels = Object.keys(ageRanges);
+        const purchaseData = labels.map(key => ageRanges[key].purchase);
+        const currentData = labels.map(key => ageRanges[key].current);
+
+        // Create the chart
+        reportChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels.map(l => l + ' {Lang::T("years")}'),
+                datasets: [
+                    {
+                        label: '{Lang::T("Purchase Value")}',
+                        data: purchaseData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: '{Lang::T("Current Value")}',
+                        data: currentData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '{Lang::T("Value")} (' + currencyCode + ')'
+                        },
+                        ticks: {
+                            callback: function (value) {
+                                return currencyCode + value;
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: '{Lang::T("Asset Age")}'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: '{Lang::T("Asset Value Depreciation by Age")}'
+                    }
+                }
+            }
+        });
+    }
+
+    // Create status pie chart
+    function createStatusPieChart(statusCounts) {
+        // Destroy previous chart if exists
+        if (reportChart) {
+            reportChart.destroy();
+        }
+
+        const ctx = document.getElementById('reportChart').getContext('2d');
+        $('#reportChart').show();
+
+        // Prepare data
+        const statuses = Object.keys(statusCounts);
+        const data = statuses.map(status => statusCounts[status]);
+        const backgroundColors = statuses.map(status => {
+            switch (status) {
+                case 'active': return 'rgba(92, 184, 92, 0.7)'; // Green
+                case 'maintenance': return 'rgba(240, 173, 78, 0.7)'; // Orange
+                case 'retired': return 'rgba(217, 83, 79, 0.7)'; // Red
+                case 'storage': return 'rgba(91, 192, 222, 0.7)'; // Blue
+                default: return 'rgba(119, 119, 119, 0.7)'; // Gray
+            }
+        });
+
+        // Create the chart
+        reportChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: statuses.map(status => formatStatus(status)),
+                datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderColor: backgroundColors.map(color => color.replace('0.7', '1')),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    },
+                    title: {
+                        display: true,
+                        text: '{Lang::T("Assets by Status")}'
+                    }
+                }
+            }
+        });
+    }
+
+    // Helper function to format category names
+    function formatCategory(category) {
+        if (!category) return '{Lang::T("Unknown")}';
+
+        switch (category) {
+            case 'network': return '{Lang::T("Network Equipment")}';
+            case 'customer': return '{Lang::T("Customer Equipment")}';
+            case 'infrastructure': return '{Lang::T("Infrastructure")}';
+            case 'vehicle': return '{Lang::T("Vehicle")}';
+            case 'tool': return '{Lang::T("Tool & Equipment")}';
+            default: return category;
+        }
+    }
+
+    // Helper function to format status
+    function formatStatus(status) {
+        if (!status) return '{Lang::T("Unknown")}';
+
+        switch (status) {
+            case 'active': return '{Lang::T("Active")}';
+            case 'maintenance': return '{Lang::T("Under Maintenance")}';
+            case 'retired': return '{Lang::T("Retired/Disposed")}';
+            case 'storage': return '{Lang::T("In Storage")}';
+            default: return status.charAt(0).toUpperCase() + status.slice(1);
+        }
+    }
+
+    // Helper function to format maintenance type
+    function formatMaintenanceType(type) {
+        if (!type) return '{Lang::T("Unknown")}';
+
+        switch (type) {
+            case 'preventive': return '{Lang::T("Preventive Maintenance")}';
+            case 'corrective': return '{Lang::T("Corrective Maintenance")}';
+            case 'emergency': return '{Lang::T("Emergency Repair")}';
+            case 'inspection': return '{Lang::T("Inspection")}';
+            case 'calibration': return '{Lang::T("Calibration")}';
+            case 'upgrade': return '{Lang::T("Upgrade")}';
+            default: return type.charAt(0).toUpperCase() + type.slice(1);
+        }
+    }
+
+    // Helper function to format maintenance status
+    function formatMaintenanceStatus(status) {
+        if (!status) return '{Lang::T("Unknown")}';
+
+        switch (status) {
+            case 'scheduled': return '{Lang::T("Scheduled")}';
+            case 'in_progress': return '{Lang::T("In Progress")}';
+            case 'completed': return '{Lang::T("Completed")}';
+            case 'cancelled': return '{Lang::T("Cancelled")}';
+            case 'overdue': return '{Lang::T("Overdue")}';
+            default: return status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
+        }
+    }
+
+    // Export report as PDF
+    function exportReportPDF() {
+        // Show loading message
+        Swal.fire({
+            title: '{Lang::T("Exporting Report")}',
+            text: '{Lang::T("Preparing PDF export...")}',
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // Collect report data
+        const reportData = {
+            reportType: currentReportType, // Changed from type to reportType to match PHP backend expectations
+            title: $('#report-title').text(),
+            dateRange: $('#report-date-range').val(),
+            category: $('#report-category').val(),
+            location: $('#report-location').val(),
+            status: $('#report-status').val(),
+            filters: {
+                dateRange: $('#report-date-range option:selected').text(),
+                category: $('#report-category option:selected').text(),
+                location: $('#report-location option:selected').text(),
+                status: $('#report-status option:selected').text()
+            },
+            customDateRange: {
+                startDate: $('#report-start-date').val(),
+                endDate: $('#report-end-date').val()
+            },
+            tableHTML: (function () {
+                // Build a complete table including both head and body
+                let fullTableHtml = '<table border="1" cellpadding="8" cellspacing="0" width="100%">';
+
+                // Get the header row
+                fullTableHtml += '<thead>';
+                fullTableHtml += $('#report-table-head').html();
+                fullTableHtml += '</thead>';
+
+                // Get the body rows
+                fullTableHtml += '<tbody>';
+                fullTableHtml += $('#report-table-body').html();
+                fullTableHtml += '</tbody>';
+
+                fullTableHtml += '</table>';
+
+                return fullTableHtml;
+            })(),
+            summaryHTML: $('#report-summary').html()
+        };
+
+        // Send to server for PDF generation
+        $.ajax({
+            url: '?_route=plugin/asset_report_export',
+            method: 'POST',
+            data: {
+                format: 'pdf',
+                reportData: JSON.stringify(reportData)
+            },
+            success: function (response) {
+                if (response.success) {
+                    Swal.close();
+
+                    // Download the PDF
+                    const link = document.createElement('a');
+                    link.href = response.fileUrl;
+                    link.download = response.fileName || 'asset-report.pdf';
+                    link.click();
+                } else {
+                    Swal.fire({
+                        title: '{Lang::T("Export Failed")}',
+                        text: response.message || '{Lang::T("Failed to generate PDF report")}',
+                        icon: 'error',
+                        confirmButtonText: '{Lang::T("OK")}'
                     });
                 }
-                
-                // Focus the print window
-                printWindow.focus();
+            },
+            error: function () {
+                Swal.fire({
+                    title: '{Lang::T("Export Failed")}',
+                    text: '{Lang::T("An error occurred while exporting to PDF")}',
+                    icon: 'error',
+                    confirmButtonText: '{Lang::T("OK")}'
+                });
             }
+        });
+    }
+
+    // Export report as CSV
+    function exportReportCSV() {
+        // Get table data
+        const headers = [];
+        const data = [];
+
+        // Extract headers
+        $('#report-table-head th').each(function () {
+            headers.push($(this).text());
+        });
+
+        // Extract rows
+        $('#report-table-body tr').each(function () {
+            const row = [];
+            $(this).find('td').each(function () {
+                row.push($(this).text());
+            });
+            if (row.length > 0) {
+                data.push(row);
+            }
+        });
+
+        // Create CSV content
+        let csvContent = headers.join(',') + '\n';
+
+        data.forEach(function (row) {
+            let csvRow = row.map(function (cell) {
+                // Escape quotes and wrap in quotes if contains comma
+                const escaped = cell.replace(/"/g, '""');
+                return (cell.indexOf(',') > -1) ? '"' + escaped + '"' : escaped;
+            }).join(',');
+
+            csvContent += csvRow + '\n';
+        });
+
+        // Create and trigger download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        const timestamp = new Date().toISOString().slice(0, 10);
+        const reportTypeText = currentReportType.charAt(0).toUpperCase() + currentReportType.slice(1);
+
+        link.href = url;
+        link.download = 'asset-' + currentReportType + '-report-' + timestamp + '.csv';
+        link.click();
+
+        // Clean up
+        URL.revokeObjectURL(url);
+    }
+
+    // Print report
+    function printReport() {
+        // Clone the report content
+        const reportTitle = $('#report-title').clone();
+        const reportContent = $('.report-content').clone();
+
+        // Add filters info
+        const filtersInfo = $('<div class="report-filters"></div>');
+        filtersInfo.append('<p><strong>{Lang::T("Filters")}:</strong> ' +
+            '{Lang::T("Date Range")}: ' + $('#report-date-range option:selected').text() + ', ' +
+            '{Lang::T("Category")}: ' + $('#report-category option:selected').text() + ', ' +
+            '{Lang::T("Location")}: ' + $('#report-location option:selected').text() + ', ' +
+            '{Lang::T("Status")}: ' + $('#report-status option:selected').text() + '</p>'
+        );
+
+        // Create print window
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(
+            '<html>' +
+            '<head>' +
+            '<title>' + reportTitle.text() + '</title>' +
+            '<style>' +
+            'body { font-family: Arial, sans-serif; padding: 20px; }' +
+            'h1 { color: #337ab7; }' +
+            'table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }' +
+            '{literal}th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }{/literal}' +
+            '{literal}th { background-color: #f5f5f5; }{/literal}' +
+            '{literal}.report-filters { margin-bottom: 20px; font-size: 12px; color: #777; }{/literal}' +
+            '{literal}.report-summary { background-color: #f9f9f9; padding: 15px; border: 1px solid #ddd; }{/literal}' +
+            '{literal}canvas { max-width: 100%; height: auto !important; }{/literal}' +
+            '{literal}@media print {{/literal}' +
+            '{literal}.no-print { display: none; }{/literal}' +
+            '{literal}body { padding: 0; }{/literal}' +
+            '{literal}}{/literal}' +
+            '</style>' +
+            '</head>' +
+            '<body>' +
+            '<h1>' + reportTitle.html() + '</h1>' +
+            '<div {literal}class="no-print"{/literal}>' +
+            '<p>This report has been prepared for printing. Use your browser\'s print function to print this report.</p>' +
+            '<button {literal}onclick="window.print()"{/literal}>Print</button>' +
+            '<button {literal}onclick="window.close()"{/literal}>Close</button>' +
+            '<hr>' +
+            '</div>' +
+            filtersInfo.prop('outerHTML') +
+            reportContent.html() +
+            '<div {literal}class="no-print"{/literal}>' +
+            '<hr>' +
+            '<p>Generated on: ' + new Date().toLocaleString() + '</p>' +
+            '</div>' +
+            '</body>' +
+            '</html>'
+        );
+
+        // Add the chart
+        if (reportChart) {
+            const canvas = printWindow.document.createElement('canvas');
+            canvas.id = 'printChart';
+            printWindow.document.body.querySelector('.report-content').insertBefore(canvas, printWindow.document.body.querySelector('.table-responsive'));
+
+            // Clone the chart in the print window
+            const printCtx = canvas.getContext('2d');
+            const printChart = new Chart(printCtx, {
+                type: reportChart.config.type,
+                data: JSON.parse(JSON.stringify(reportChart.data)),
+                options: JSON.parse(JSON.stringify(reportChart.options))
+            });
+        }
+
+        // Focus the print window
+        printWindow.focus();
+    }
 
 
 </script>
@@ -5911,8 +5960,8 @@
         const updateLink = "{$updateLink}";
         const productName = "Asset Manager";
         const version = "{$version}";
-        $('#version').html(productName + ' | Ver: ' + version + ' | by: <a href="' + portalLink + '">Focuslinks Tech</a> | <a href="' + donateLink + '">Donate</a>' );
-        
+        $('#version').html(productName + ' | Ver: ' + version + ' | by: <a href="' + portalLink + '">Focuslinks Tech</a> | <a href="' + donateLink + '">Donate</a>');
+
     });
 </script>
 

@@ -1356,19 +1356,19 @@ function asset_welcome_seen()
 {
     _admin();
     // _log("Processing asset_welcome_seen request");
-    
+
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header('Content-Type: application/json');
-       // _log("Invalid request method for asset_welcome_seen");
+        // _log("Invalid request method for asset_welcome_seen");
         echo json_encode(['success' => false, 'message' => 'Invalid request method']);
         exit;
     }
     // Update the settings to record that welcome message has been seen
     try {
         $exists = ORM::for_table('tbl_appconfig')
-            ->where('setting', 'welcome_message_viewed')
+            ->where('setting', 'welcome_message_viewed') 
             ->count();
-            
+
         if ($exists) {
             ORM::for_table('tbl_appconfig')
                 ->where('setting', 'welcome_message_viewed')
@@ -1381,7 +1381,7 @@ function asset_welcome_seen()
                 ->set('value', 'yes')
                 ->save();
         }
-        
+
         header('Content-Type: application/json');
         echo json_encode(['success' => true]);
     } catch (Exception $e) {
