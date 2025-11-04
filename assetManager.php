@@ -3,7 +3,7 @@
 /**
  * Bismillahir Rahmanir Raheem
  * 
- * PHP Mikrotik Billing (https://github.com/paybilling/phpnuxbill/)
+ * PHP Mikrotik Billing (https://github.com/hotspotbilling/phpnuxbill/)
  *
  * Asset Manager System For PHPNuxBill 
  *
@@ -16,14 +16,19 @@
 
 register_menu(" Asset Manager", true, "assetManager", 'AFTER_MESSAGE', 'fa fa-cubes', '', "");
 
+
 function assetManager()
 {
-    global $ui, $config;
+    global $ui, $config, $routes;
     _admin();
     $ui->assign('_title', $GLOBALS['config']['CompanyName'] . ' - ' . 'Asset Manager');
     $ui->assign('_system_menu', '');
     $admin = Admin::_info();
     $ui->assign('_admin', $admin);
+    $ui->assign('version', 'v1.0.0');
+    $ui->assign('xheader', '<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>');
 
     // Check user type for access
     if (!in_array($admin['user_type'], ['SuperAdmin', 'Admin', 'Sales'])) {
@@ -31,1322 +36,1215 @@ function assetManager()
         exit;
     }
 
-    // Create assets table if it doesn't exist
+    // Initialize database tables
     createAssetsTable();
 
-    // Load asset statistics
-    $stats = getAssetStatistics();
-    $ui->assign('stats', $stats);
+    // Ensure database schema is up to date
+    ensureSchemaUpdates();
 
-    // Load recent assets
-    $recentAssets = getRecentAssets(10);
-    $ui->assign('recentAssets', $recentAssets);
-    $ui->assign('version', 'v1.0.0');
-    $ui->assign('xheader', '<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>');
-    $ui->display('assetManager.tpl');
+    // Handle AJAX requests first, before any UI output
+    if (isset($_GET['ajax']) && $_GET['ajax'] === 'get-models') {
+        getModelsByBrand();
+    }
+
+    // Get the action from routes
+    $action = isset($routes[2]) ? $routes[2] : 'dashboard';
+
+    switch ($action) {
+        case 'dashboard':
+            assetDashboard();
+            break;
+        case 'categories':
+            assetCategories();
+            break;
+        case 'categories-add':
+            assetCategoriesAdd();
+            break;
+        case 'categories-edit':
+            assetCategoriesEdit();
+            break;
+        case 'categories-delete':
+            assetCategoriesDelete();
+            break;
+        case 'brands':
+            assetBrands();
+            break;
+        case 'brands-add':
+            assetBrandsAdd();
+            break;
+        case 'brands-edit':
+            assetBrandsEdit();
+            break;
+        case 'brands-delete':
+            assetBrandsDelete();
+            break;
+        case 'models':
+            assetModels();
+            break;
+        case 'models-add':
+            assetModelsAdd();
+            break;
+        case 'models-edit':
+            assetModelsEdit();
+            break;
+        case 'models-delete':
+            assetModelsDelete();
+            break;
+        case 'assets':
+            assetsList();
+            break;
+        case 'assets-add':
+            assetsAdd();
+            break;
+        case 'assets-edit':
+            assetsEdit();
+            break;
+        case 'assets-view':
+            assetsView();
+            break;
+        case 'assets-delete':
+            assetsDelete();
+            break;
+        case 'reports':
+            assetReports();
+            break;
+        case 'reports-generate':
+            generateAssetReport();
+            break;
+        case 'reports-export':
+            exportAssetReport();
+            break;
+        case 'welcome':
+            asset_welcome_seen();
+            break;
+        default:
+            assetDashboard();
+            break;
+    }
 }
 
 function createAssetsTable()
 {
     try {
+        // Create asset categories table
+        $sql = "CREATE TABLE IF NOT EXISTS tbl_asset_categories (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            name varchar(255) NOT NULL,
+            description text,
+            status enum('Active','Inactive') DEFAULT 'Active',
+            created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+            updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY unique_category_name (name)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+        ORM::raw_execute($sql);
+
+        // Create asset brands table
+        $sql = "CREATE TABLE IF NOT EXISTS tbl_asset_brands (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            name varchar(255) NOT NULL,
+            description text,
+            country varchar(100),
+            website varchar(255),
+            status enum('Active','Inactive') DEFAULT 'Active',
+            created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+            updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY unique_brand_name (name)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+        ORM::raw_execute($sql);
+
+        // Create asset models table
+        $sql = "CREATE TABLE IF NOT EXISTS tbl_asset_models (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            brand_id int(11) NOT NULL,
+            name varchar(255) NOT NULL,
+            model_number varchar(100),
+            description text,
+            specifications text,
+            status enum('Active','Inactive') DEFAULT 'Active',
+            created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+            updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY idx_brand_id (brand_id),
+            CONSTRAINT fk_models_brand FOREIGN KEY (brand_id) REFERENCES tbl_asset_brands(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+        ORM::raw_execute($sql);
+
         // Create assets table
         $sql = "CREATE TABLE IF NOT EXISTS tbl_assets (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            asset_id VARCHAR(50) UNIQUE NOT NULL,
-            category ENUM('network', 'customer', 'infrastructure', 'vehicle', 'tool') NOT NULL,
-            name VARCHAR(255) NOT NULL,
-            brand_model VARCHAR(255),
-            serial_number VARCHAR(255),
-            purchase_date DATE,
-            purchase_cost DECIMAL(10,2),
-            supplier VARCHAR(255),
-            location VARCHAR(255),
-            lat VARCHAR(20),
-            lng VARCHAR(20),
-            status ENUM('active', 'inactive', 'maintenance', 'decommissioned') DEFAULT 'active',
-            warranty_expiry DATE,
-            assigned_to VARCHAR(255),
-            deployed_date DATE,
-            description TEXT,
-            ip_address VARCHAR(45),
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )";
+            id int(11) NOT NULL AUTO_INCREMENT,
+            category_id int(11) NOT NULL,
+            brand_id int(11) NOT NULL,
+            model_id int(11) NOT NULL,
+            asset_tag varchar(100) NOT NULL,
+            serial_number varchar(255),
+            name varchar(255) NOT NULL,
+            description text,
+            purchase_date date,
+            purchase_cost decimal(15,2),
+            warranty_expiry date,
+            location varchar(255),
+            latitude decimal(10,8),
+            longitude decimal(11,8),
+            assigned_to int(11),
+            status enum('Active','Inactive','Under Maintenance','Disposed') DEFAULT 'Active',
+            condition_status enum('Excellent','Good','Fair','Poor') DEFAULT 'Good',
+            notes text,
+            created_by int(11),
+            created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+            updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY unique_asset_tag (asset_tag),
+            KEY idx_category_id (category_id),
+            KEY idx_brand_id (brand_id),
+            KEY idx_model_id (model_id),
+            KEY idx_assigned_to (assigned_to),
+            KEY idx_status (status),
+            KEY idx_coordinates (latitude, longitude),
+            CONSTRAINT fk_assets_category FOREIGN KEY (category_id) REFERENCES tbl_asset_categories(id) ON DELETE CASCADE,
+            CONSTRAINT fk_assets_brand FOREIGN KEY (brand_id) REFERENCES tbl_asset_brands(id) ON DELETE CASCADE,
+            CONSTRAINT fk_assets_model FOREIGN KEY (model_id) REFERENCES tbl_asset_models(id) ON DELETE CASCADE,
+            CONSTRAINT fk_assets_customer FOREIGN KEY (assigned_to) REFERENCES tbl_customers(id) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
         ORM::raw_execute($sql);
 
-        // Create asset maintenance table
-        $sql = "CREATE TABLE IF NOT EXISTS tbl_asset_maintenance (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            asset_id VARCHAR(50) NOT NULL,
-            scheduled_date DATE NOT NULL,
-            maintenance_date DATE NOT NULL,
-            maintenance_type ENUM('preventive', 'corrective', 'emergency', 'inspection', 'calibration', 'upgrade') NOT NULL,
-            description TEXT,
-            priority ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
-            status ENUM('scheduled', 'completed', 'in_progress', 'overdue', 'cancelled') DEFAULT 'scheduled',
-            technician VARCHAR(255),
-            cost DECIMAL(10,2),
-            actual_cost DECIMAL(10,2),
-            completion_notes TEXT,
-            next_maintenance DATE,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (asset_id) REFERENCES tbl_assets(asset_id) ON DELETE CASCADE
-        )";
-        ORM::raw_execute($sql);
-
-        // Create asset assignments table
-        $sql = "CREATE TABLE IF NOT EXISTS tbl_asset_assignments (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            asset_id VARCHAR(50) NOT NULL,
-            assigned_to VARCHAR(255) NOT NULL,
-            assignment_date DATE NOT NULL,
-            return_date DATE,
-            assignment_type ENUM('customer', 'employee', 'location') NOT NULL,
-            notes TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (asset_id) REFERENCES tbl_assets(asset_id) ON DELETE CASCADE
-        )";
-        ORM::raw_execute($sql);
-    } catch (Exception $e) {
-        _log("Asset Manager DB Error: " . $e->getMessage());
-        echo "Asset Manager DB Error: " . $e->getMessage();
-        exit;
-    }
-}
-
-function asset_add()
-{
-    _admin();
-
-    $admin = Admin::_info();
-    if (!in_array($admin['user_type'], ['SuperAdmin', 'Admin', 'Sales'])) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => Lang::T('Permission denied')]);
-        exit;
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => Lang::T('Invalid request method')]);
-        exit;
-    }
-
-    $rawInput = file_get_contents('php://input');
-    _log("Raw input: " . $rawInput);
-
-    $data = json_decode($rawInput, true);
-
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => Lang::T('Invalid JSON data: ') . json_last_error_msg()]);
-        exit;
-    }
-
-    _log("Decoded data: " . print_r($data, true));
-
-    if (!$data || !isset($data['asset_id']) || !isset($data['category']) || !isset($data['name'])) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => Lang::T('Missing required fields: asset_id, category, or name')]);
-        exit;
-    }
-
-    try {
-        // Ensure tables exist
-        createAssetsTable();
-
-        // Check if asset_id already exists
-        $existingAsset = ORM::for_table('tbl_assets')->where('asset_id', $data['asset_id'])->find_one();
-        if ($existingAsset) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => Lang::T('Asset ID already exists')]);
-            exit;
-        }
-
-        $asset = ORM::for_table('tbl_assets')->create();
-        $asset->asset_id = $data['asset_id'];
-        $asset->category = $data['category'];
-        $asset->name = $data['name'];
-        $asset->brand_model = $data['brand_model'] ?? '';
-        $asset->serial_number = $data['serial_number'] ?? '';
-        $asset->purchase_date = !empty($data['purchase_date']) ? $data['purchase_date'] : null;
-        $asset->purchase_cost = !empty($data['purchase_cost']) ? floatval($data['purchase_cost']) : 0;
-        $asset->supplier = $data['supplier'] ?? '';
-        $asset->location = $data['location'] ?? '';
-        $asset->lat = $data['lat'] ?? '';
-        $asset->lng = $data['lng'] ?? '';
-        $asset->status = $data['status'] ?? 'active';
-        $asset->warranty_expiry = !empty($data['warranty_expiry']) ? $data['warranty_expiry'] : null;
-        $asset->assigned_to = $data['assigned_to'] ?? '';
-        $asset->deployed_date = $data['deployed_date'] ?? 'null';
-        $asset->description = $data['description'] ?? '';
-        $asset->ip_address = $data['ip_address'] ?? null;
-        $asset->created_at = date('Y-m-d H:i:s');
-
-        _log(Lang::T("About to save asset: ") . print_r($asset->as_array(), true));
-
-        $result = $asset->save();
-
-        if ($result) {
-            _log("Asset added: " . $data['asset_id'], $admin['user_type']);
-            header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'message' => Lang::T('Asset added successfully'), 'asset_id' => $data['asset_id']]);
-        } else {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => Lang::T('Failed to save asset to database')]);
-        }
-    } catch (Exception $e) {
-        _log("Asset Add Error: " . $e->getMessage());
-        _log("Stack trace: " . $e->getTraceAsString());
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => Lang::T('Database error: ') . $e->getMessage()]);
-    }
-    exit;
-}
-
-function asset_edit()
-{
-    _admin();
-
-    $admin = Admin::_info();
-    if (!in_array($admin['user_type'], ['SuperAdmin', 'Admin'])) {
-        echo json_encode(['success' => false, 'message' => Lang::T('Permission denied')]);
-        exit;
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $data = json_decode(file_get_contents('php://input'), true);
-
+        // Insert default categories if table is empty
         try {
-            $asset = ORM::for_table('tbl_assets')->where('asset_id', $data['asset_id'])->find_one();
+            $categoryCount = ORM::for_table('tbl_asset_categories')->count();
+            if ($categoryCount == 0) {
+                $categories = [
+                    ['name' => 'Network Equipment', 'description' => 'Routers, switches, access points, and other networking hardware'],
+                    ['name' => 'Power Equipment', 'description' => 'UPS, power supplies, batteries, and power management devices'],
+                    ['name' => 'Transmission Equipment', 'description' => 'Fiber optic equipment, wireless transmission, antennas'],
+                    ['name' => 'Computing Equipment', 'description' => 'Servers, computers, storage devices'],
+                    ['name' => 'Infrastructure', 'description' => 'Towers, cabinets, cables, and physical infrastructure']
+                ];
 
-            if ($asset) {
-                $asset->category = $data['category'];
-                $asset->name = $data['name'];
-                $asset->brand_model = $data['brand_model'];
-                $asset->serial_number = $data['serial_number'];
-                $asset->purchase_date = $data['purchase_date'] ?: null;
-                $asset->purchase_cost = $data['purchase_cost'] ?: null;
-                $asset->supplier = $data['supplier'];
-                $asset->location = $data['location'];
-                $asset->lat = $data['lat'] ?? '';
-                $asset->lng = $data['lng'] ?? '';
-                $asset->status = $data['status'];
-                $asset->warranty_expiry = $data['warranty_expiry'] ?: null;
-                $asset->assigned_to = $data['assigned_to'];
-                $asset->description = $data['description'];
-                $asset->ip_address = $data['ip_address'] ?? null;
-
-                $result = $asset->save();
-
-                if ($result) {
-                    _log("Asset updated: " . $data['asset_id'], $admin['user_type']);
-                    echo json_encode(['success' => true, 'message' => Lang::T('Asset updated successfully')]);
-                } else {
-                    echo json_encode(['success' => false, 'message' => Lang::T('Failed to update asset')]);
+                foreach ($categories as $cat) {
+                    try {
+                        $category = ORM::for_table('tbl_asset_categories')->create();
+                        $category->name = $cat['name'];
+                        $category->description = $cat['description'];
+                        $category->status = 'Active';
+                        $category->save();
+                    } catch (Exception $e) {
+                        // Ignore duplicates
+                    }
                 }
-            } else {
-                echo json_encode(['success' => false, 'message' => Lang::T('Asset not found')]);
             }
         } catch (Exception $e) {
-            _log(Lang::T('Asset Edit Error: ') . $e->getMessage());
-            echo json_encode(['success' => false, 'message' => Lang::T('Database error: ') . $e->getMessage()]);
-        }
-    }
-}
-
-function asset_delete()
-{
-    _admin();
-
-    $admin = Admin::_info();
-    if (!in_array($admin['user_type'], ['SuperAdmin', 'Admin'])) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => Lang::T('Permission denied')]);
-        exit;
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $assetId = $_POST['asset_id'] ?? '';
-
-        if (empty($assetId)) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => Lang::T('Asset ID required')]);
-            exit;
+            // Table might not exist yet, ignore
         }
 
+        // Insert default brands if table is empty
         try {
-            $asset = ORM::for_table('tbl_assets')->where('asset_id', $assetId)->find_one();
+            $brandCount = ORM::for_table('tbl_asset_brands')->count();
+            if ($brandCount == 0) {
+                $brands = [
+                    ['name' => 'Cisco Systems', 'description' => 'Leading provider of networking equipment', 'country' => 'United States', 'website' => 'https://www.cisco.com'],
+                    ['name' => 'Ubiquiti Networks', 'description' => 'Manufacturer of networking and wireless communication products', 'country' => 'United States', 'website' => 'https://www.ui.com'],
+                    ['name' => 'MikroTik', 'description' => 'Latvian manufacturer of computer networking equipment', 'country' => 'Latvia', 'website' => 'https://mikrotik.com'],
+                    ['name' => 'TP-Link', 'description' => 'Chinese manufacturer of computer networking products', 'country' => 'China', 'website' => 'https://www.tp-link.com'],
+                    ['name' => 'Huawei', 'description' => 'Chinese multinational technology corporation', 'country' => 'China', 'website' => 'https://www.huawei.com']
+                ];
 
-            if ($asset) {
-                $result = $asset->delete();
-
-                if ($result) {
-                    _log("Asset deleted: " . $assetId, $admin['user_type']);
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => true, 'message' => Lang::T('Asset deleted successfully')]);
-                } else {
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => false, 'message' => Lang::T('Failed to delete asset')]);
+                foreach ($brands as $mak) {
+                    try {
+                        $brand = ORM::for_table('tbl_asset_brands')->create();
+                        $brand->name = $mak['name'];
+                        $brand->description = $mak['description'];
+                        $brand->country = $mak['country'];
+                        $brand->website = $mak['website'];
+                        $brand->status = 'Active';
+                        $brand->save();
+                    } catch (Exception $e) {
+                        // Ignore duplicates
+                    }
                 }
-            } else {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => Lang::T('Asset not found')]);
             }
         } catch (Exception $e) {
-            _log("Asset Delete Error: " . $e->getMessage());
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => Lang::T('Database error: ') . $e->getMessage()]);
+            // Table might not exist yet, ignore
         }
-    }
-}
-
-function asset_view()
-{
-    _admin();
-
-    $assetId = $_GET['asset_id'] ?? '';
-
-    if (empty($assetId)) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Asset ID required']);
-        exit;
-    }
-
-    try {
-        // Get asset details
-        $asset = ORM::for_table('tbl_assets')->where('asset_id', $assetId)->find_one();
-
-        if ($asset) {
-            // Get maintenance history
-            $maintenance = ORM::for_table('tbl_asset_maintenance')
-                ->where('asset_id', $assetId)
-                ->order_by_desc('maintenance_date')
-                ->find_array();
-
-            // Get assignment history
-            $assignments = ORM::for_table('tbl_asset_assignments')
-                ->where('asset_id', $assetId)
-                ->order_by_desc('assignment_date')
-                ->find_array();
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'asset' => $asset->as_array(),
-                'maintenance' => $maintenance,
-                'assignments' => $assignments
-            ]);
-        } else {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Asset not found']);
-        }
+        // Continue
     } catch (Exception $e) {
-        _log("Asset View Error: " . $e->getMessage());
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+        _log(Lang::T('Asset Manager DB Error: ') . $e->getMessage());
+        echo Lang::T("Error creating Asset Manager tables.  Error: ") . $e->getMessage();
     }
-    exit;
 }
 
-function getMaintenanceCostAnalysis()
+function ensureSchemaUpdates()
 {
     try {
-        $analysis = [];
-        $quarters = [];
-        $plannedCosts = [];
-        $emergencyCosts = [];
+        // Try to add purchase_cost column if it doesn't exist
+        try {
+            ORM::raw_execute("ALTER TABLE tbl_assets ADD COLUMN purchase_cost decimal(15,2) DEFAULT NULL");
+            // Continue
+        } catch (Exception $e) {
+            // Column probably already exists, which is fine
+            if (strpos($e->getMessage(), 'Duplicate column name') === false) {
+                _log("Asset Manager: purchase_cost column check - " . $e->getMessage());
+            }
+        }
 
-        // Get data for last 4 quarters
-        for ($i = 3; $i >= 0; $i--) {
-            // Calculate quarter start and end dates
-            $currentQuarter = ceil(date('n') / 3);
-            $currentYear = date('Y');
+        // Try to add purchase_date column if it doesn't exist
+        try {
+            ORM::raw_execute("ALTER TABLE tbl_assets ADD COLUMN purchase_date date DEFAULT NULL");
+            // Continue
+        } catch (Exception $e) {
+            // Column probably already exists, which is fine
+            if (strpos($e->getMessage(), 'Duplicate column name') === false) {
+                _log("Asset Manager: purchase_date column check - " . $e->getMessage());
+            }
+        }
 
-            $targetQuarter = $currentQuarter - $i;
-            $targetYear = $currentYear;
+        // Try to add warranty_expiry column if it doesn't exist
+        try {
+            ORM::raw_execute("ALTER TABLE tbl_assets ADD COLUMN warranty_expiry date DEFAULT NULL");
+            // Continue
+        } catch (Exception $e) {
+            // Column probably already exists, which is fine
+            if (strpos($e->getMessage(), 'Duplicate column name') === false) {
+                _log("Asset Manager: warranty_expiry column check - " . $e->getMessage());
+            }
+        }
 
-            // Adjust for previous year quarters
-            if ($targetQuarter <= 0) {
-                $targetQuarter += 4;
-                $targetYear--;
+        // Try to add condition_status column if it doesn't exist
+        try {
+            ORM::raw_execute("ALTER TABLE tbl_assets ADD COLUMN condition_status enum('Excellent','Good','Fair','Poor') DEFAULT 'Good'");
+            // Continue
+        } catch (Exception $e) {
+            // Column probably already exists, which is fine
+            if (strpos($e->getMessage(), 'Duplicate column name') === false) {
+                _log("Asset Manager: condition_status column check - " . $e->getMessage());
+            }
+        }
+
+        // Update assigned_to column to int type and add foreign key if needed
+        try {
+            // Set all non-numeric values to NULL first
+            ORM::raw_execute("UPDATE tbl_assets SET assigned_to = NULL WHERE assigned_to IS NOT NULL AND assigned_to NOT REGEXP '^[0-9]+$'");
+
+            // Change column type to int
+            ORM::raw_execute("ALTER TABLE tbl_assets MODIFY assigned_to int(11) DEFAULT NULL");
+
+            // Add index if it doesn't exist
+            try {
+                ORM::raw_execute("ALTER TABLE tbl_assets ADD KEY idx_assigned_to (assigned_to)");
+            } catch (Exception $e) {
+                // Index might already exist, which is fine
             }
 
-            $quarterStart = date('Y-m-d', mktime(0, 0, 0, ($targetQuarter - 1) * 3 + 1, 1, $targetYear));
-            $quarterEnd = date('Y-m-t', mktime(0, 0, 0, $targetQuarter * 3, 1, $targetYear));
-
-            $quarterLabel = 'Q' . $targetQuarter . ' ' . $targetYear;
-            $quarters[] = $quarterLabel;
-
-            // Get planned maintenance costs (preventive)
-            $plannedResult = ORM::for_table('tbl_asset_maintenance')
-                ->select_expr('SUM(COALESCE(actual_cost, cost))', 'total_cost')
-                ->where('maintenance_type', 'preventive')
-                ->where_gte('maintenance_date', $quarterStart)
-                ->where_lte('maintenance_date', $quarterEnd)
-                ->find_one();
-            $plannedCosts[] = (float)($plannedResult->total_cost ?? 0);
-
-            // Get emergency maintenance costs (corrective + emergency)
-            $emergencyResult = ORM::for_table('tbl_asset_maintenance')
-                ->select_expr('SUM(COALESCE(actual_cost, cost))', 'total_cost')
-                ->where_in('maintenance_type', ['corrective', 'emergency'])
-                ->where_gte('maintenance_date', $quarterStart)
-                ->where_lte('maintenance_date', $quarterEnd)
-                ->find_one();
-            $emergencyCosts[] = (float)($emergencyResult->total_cost ?? 0);
+            // Add foreign key constraint if it doesn't exist
+            try {
+                ORM::raw_execute("ALTER TABLE tbl_assets ADD CONSTRAINT fk_assets_customer FOREIGN KEY (assigned_to) REFERENCES tbl_customers(id) ON DELETE SET NULL");
+            } catch (Exception $e) {
+                // Constraint might already exist or there might be invalid references
+                if (strpos($e->getMessage(), 'Duplicate') === false) {
+                    _log(Lang::T("Asset Manager: Could not add foreign key constraint - ") . $e->getMessage());
+                }
+            }
+        } catch (Exception $e) {
+            _log(Lang::T("Asset Manager: assigned_to column conversion error - ") . $e->getMessage());
         }
-
-        return [
-            'labels' => $quarters,
-            'planned' => $plannedCosts,
-            'emergency' => $emergencyCosts
-        ];
     } catch (Exception $e) {
-        _log("Maintenance Cost Analysis Error: " . $e->getMessage());
-        return [
-            'labels' => ['Q1', 'Q2', 'Q3', 'Q4'],
-            'planned' => [0, 0, 0, 0],
-            'emergency' => [0, 0, 0, 0]
-        ];
+        _log(Lang::T("Asset Manager Schema Update Error: ") . $e->getMessage());
     }
 }
 
-function getAssetUtilizationTrends()
+// Dashboard Functions
+function assetDashboard()
 {
+    global $ui, $config;
+
     try {
-        $trends = [];
-        $weeks = [];
+        // Get analytics data
+        $totalAssets = ORM::for_table('tbl_assets')->count();
+        $activeAssets = ORM::for_table('tbl_assets')->where('status', 'Active')->count();
+        $inactiveAssets = ORM::for_table('tbl_assets')->where('status', 'Inactive')->count();
+        $maintenanceAssets = ORM::for_table('tbl_assets')->where('status', 'Under Maintenance')->count();
 
-        // Debug: Log function start and check if assets table exists
-        _log("Starting getAssetUtilizationTrends calculation");
+        $totalCategories = ORM::for_table('tbl_asset_categories')->count();
+        $totalBrands = ORM::for_table('tbl_asset_brands')->count();
+        $totalModels = ORM::for_table('tbl_asset_models')->count();
 
-        // First check if we have any assets at all
-        $totalAssetsEver = ORM::for_table('tbl_assets')->count();
-        _log("Total assets in database: $totalAssetsEver");
-
-        if ($totalAssetsEver == 0) {
-            _log("No assets found in database, returning zero data");
-            return [
-                'labels' => ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                'data' => [0, 0, 0, 0]
-            ];
-        }
-
-        // Get data for last 4 weeks
-        for ($i = 3; $i >= 0; $i--) {
-            $weekStart = date('Y-m-d', strtotime("-$i weeks Monday"));
-            $weekEnd = date('Y-m-d', strtotime("-$i weeks Sunday"));
-            $weekLabel = 'Week ' . (4 - $i);
-            $weeks[] = $weekLabel;
-
-            // Count total assets existing during this week
-            $totalAssets = ORM::for_table('tbl_assets')
-                ->where_lte('created_at', $weekEnd . ' 23:59:59')
-                ->count();
-
-            // Count active assets during this week
-            $activeAssets = ORM::for_table('tbl_assets')
-                ->where('status', 'active')
-                ->where_lte('created_at', $weekEnd . ' 23:59:59')
-                ->count();
-
-            // Calculate utilization percentage
-            $utilization = $totalAssets > 0 ? round(($activeAssets / $totalAssets) * 100, 1) : 0;
-            $trends[] = $utilization;
-
-            // Debug: Log each week's data
-            _log("Week $weekLabel ($weekStart to $weekEnd): Total=$totalAssets, Active=$activeAssets, Utilization=$utilization%");
-        }
-
-        $result = [
-            'labels' => $weeks,
-            'data' => $trends
-        ];
-
-        // Debug: Log final result
-        _log("Utilization Trends Result: " . json_encode($result));
-
-        return $result;
-    } catch (Exception $e) {
-        _log("Asset Utilization Trends Error: " . $e->getMessage());
-        return [
-            'labels' => ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            'data' => [0, 0, 0, 0]
-        ];
-    }
-}
-
-function getAssetPerformanceHistory()
-{
-    try {
-        $history = [];
-        $months = [];
-
-        _log("Starting getAssetPerformanceHistory calculation");
-
-        // Get data for last 12 months
-        for ($i = 11; $i >= 0; $i--) {
-            $date = date('Y-m-01', strtotime("-$i months"));
-            $monthName = date('M', strtotime($date));
-            $months[] = $monthName;
-
-            $startOfMonth = date('Y-m-01', strtotime($date));
-            $endOfMonth = date('Y-m-t', strtotime($date));
-
-            // Count NEW assets registered this month
-            $newAssetsThisMonth = ORM::for_table('tbl_assets')
-                ->where_gte('created_at', $startOfMonth . ' 00:00:00')
-                ->where_lte('created_at', $endOfMonth . ' 23:59:59')
-                ->count();
-
-            // Count maintenance activities performed this month
-            $maintenanceThisMonth = ORM::for_table('tbl_asset_maintenance')
-                ->where_raw("DATE_FORMAT(maintenance_date, '%Y-%m') = '" . date('Y-m', strtotime($date)) . "'")
-                ->count();
-
-            $history['registered'][] = $newAssetsThisMonth;
-            $history['maintenance'][] = $maintenanceThisMonth;
-
-            // Debug: Log each month's data
-            _log("Month $monthName: New assets=$newAssetsThisMonth, Maintenance=$maintenanceThisMonth");
-        }
-
-        $result = [
-            'labels' => $months,
-            'registered' => $history['registered'],
-            'maintenance' => $history['maintenance']
-        ];
-
-        _log("Asset Performance History Result: " . json_encode($result));
-
-        return $result;
-    } catch (Exception $e) {
-        _log("Asset Performance History Error: " . $e->getMessage());
-        return [
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            'registered' => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'maintenance' => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        ];
-    }
-}
-
-function getAssetStatistics()
-{
-    try {
-        $stats = [];
-
-        // Total assets
-        $stats['total'] = ORM::for_table('tbl_assets')->count();
-
-        // Active assets
-        $stats['active'] = ORM::for_table('tbl_assets')->where('status', 'active')->count();
-
-        // Under maintenance
-        $stats['maintenance'] = ORM::for_table('tbl_assets')->where('status', 'maintenance')->count();
-
-        // Critical (warranty expiring in 30 days)
-        $stats['critical'] = ORM::for_table('tbl_assets')
-            ->where_raw('warranty_expiry <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) AND warranty_expiry >= CURDATE()')
-            ->count();
-
-        // Total asset value
-        $result = ORM::for_table('tbl_assets')
-            ->select_expr('SUM(purchase_cost)', 'total_value')
-            ->where_not_null('purchase_cost')
-            ->find_one();
-        $stats['total_value'] = (float)($result->total_value ?? 0);
-
-        $result = ORM::for_table('tbl_asset_maintenance')
-            ->select_expr('SUM(COALESCE(actual_cost, cost))', 'monthly_maintenance')
-            ->where_raw('MONTH(maintenance_date) = MONTH(CURDATE()) AND YEAR(maintenance_date) = YEAR(CURDATE())')
-            ->find_one();
-        $stats['monthly_maintenance'] = (float)($result->monthly_maintenance ?? 0);
-
-        // Asset utilization calculation (active assets / total assets * 100)
-        if ($stats['total'] > 0) {
-            $stats['utilization'] = round(($stats['active'] / $stats['total']) * 100, 1);
-        } else {
-            $stats['utilization'] = 0;
-        }
-
-        // Average uptime calculation based on asset status and maintenance frequency
-        if ($stats['total'] > 0) {
-            $uptime_score = ($stats['active'] * 100) + ($stats['maintenance'] * 50);
-            $stats['avg_uptime'] = round($uptime_score / $stats['total'], 1);
-        } else {
-            $stats['avg_uptime'] = 0;
-        }
-
-        // Assets by category
-        $stats['by_category'] = ORM::for_table('tbl_assets')
-            ->select('category')
-            ->select_expr('COUNT(*)', 'count')
-            ->group_by('category')
-            ->find_array();
-
-        // Assets by location
-        $stats['by_location'] = ORM::for_table('tbl_assets')
-            ->select('location')
-            ->select_expr('COUNT(*)', 'count')
-            ->where_not_null('location')
-            ->where_not_equal('location', '')
-            ->group_by('location')
-            ->order_by_desc('count')
+        // Get recent assets
+        $recentAssets = ORM::for_table('tbl_assets')
+            ->select('tbl_assets.*')
+            ->select('tbl_asset_categories.name', 'category_name')
+            ->select('tbl_asset_brands.name', 'brand_name')
+            ->select('tbl_asset_models.name', 'model_name')
+            ->join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+            ->join('tbl_asset_brands', ['tbl_assets.brand_id', '=', 'tbl_asset_brands.id'])
+            ->join('tbl_asset_models', ['tbl_assets.model_id', '=', 'tbl_asset_models.id'])
+            ->order_by_desc('tbl_assets.created_at')
             ->limit(10)
             ->find_array();
 
-        // Assets by status
-        $stats['by_status'] = ORM::for_table('tbl_assets')
+        // Get assets by category for chart
+        $assetsByCategory = ORM::for_table('tbl_assets')
+            ->select('tbl_asset_categories.name', 'category_name')
+            ->select_expr('COUNT(*)', 'count')
+            ->join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+            ->group_by('tbl_asset_categories.name')
+            ->find_array();
+
+        // Get assets by status for chart
+        $assetsByStatus = ORM::for_table('tbl_assets')
             ->select('status')
             ->select_expr('COUNT(*)', 'count')
             ->group_by('status')
             ->find_array();
 
-        // Recent maintenance activities
-        $stats['recent_maintenance'] = ORM::for_table('tbl_asset_maintenance')
-            ->select('tbl_asset_maintenance.*')
-            ->select('tbl_assets.name', 'asset_name')
-            ->left_outer_join('tbl_assets', array('tbl_asset_maintenance.asset_id', '=', 'tbl_assets.asset_id'))
-            ->order_by_desc('tbl_asset_maintenance.maintenance_date')
-            ->limit(5)
-            ->find_array();
+        // Get cost-related statistics (with error handling for missing column)
+        try {
 
-        // Performance history for charts
-        $stats['performance_history'] = getAssetPerformanceHistory();
+            $totalAssetValue = ORM::for_table('tbl_assets')
+                ->select_expr('COALESCE(SUM(purchase_cost), 0)', 'total')
+                ->find_one();
+            $totalAssetValue = $totalAssetValue ? $totalAssetValue['total'] : 0;
 
-        // Utilization trends for analytics
-        $stats['utilization_trends'] = getAssetUtilizationTrends();
+            // Get currency code from config, fallback to USD if not set
+            $currencyCode = isset($config['currency_code']) ? $config['currency_code'] : 'USD';
 
-        // Maintenance cost analysis for charts
-        $stats['maintenance_cost_analysis'] = getMaintenanceCostAnalysis();
+            // Get assets by cost range for chart
+            $assetsByCostRange = ORM::for_table('tbl_assets')
+                ->select_expr(
+                    "CASE 
+                        WHEN purchase_cost IS NULL OR purchase_cost = 0 OR purchase_cost = '' THEN 'No Cost Data'
+                        WHEN purchase_cost <= 1000 THEN 'Under {$currencyCode} 1,000'
+                        WHEN purchase_cost <= 5000 THEN '{$currencyCode} 1,000 - {$currencyCode} 5,000'
+                        WHEN purchase_cost <= 10000 THEN '{$currencyCode} 5,000 - {$currencyCode} 10,000'
+                        WHEN purchase_cost <= 25000 THEN '{$currencyCode} 10,000 - {$currencyCode} 25,000'
+                        ELSE 'Over {$currencyCode} 25,000'
+                    END",
+                    'cost_range'
+                )
+                ->select_expr('COUNT(*)', 'count')
+                ->group_by('cost_range')
+                ->find_array();
 
-        $stats['this_month_maintenance'] = getThisMonthMaintenance();
+            // Get top 5 most expensive assets
+            $expensiveAssets = ORM::for_table('tbl_assets')
+                ->select('tbl_assets.name')
+                ->select('tbl_assets.asset_tag')
+                ->select('tbl_assets.purchase_cost')
+                ->select('tbl_asset_categories.name', 'category_name')
+                ->join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+                ->where_not_null('purchase_cost')
+                ->where_not_equal('purchase_cost', '')
+                ->where_not_equal('purchase_cost', 0)
+                ->order_by_desc('purchase_cost')
+                ->limit(5)
+                ->find_array();
 
-        $stats['lifecycle_distribution'] = getLifecycleDistribution();
-
-        return $stats;
+            // Get cost by category for chart
+            $costByCategory = ORM::for_table('tbl_assets')
+                ->select('tbl_asset_categories.name', 'category_name')
+                ->select_expr('COALESCE(SUM(purchase_cost), 0)', 'total_cost')
+                ->join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+                ->where_not_null('purchase_cost')
+                ->where_not_equal('purchase_cost', '')
+                ->where_not_equal('purchase_cost', 0)
+                ->where_gt('purchase_cost', 0)
+                ->group_by('tbl_asset_categories.name')
+                ->find_array();
+        } catch (Exception $costException) {
+            // If purchase_cost column doesn't exist, set default values
+            $totalAssetValue = 0;
+            $assetsByCostRange = [];
+            $expensiveAssets = [];
+            $costByCategory = [];
+            _log(Lang::T('Asset Manager Cost Query Error (column may not exist): ') . $costException->getMessage());
+        }
     } catch (Exception $e) {
-        _log("Asset Statistics Error: " . $e->getMessage());
-        return [
-            'total' => 0,
-            'active' => 0,
-            'maintenance' => 0,
-            'critical' => 0,
-            'total_value' => 0,
-            'monthly_maintenance' => 0,
-            'utilization' => 0,
-            'avg_uptime' => 0,
-            'by_category' => [],
-            'by_location' => [],
-            'by_status' => [],
-            'recent_maintenance' => []
-        ];
+        // If tables don't exist yet, set default values
+        $totalAssets = 0;
+        $activeAssets = 0;
+        $inactiveAssets = 0;
+        $maintenanceAssets = 0;
+        $totalCategories = 0;
+        $totalBrands = 0;
+        $totalModels = 0;
+        $recentAssets = [];
+        $assetsByCategory = [];
+        $assetsByStatus = [];
+        $totalAssetValue = 0;
+        $assetsByCostRange = [];
+        $expensiveAssets = [];
+        $costByCategory = [];
+
+        _log(Lang::T('Asset Manager Dashboard Error: ') . $e->getMessage());
     }
+
+    // Get currency code for UI display
+    $currencyCode = isset($config['currency_code']) ? $config['currency_code'] : 'USD';
+
+    $ui->assign('totalAssets', $totalAssets);
+    $ui->assign('activeAssets', $activeAssets);
+    $ui->assign('inactiveAssets', $inactiveAssets);
+    $ui->assign('maintenanceAssets', $maintenanceAssets);
+    $ui->assign('totalCategories', $totalCategories);
+    $ui->assign('totalBrands', $totalBrands);
+    $ui->assign('totalModels', $totalModels);
+    $ui->assign('recentAssets', $recentAssets);
+    $ui->assign('assetsByCategory', $assetsByCategory);
+    $ui->assign('assetsByStatus', $assetsByStatus);
+    $ui->assign('totalAssetValue', $totalAssetValue);
+    $ui->assign('assetsByCostRange', $assetsByCostRange);
+    $ui->assign('expensiveAssets', $expensiveAssets);
+    $ui->assign('costByCategory', $costByCategory);
+    $ui->assign('currencyCode', $currencyCode);
+
+    $ui->display('assetManager_dashboard.tpl');
 }
 
-function getRecentAssets($limit = 10)
+// Category Functions
+function assetCategories()
 {
+    global $ui;
+
     try {
-        return ORM::for_table('tbl_assets')
-            ->order_by_desc('created_at')
-            ->limit($limit)
-            ->find_array();
+        $categories = ORM::for_table('tbl_asset_categories')
+            ->select('tbl_asset_categories.*')
+            ->select_expr('COUNT(tbl_assets.id)', 'asset_count')
+            ->left_outer_join('tbl_assets', ['tbl_asset_categories.id', '=', 'tbl_assets.category_id'])
+            ->group_by('tbl_asset_categories.id')
+            ->order_by_desc('tbl_asset_categories.created_at');
     } catch (Exception $e) {
-        _log("Recent Assets Error: " . $e->getMessage());
-        return [];
+        $categories = [];
+        _log(Lang::T("Asset Categories Error: ") . $e->getMessage());
     }
+
+    $totalCategories = Paginator::findMany($categories, ['search' => ''], 25, '');
+    $ui->assign('categories', $totalCategories);
+    $ui->display('assetManager_categories.tpl');
 }
 
-/**
- * Returns the maintenance activities performed in the current month.
- *
- * @return array
- */
-function getThisMonthMaintenance()
+function assetCategoriesAdd()
 {
-    try {
-        $results = ORM::for_table('tbl_asset_maintenance')
-            ->select('maintenance_date')
-            // ->where_raw('MONTH(maintenance_date) = MONTH(CURDATE()) AND YEAR(maintenance_date) = YEAR(CURDATE())')
-            ->order_by_desc('maintenance_date')
-            ->find_array();
-        return $results;
-    } catch (Exception $e) {
-        _log("This Month Maintenance Error: " . $e->getMessage());
-        return [];
-    }
-}
+    global $ui;
 
-function asset_statistics()
-{
-    try {
-        _admin();
-        header('Content-Type: application/json');
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $name = _post('name');
+        $description = _post('description');
+        $status = _post('status');
 
-        $stats = getAssetStatistics();
-        echo json_encode(['success' => true, 'data' => $stats]);
-    } catch (Exception $e) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-    }
-}
-
-function asset_export()
-{
-    _admin();
-
-    $admin = Admin::_info();
-    if (!in_array($admin['user_type'], ['SuperAdmin', 'Admin', 'Sales'])) {
-        echo json_encode(['success' => false, 'message' => Lang::T('Permission denied')]);
-        exit;
-    }
-
-    try {
-        $assets = ORM::for_table('tbl_assets')
-            ->order_by('asset_id')
-            ->find_array();
-
-        // Set CSV headers
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="assets_export_' . date('Y-m-d_H-i-s') . '.csv"');
-
-        $output = fopen('php://output', 'w');
-
-        // Write CSV header
-        if (!empty($assets)) {
-            fputcsv($output, array_keys($assets[0]));
-
-            // Write data rows
-            foreach ($assets as $asset) {
-                fputcsv($output, $asset);
-            }
+        if (empty($name)) {
+            r2(getUrl('plugin/assetManager/categories-add'), 'e', Lang::T('Category name is required'));
         }
 
-        fclose($output);
-        _log("Assets exported", $admin['user_type']);
-    } catch (Exception $e) {
-        _log("Asset Export Error: " . $e->getMessage());
-        echo json_encode(['success' => false, 'message' => Lang::T('Export failed: ') . $e->getMessage()]);
+        // Check if category already exists
+        $exists = ORM::for_table('tbl_asset_categories')->where('name', $name)->count();
+        if ($exists > 0) {
+            r2(getUrl('plugin/assetManager/categories-add'), 'e', Lang::T('Category with this name already exists'));
+        }
+
+        $category = ORM::for_table('tbl_asset_categories')->create();
+        $category->name = $name;
+        $category->description = $description;
+        $category->status = $status;
+        $category->save();
+
+        r2(getUrl('plugin/assetManager/categories'), 's', Lang::T('Category added successfully'));
     }
+
+    $ui->display('assetManager_categories_add.tpl');
 }
 
-function asset_list()
+function assetCategoriesEdit()
 {
-    _admin();
-    header('Content-Type: application/json');
+    global $ui, $routes;
+
+    $id = $routes[3];
+    if (empty($id)) {
+        r2(getUrl('plugin/assetManager/categories'), 'e', Lang::T('Category ID is required'));
+    }
+
+    $category = ORM::for_table('tbl_asset_categories')->find_one($id);
+    if (!$category) {
+        r2(getUrl('plugin/assetManager/categories'), 'e', Lang::T('Category not found'));
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $name = _post('name');
+        $description = _post('description');
+        $status = _post('status');
+
+        if (empty($name)) {
+            r2(getUrl('plugin/assetManager/categories-edit/' . $id), 'e', Lang::T('Category name is required'));
+        }
+
+        // Check if category name already exists (excluding current)
+        $exists = ORM::for_table('tbl_asset_categories')
+            ->where('name', $name)
+            ->where_not_equal('id', $id)
+            ->count();
+        if ($exists > 0) {
+            r2(getUrl('plugin/assetManager/categories-edit/' . $id), 'e', Lang::T('Category with this name already exists'));
+        }
+
+        $category->name = $name;
+        $category->description = $description;
+        $category->status = $status;
+        $category->save();
+
+        r2(getUrl('plugin/assetManager/categories'), 's', Lang::T('Category updated successfully'));
+    }
+
+    $ui->assign('category', $category);
+    $ui->display('assetManager_categories_edit.tpl');
+}
+
+function assetCategoriesDelete()
+{
+    global $routes;
+
+    $id = $routes[3];
+    if (empty($id)) {
+        r2(getUrl('plugin/assetManager/categories'), 'e', Lang::T('Category ID is required'));
+    }
+
+    $category = ORM::for_table('tbl_asset_categories')->find_one($id);
+    if (!$category) {
+        r2(getUrl('plugin/assetManager/categories'), 'e', Lang::T('Category not found'));
+    }
+
+    // Check if category has assets
+    $assetCount = ORM::for_table('tbl_assets')->where('category_id', $id)->count();
+    if ($assetCount > 0) {
+        r2(getUrl('plugin/assetManager/categories'), 'e', Lang::T('Cannot delete category that has assets assigned to it'));
+    }
+
+    $category->delete();
+    r2(getUrl('plugin/assetManager/categories'), 's', Lang::T('Category deleted successfully'));
+}
+
+// Brand Functions
+function assetBrands()
+{
+    global $ui;
+
+    try {
+        $brands = ORM::for_table('tbl_asset_brands')
+            ->select('tbl_asset_brands.*')
+            ->select_expr('COUNT(DISTINCT tbl_asset_models.id)', 'model_count')
+            ->select_expr('COUNT(DISTINCT tbl_assets.id)', 'asset_count')
+            ->left_outer_join('tbl_asset_models', ['tbl_asset_brands.id', '=', 'tbl_asset_models.brand_id'])
+            ->left_outer_join('tbl_assets', ['tbl_asset_brands.id', '=', 'tbl_assets.brand_id'])
+            ->group_by('tbl_asset_brands.id')
+            ->order_by_desc('tbl_asset_brands.created_at');
+    } catch (Exception $e) {
+        $brands = [];
+        _log(Lang::T("Asset Brands Error: ") . $e->getMessage());
+    }
+
+    $totalBrands = Paginator::findMany($brands, ['search' => ''], 25, '');
+    $ui->assign('brands', $totalBrands);
+    $ui->display('assetManager_brands.tpl');
+}
+
+function assetBrandsAdd()
+{
+    global $ui;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $name = _post('name');
+        $description = _post('description');
+        $country = _post('country');
+        $website = _post('website');
+        $status = _post('status');
+
+        if (empty($name)) {
+            r2(getUrl('plugin/assetManager/brands-add'), 'e', Lang::T('Brand name is required'));
+        }
+
+        // Check if brand already exists
+        $exists = ORM::for_table('tbl_asset_brands')->where('name', $name)->count();
+        if ($exists > 0) {
+            r2(getUrl('plugin/assetManager/brands-add'), 'e', Lang::T('Brand with this name already exists'));
+        }
+
+        $brand = ORM::for_table('tbl_asset_brands')->create();
+        $brand->name = $name;
+        $brand->description = $description;
+        $brand->country = $country;
+        $brand->website = $website;
+        $brand->status = $status;
+        $brand->save();
+
+        r2(getUrl('plugin/assetManager/brands'), 's', Lang::T('Brand added successfully'));
+    }
+
+    $ui->display('assetManager_brands_add.tpl');
+}
+
+function assetBrandsEdit()
+{
+    global $ui, $routes;
+
+    $id = $routes[3];
+    if (empty($id)) {
+        r2(getUrl('plugin/assetManager/brands'), 'e', Lang::T('Brand ID is required'));
+    }
+
+    $brand = ORM::for_table('tbl_asset_brands')->find_one($id);
+    if (!$brand) {
+        r2(getUrl('plugin/assetManager/brands'), 'e', Lang::T('Brand not found'));
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $name = _post('name');
+        $description = _post('description');
+        $country = _post('country');
+        $website = _post('website');
+        $status = _post('status');
+
+        if (empty($name)) {
+            r2(getUrl('plugin/assetManager/brands-edit/' . $id), 'e', Lang::T('Brand name is required'));
+        }
+
+        // Check if brand name already exists (excluding current)
+        $exists = ORM::for_table('tbl_asset_brands')
+            ->where('name', $name)
+            ->where_not_equal('id', $id)
+            ->count();
+        if ($exists > 0) {
+            r2(getUrl('plugin/assetManager/brands-edit/' . $id), 'e', Lang::T('Brand with this name already exists'));
+        }
+
+        $brand->name = $name;
+        $brand->description = $description;
+        $brand->country = $country;
+        $brand->website = $website;
+        $brand->status = $status;
+        $brand->save();
+
+        r2(getUrl('plugin/assetManager/brands'), 's', Lang::T('Brand updated successfully'));
+    }
+
+    $ui->assign('brand', $brand);
+    $ui->display('assetManager_brands_edit.tpl');
+}
+
+function assetBrandsDelete()
+{
+    global $routes;
+
+    $id = $routes[3];
+    if (empty($id)) {
+        r2(getUrl('plugin/assetManager/brands'), 'e', Lang::T('Brand ID is required'));
+    }
+
+    $brand = ORM::for_table('tbl_asset_brands')->find_one($id);
+    if (!$brand) {
+        r2(getUrl('plugin/assetManager/brands'), 'e', Lang::T('Brand not found'));
+    }
+
+    // Check if brand has models or assets
+    $modelCount = ORM::for_table('tbl_asset_models')->where('brand_id', $id)->count();
+    $assetCount = ORM::for_table('tbl_assets')->where('brand_id', $id)->count();
+
+    if ($modelCount > 0 || $assetCount > 0) {
+        r2(getUrl('plugin/assetManager/brands'), 'e', Lang::T('Cannot delete brand that has models or assets assigned to it'));
+    }
+
+    $brand->delete();
+    r2(getUrl('plugin/assetManager/brands'), 's', Lang::T('Brand deleted successfully'));
+}
+
+// Model Functions
+function assetModels()
+{
+    global $ui;
+
+    try {
+        $models = ORM::for_table('tbl_asset_models')
+            ->select('tbl_asset_models.*')
+            ->select('tbl_asset_brands.name', 'brand_name')
+            ->select_expr('COUNT(tbl_assets.id)', 'asset_count')
+            ->join('tbl_asset_brands', ['tbl_asset_models.brand_id', '=', 'tbl_asset_brands.id'])
+            ->left_outer_join('tbl_assets', ['tbl_asset_models.id', '=', 'tbl_assets.model_id'])
+            ->group_by('tbl_asset_models.id')
+            ->order_by_desc('tbl_asset_models.created_at');
+    } catch (Exception $e) {
+        $models = [];
+        _log("Asset Models Error: " . $e->getMessage());
+    }
+
+    $totalModels = Paginator::findMany($models, ['search' => ''], 25, '');
+    $ui->assign('models', $totalModels);
+    $ui->display('assetManager_models.tpl');
+}
+
+function assetModelsAdd()
+{
+    global $ui;
+
+    try {
+        $brands = ORM::for_table('tbl_asset_brands')->where('status', 'Active')->order_by_asc('name')->find_array();
+    } catch (Exception $e) {
+        $brands = [];
+        _log(Lang::T("Asset Models Add - Brands Error: ") . $e->getMessage());
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $brand_id = _post('brand_id');
+        $name = _post('name');
+        $model_number = _post('model_number');
+        $description = _post('description');
+        $specifications = _post('specifications');
+        $status = _post('status');
+
+        if (empty($name) || empty($brand_id)) {
+            r2(getUrl('plugin/assetManager/models-add'), 'e', Lang::T('Model name and brand are required'));
+        }
+
+        try {
+            $model = ORM::for_table('tbl_asset_models')->create();
+            $model->brand_id = $brand_id;
+            $model->name = $name;
+            $model->model_number = $model_number;
+            $model->description = $description;
+            $model->specifications = $specifications;
+            $model->status = $status;
+            $model->save();
+
+            r2(getUrl('plugin/assetManager/models'), 's', Lang::T('Model added successfully'));
+        } catch (Exception $e) {
+            _log(Lang::T("Asset Models Add Error: ") . $e->getMessage());
+            r2(getUrl('plugin/assetManager/models-add'), 'e', Lang::T('Error adding model: ') . $e->getMessage());
+        }
+    }
+
+    $ui->assign('brands', $brands);
+    $ui->display('assetManager_models_add.tpl');
+}
+
+function assetModelsEdit()
+{
+    global $ui, $routes;
+
+    $id = $routes[3];
+    if (empty($id)) {
+        r2(getUrl('plugin/assetManager/models'), 'e', Lang::T('Model ID is required'));
+    }
+
+    $model = ORM::for_table('tbl_asset_models')->find_one($id);
+    if (!$model) {
+        r2(getUrl('plugin/assetManager/models'), 'e', Lang::T('Model not found'));
+    }
+
+    $brands = ORM::for_table('tbl_asset_brands')->where('status', 'Active')->order_by_asc('name')->find_array();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $brand_id = _post('brand_id');
+        $name = _post('name');
+        $model_number = _post('model_number');
+        $description = _post('description');
+        $specifications = _post('specifications');
+        $status = _post('status');
+
+        if (empty($name) || empty($brand_id)) {
+            r2(getUrl('plugin/assetManager/models-edit/' . $id), 'e', Lang::T('Model name and brand are required'));
+        }
+
+        $model->brand_id = $brand_id;
+        $model->name = $name;
+        $model->model_number = $model_number;
+        $model->description = $description;
+        $model->specifications = $specifications;
+        $model->status = $status;
+        $model->save();
+
+        r2(getUrl('plugin/assetManager/models'), 's', Lang::T('Model updated successfully'));
+    }
+
+    $ui->assign('model', $model);
+    $ui->assign('brands', $brands);
+    $ui->display('assetManager_models_edit.tpl');
+}
+
+function assetModelsDelete()
+{
+    global $routes;
+
+    $id = $routes[3];
+    if (empty($id)) {
+        r2(getUrl('plugin/assetManager/models'), 'e', Lang::T('Model ID is required'));
+    }
+
+    $model = ORM::for_table('tbl_asset_models')->find_one($id);
+    if (!$model) {
+        r2(getUrl('plugin/assetManager/models'), 'e', Lang::T('Model not found'));
+    }
+
+    // Check if model has assets
+    $assetCount = ORM::for_table('tbl_assets')->where('model_id', $id)->count();
+    if ($assetCount > 0) {
+        r2(getUrl('plugin/assetManager/models'), 'e', Lang::T('Cannot delete model that has assets assigned to it'));
+    }
+
+    $model->delete();
+    r2(getUrl('plugin/assetManager/models'), 's', Lang::T('Model deleted successfully'));
+}
+
+// Asset Functions
+function assetsList()
+{
+    global $ui;
 
     try {
         $assets = ORM::for_table('tbl_assets')
-            ->order_by_desc('created_at')
+            ->select('tbl_assets.*')
+            ->select('tbl_asset_categories.name', 'category_name')
+            ->select('tbl_asset_brands.name', 'brand_name')
+            ->select('tbl_asset_models.name', 'model_name')
+            ->select('tbl_customers.fullname', 'assigned_to_name')
+            ->join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+            ->join('tbl_asset_brands', ['tbl_assets.brand_id', '=', 'tbl_asset_brands.id'])
+            ->join('tbl_asset_models', ['tbl_assets.model_id', '=', 'tbl_asset_models.id'])
+            ->left_outer_join('tbl_customers', ['tbl_assets.assigned_to', '=', 'tbl_customers.id'])
+            ->order_by_desc('tbl_assets.created_at');
+    } catch (Exception $e) {
+        $assets = [];
+        _log(Lang::T('Assets List Error: ') . $e->getMessage());
+    }
+
+    $totalAssets = Paginator::findMany($assets, ['search' => ''], 25, '');
+
+    // Get currency code from config
+    global $config;
+    $currencyCode = isset($config['currency_code']) ? $config['currency_code'] : 'USD';
+
+    $ui->assign('assets', $totalAssets);
+    $ui->assign('currencyCode', $currencyCode);
+    $ui->display('assetManager_assets.tpl');
+}
+
+function assetsAdd()
+{
+    global $ui;
+
+    try {
+        $categories = ORM::for_table('tbl_asset_categories')->where('status', 'Active')->order_by_asc('name')->find_array();
+        $brands = ORM::for_table('tbl_asset_brands')->where('status', 'Active')->order_by_asc('name')->find_array();
+        $customers = ORM::for_table('tbl_customers')->order_by_asc('id')->find_array();
+    } catch (Exception $e) {
+        $categories = [];
+        $brands = [];
+        $customers = [];
+        _log(Lang::T('Assets Add - Data Error: ') . $e->getMessage());
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $category_id = _post('category_id');
+        $brand_id = _post('brand_id');
+        $model_id = _post('model_id');
+        $asset_tag = _post('asset_tag');
+        $serial_number = _post('serial_number');
+        $name = _post('name');
+        $description = _post('description');
+        $purchase_date = _post('purchase_date');
+        $purchase_cost = _post('purchase_cost');
+        $warranty_expiry = _post('warranty_expiry');
+        $location = _post('location');
+        $lat = _post('lat');
+        $lng = _post('lng');
+        $assigned_to = _post('assigned_to');
+        $status = _post('status');
+        $condition_status = _post('condition_status');
+        $notes = _post('notes');
+
+        // Handle empty dates - convert empty strings to NULL for database
+        if (empty($purchase_date)) {
+            $purchase_date = null;
+        }
+        if (empty($warranty_expiry)) {
+            $warranty_expiry = null;
+        }
+
+        // Handle empty assigned_to - convert empty strings to NULL for database
+        if (empty($assigned_to)) {
+            $assigned_to = null;
+        }
+
+        // Handle coordinates - validate and convert to proper decimal values
+        $latitude = null;
+        $longitude = null;
+        if (!empty($lat) && is_numeric($lat)) {
+            $latitude = (float)$lat;
+        }
+        if (!empty($lng) && is_numeric($lng)) {
+            $longitude = (float)$lng;
+        }
+
+        if (empty($name) || empty($category_id) || empty($brand_id) || empty($model_id) || empty($asset_tag)) {
+            r2(getUrl('plugin/assetManager/assets-add'), 'e', Lang::T('Required fields are missing'));
+        }
+
+        try {
+            // Check if asset tag already exists
+            $exists = ORM::for_table('tbl_assets')->where('asset_tag', $asset_tag)->count();
+            if ($exists > 0) {
+                r2(getUrl('plugin/assetManager/assets-add'), 'e', Lang::T('Asset tag already exists'));
+            }
+
+            $admin = Admin::_info();
+
+            $asset = ORM::for_table('tbl_assets')->create();
+            $asset->category_id = $category_id;
+            $asset->brand_id = $brand_id;
+            $asset->model_id = $model_id;
+            $asset->asset_tag = $asset_tag;
+            $asset->serial_number = $serial_number;
+            $asset->name = $name;
+            $asset->description = $description;
+            $asset->purchase_date = $purchase_date;
+            $asset->purchase_cost = $purchase_cost;
+            $asset->warranty_expiry = $warranty_expiry;
+            $asset->location = $location;
+            $asset->latitude = $latitude;
+            $asset->longitude = $longitude;
+            $asset->assigned_to = $assigned_to;
+            $asset->status = $status;
+            $asset->condition_status = $condition_status;
+            $asset->notes = $notes;
+            $asset->created_by = $admin['id'];
+            $asset->save();
+
+            r2(getUrl('plugin/assetManager/assets'), 's', Lang::T('Asset added successfully'));
+        } catch (Exception $e) {
+            _log("Assets Add Error: " . $e->getMessage());
+            r2(getUrl('plugin/assetManager/assets-add'), 'e', Lang::T('Error adding asset: ') . $e->getMessage());
+        }
+    }
+
+    $ui->assign('categories', $categories);
+    $ui->assign('brands', $brands);
+    $ui->assign('customers', $customers);
+    $ui->display('assetManager_assets_add.tpl');
+}
+
+function assetsEdit()
+{
+    global $ui, $routes;
+
+    $id = $routes[3];
+    if (empty($id)) {
+        r2(getUrl('plugin/assetManager/assets'), 'e', Lang::T('Asset ID is required'));
+    }
+
+    $asset = ORM::for_table('tbl_assets')->find_one($id);
+    if (!$asset) {
+        r2(getUrl('plugin/assetManager/assets'), 'e', Lang::T('Asset not found'));
+    }
+
+    $categories = ORM::for_table('tbl_asset_categories')->where('status', 'Active')->order_by_asc('name')->find_array();
+    $brands = ORM::for_table('tbl_asset_brands')->where('status', 'Active')->order_by_asc('name')->find_array();
+    $models = ORM::for_table('tbl_asset_models')->where('brand_id', $asset['brand_id'])->where('status', 'Active')->order_by_asc('name')->find_array();
+    $customers = ORM::for_table('tbl_customers')->order_by_asc('id')->find_array();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $category_id = _post('category_id');
+        $brand_id = _post('brand_id');
+        $model_id = _post('model_id');
+        $asset_tag = _post('asset_tag');
+        $serial_number = _post('serial_number');
+        $name = _post('name');
+        $description = _post('description');
+        $purchase_date = _post('purchase_date');
+        $purchase_cost = _post('purchase_cost');
+        $warranty_expiry = _post('warranty_expiry');
+        $location = _post('location');
+        $lat = _post('lat');
+        $lng = _post('lng');
+        $assigned_to = _post('assigned_to');
+        $status = _post('status');
+        $condition_status = _post('condition_status');
+        $notes = _post('notes');
+
+        // Handle empty dates - convert empty strings to NULL for database
+        if (empty($purchase_date)) {
+            $purchase_date = null;
+        }
+        if (empty($warranty_expiry)) {
+            $warranty_expiry = null;
+        }
+
+        // Handle empty assigned_to - convert empty strings to NULL for database
+        if (empty($assigned_to)) {
+            $assigned_to = null;
+        }
+
+        // Handle coordinates - validate and convert to proper decimal values
+        $latitude = null;
+        $longitude = null;
+        if (!empty($lat) && is_numeric($lat)) {
+            $latitude = (float)$lat;
+        }
+        if (!empty($lng) && is_numeric($lng)) {
+            $longitude = (float)$lng;
+        }
+
+        if (empty($name) || empty($category_id) || empty($brand_id) || empty($model_id) || empty($asset_tag)) {
+            r2(getUrl('plugin/assetManager/assets-edit/' . $id), 'e', Lang::T('Required fields are missing'));
+        }
+
+        // Check if asset tag already exists (excluding current)
+        $exists = ORM::for_table('tbl_assets')
+            ->where('asset_tag', $asset_tag)
+            ->where_not_equal('id', $id)
+            ->count();
+        if ($exists > 0) {
+            r2(getUrl('plugin/assetManager/assets-edit/' . $id), 'e', Lang::T('Asset tag already exists'));
+        }
+
+        $asset->category_id = $category_id;
+        $asset->brand_id = $brand_id;
+        $asset->model_id = $model_id;
+        $asset->asset_tag = $asset_tag;
+        $asset->serial_number = $serial_number;
+        $asset->name = $name;
+        $asset->description = $description;
+        $asset->purchase_date = $purchase_date;
+        $asset->purchase_cost = $purchase_cost;
+        $asset->warranty_expiry = $warranty_expiry;
+        $asset->location = $location;
+        $asset->latitude = $latitude;
+        $asset->longitude = $longitude;
+        $asset->assigned_to = $assigned_to;
+        $asset->status = $status;
+        $asset->condition_status = $condition_status;
+        $asset->notes = $notes;
+        $asset->save();
+
+        r2(getUrl('plugin/assetManager/assets'), 's', Lang::T('Asset updated successfully'));
+    }
+
+    $ui->assign('asset', $asset);
+    $ui->assign('categories', $categories);
+    $ui->assign('brands', $brands);
+    $ui->assign('models', $models);
+    $ui->assign('customers', $customers);
+    $ui->display('assetManager_assets_edit.tpl');
+}
+
+function assetsView()
+{
+    global $ui, $routes;
+
+    $id = $routes[3];
+    if (empty($id)) {
+        r2(getUrl('plugin/assetManager/assets'), 'e', Lang::T('Asset ID is required'));
+    }
+
+    // Get asset with related data
+    $asset = ORM::for_table('tbl_assets')
+        ->select('tbl_assets.*')
+        ->select('tbl_asset_categories.name', 'category_name')
+        ->select('tbl_asset_brands.name', 'brand_name')
+        ->select('tbl_asset_models.name', 'model_name')
+        ->select('tbl_customers.fullname', 'assigned_name')
+        ->left_outer_join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+        ->left_outer_join('tbl_asset_brands', ['tbl_assets.brand_id', '=', 'tbl_asset_brands.id'])
+        ->left_outer_join('tbl_asset_models', ['tbl_assets.model_id', '=', 'tbl_asset_models.id'])
+        ->left_outer_join('tbl_customers', ['tbl_assets.assigned_to', '=', 'tbl_customers.id'])
+        ->find_one($id);
+
+    if (!$asset) {
+        r2(getUrl('plugin/assetManager/assets'), 'e', Lang::T('Asset not found'));
+    }
+
+    // Convert ORM object to array for template
+    $assetData = $asset->as_array();
+
+    // Add assigned customer name
+    $assetData['assigned_name'] = $asset->assigned_to ? $asset->assigned_name : Lang::T('Not Assigned');
+    // Add related names
+    $assetData['category_name'] = $asset->category_name ?: Lang::T('Not Assigned');
+    $assetData['brand_name'] = $asset->brand_name ?: Lang::T('Not Assigned');
+    $assetData['model_name'] = $asset->model_name ?: Lang::T('Not Assigned');
+
+    // Get currency code from config
+    global $config;
+    $currencyCode = isset($config['currency_code']) ? $config['currency_code'] : 'USD';
+
+    $ui->assign('asset', $assetData);
+    $ui->assign('currencyCode', $currencyCode);
+    $ui->assign('_title', Lang::T('View Asset - ') . $assetData['name']);
+    $ui->display('assetManager_assets_view.tpl');
+}
+
+function assetsDelete()
+{
+    global $routes;
+
+    $id = $routes[3];
+    if (empty($id)) {
+        r2(getUrl('plugin/assetManager/assets'), 'e', Lang::T('Asset ID is required'));
+    }
+
+    $asset = ORM::for_table('tbl_assets')->find_one($id);
+    if (!$asset) {
+        r2(getUrl('plugin/assetManager/assets'), 'e', Lang::T('Asset not found'));
+    }
+
+    $asset->delete();
+    r2(getUrl('plugin/assetManager/assets'), 's', Lang::T('Asset deleted successfully'));
+}
+
+// AJAX Function to get models by brand
+function getModelsByBrand()
+{
+    // Force JSON response header early
+    header('Content-Type: application/json');
+    header('Cache-Control: no-cache, must-revalidate');
+
+    try {
+        // Check authentication
+        $admin = Admin::_info();
+        if (!$admin) {
+            _log("getModelsByBrand: No admin authentication");
+            echo json_encode(['success' => false, 'message' => Lang::T('Authentication required')]);
+            exit;
+        }
+
+        // Check user permissions
+        if (!in_array($admin['user_type'], ['SuperAdmin', 'Admin', 'Sales'])) {
+            _log("getModelsByBrand: Access denied for user type: " . $admin['user_type']);
+            echo json_encode(['success' => false, 'message' => Lang::T('Access denied')]);
+            exit;
+        }
+
+        $brand_id = _get('brand_id');
+        if (empty($brand_id)) {
+            _log("getModelsByBrand: No brand_id provided");
+            echo json_encode(['success' => false, 'message' => Lang::T('Brand ID is required')]);
+            exit;
+        }
+
+        // Check if the brand exists
+        $brandExists = ORM::for_table('tbl_asset_brands')->find_one($brand_id);
+        if (!$brandExists) {
+            _log(Lang::T("getModelsByBrand: Brand not found for ID: ") . $brand_id);
+            echo json_encode(['success' => false, 'message' => Lang::T('Brand not found')]);
+            exit;
+        }
+
+        $models = ORM::for_table('tbl_asset_models')
+            ->where('brand_id', $brand_id)
+            ->where('status', 'Active')
+            ->order_by_asc('name')
             ->find_array();
 
-        echo json_encode(['success' => true, 'data' => $assets]);
+        _log(Lang::T("getModelsByBrand: Found ") . count($models) . Lang::T(" models for brand ") . $brand_id);
+        echo json_encode(['success' => true, 'models' => $models, 'count' => count($models)]);
     } catch (Exception $e) {
-        _log("Asset List Error: " . $e->getMessage());
+        _log(Lang::T("getModelsByBrand Error: ") . $e->getMessage());
         echo json_encode(['success' => false, 'message' => Lang::T('Database error: ') . $e->getMessage()]);
     }
-}
-
-function asset_list_by_category()
-{
-    _admin();
-    header('Content-Type: application/json');
-
-    $category = $_GET['category'] ?? '';
-
-    if (empty($category)) {
-        echo json_encode(['success' => false, 'message' => Lang::T('Category required')]);
-        exit;
-    }
-
-    try {
-        $assets = ORM::for_table('tbl_assets')
-            ->where('category', $category)
-            ->order_by_desc('created_at')
-            ->find_array();
-
-        echo json_encode(['success' => true, 'data' => $assets]);
-    } catch (Exception $e) {
-        _log("Asset List by Category Error: " . $e->getMessage());
-        echo json_encode(['success' => false, 'message' => Lang::T('Database error: ') . $e->getMessage()]);
-    }
-}
-
-
-function asset_schedule_maintenance()
-{
-    _admin();
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        try {
-            $input = json_decode(file_get_contents('php://input'), true);
-
-            if (!$input) {
-                _log("Failed to decode JSON input for maintenance scheduling");
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => 'Invalid JSON input']);
-                exit;
-            }
-
-            // Validate required fields
-            $required_fields = ['asset_id', 'maintenance_type', 'scheduled_date', 'description'];
-            foreach ($required_fields as $field) {
-                if (empty($input[$field])) {
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => false, 'message' => "Field '$field' is required"]);
-                    exit;
-                }
-            }
-
-            // Check if asset exists
-            $asset = ORM::for_table('tbl_assets')
-                ->where('asset_id', $input['asset_id'])
-                ->find_one();
-
-            if (!$asset) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => 'Asset not found']);
-                exit;
-            }
-
-            // Create maintenance schedule record
-            $maintenance = ORM::for_table('tbl_asset_maintenance')->create();
-            $maintenance->asset_id = $input['asset_id'];
-            $maintenance->maintenance_type = $input['maintenance_type'];
-            $maintenance->scheduled_date = $input['scheduled_date'];
-            $maintenance->maintenance_date = null; // Will be set when maintenance is completed
-            $maintenance->description = $input['description'];
-            $maintenance->technician = $input['technician'] ?? null;
-            $maintenance->cost = $input['estimated_cost'] ?? 0;
-            $maintenance->priority = $input['priority'] ?? 'medium';
-            $maintenance->status = 'scheduled';
-            $maintenance->created_at = date('Y-m-d H:i:s');
-            $maintenance->save();
-
-            _log("Scheduled maintenance for asset: " . $input['asset_id'] . " on " . $input['scheduled_date']);
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'message' => 'Maintenance scheduled successfully',
-                'maintenance_id' => $maintenance->id
-            ]);
-            exit;
-        } catch (Exception $e) {
-            _log("Error scheduling maintenance: " . $e->getMessage());
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Error scheduling maintenance: ' . $e->getMessage()]);
-            exit;
-        }
-    }
-
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
     exit;
-}
-
-function asset_complete_maintenance()
-{
-    _admin();
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        try {
-            $input = json_decode(file_get_contents('php://input'), true);
-
-            if (!$input || empty($input['maintenance_id'])) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => 'Maintenance ID is required']);
-                exit;
-            }
-
-            // Find maintenance record
-            $maintenance = ORM::for_table('tbl_asset_maintenance')
-                ->where('id', $input['maintenance_id'])
-                ->find_one();
-
-            if (!$maintenance) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => 'Maintenance record not found']);
-                exit;
-            }
-
-            // Update maintenance record
-            $maintenance->status = 'completed';
-            $maintenance->maintenance_date = $input['completion_date'] ?? date('Y-m-d');
-            $maintenance->actual_cost = $input['actual_cost'] ?? $maintenance->estimated_cost;
-            $maintenance->technician = $input['technician'] ?? $maintenance->technician;
-            $maintenance->completion_notes = $input['completion_notes'] ?? '';
-            $maintenance->updated_at = date('Y-m-d H:i:s');
-            $maintenance->save();
-
-            _log("Completed maintenance for maintenance ID: " . $input['maintenance_id']);
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'message' => 'Maintenance marked as completed'
-            ]);
-            exit;
-        } catch (Exception $e) {
-            _log("Error completing maintenance: " . $e->getMessage());
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Error completing maintenance: ' . $e->getMessage()]);
-            exit;
-        }
-    }
-
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-    exit;
-}
-
-function asset_maintenance_list()
-{
-    _admin();
-
-    try {
-        $status = $_GET['status'] ?? 'all';
-        $asset_id = $_GET['asset_id'] ?? null;
-
-        $query = ORM::for_table('tbl_asset_maintenance')
-            ->table_alias('m')
-            ->select('m.*')
-            ->left_outer_join('tbl_assets', ['m.asset_id', '=', 'a.asset_id'], 'a')
-            ->select('a.name', 'asset_name')
-            ->select('a.category', 'asset_category');
-
-        if ($status !== 'all') {
-            $query->where('m.status', $status);
-        }
-
-        if ($asset_id) {
-            $query->where('m.asset_id', $asset_id);
-        }
-
-        $maintenance_records = $query->order_by_desc('m.scheduled_date')->find_array();
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true,
-            'data' => $maintenance_records
-        ]);
-        exit;
-    } catch (Exception $e) {
-        _log("Error fetching maintenance list: " . $e->getMessage());
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Error fetching maintenance records']);
-        exit;
-    }
-}
-
-function asset_upcoming_maintenance()
-{
-    _admin();
-
-    try {
-        $days_ahead = $_GET['days'] ?? 30;
-        $today = date('Y-m-d');
-        $future_date = date('Y-m-d', strtotime("+$days_ahead days"));
-
-        $upcoming = ORM::for_table('tbl_asset_maintenance')
-            ->table_alias('m')
-            ->select('m.*')
-            ->select('a.name', 'asset_name')
-            ->select('a.category', 'asset_category')
-            ->select('a.location', 'asset_location')
-            ->left_outer_join('tbl_assets', ['m.asset_id', '=', 'a.asset_id'], 'a')
-            ->where_gte('m.scheduled_date', $today)
-            ->where_lte('m.scheduled_date', $future_date)
-            ->order_by_asc('m.scheduled_date')
-            ->find_array();
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true,
-            'data' => $upcoming
-        ]);
-        exit;
-    } catch (Exception $e) {
-        _log("Error fetching upcoming maintenance: " . $e->getMessage());
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Error fetching upcoming maintenance']);
-        exit;
-    }
-}
-
-function asset_update_maintenance()
-{
-    _admin();
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        try {
-            $input = json_decode(file_get_contents('php://input'), true);
-
-            if (!$input || empty($input['maintenance_id'])) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => 'Maintenance ID is required']);
-                exit;
-            }
-
-            // Find maintenance record
-            $maintenance = ORM::for_table('tbl_asset_maintenance')
-                ->where('id', $input['maintenance_id'])
-                ->find_one();
-
-            if (!$maintenance) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => 'Maintenance record not found']);
-                exit;
-            }
-
-            // Update maintenance record
-            if (isset($input['asset_id'])) $maintenance->asset_id = $input['asset_id'];
-            if (isset($input['maintenance_type'])) $maintenance->maintenance_type = $input['maintenance_type'];
-            if (isset($input['scheduled_date'])) $maintenance->scheduled_date = $input['scheduled_date'];
-            if (isset($input['priority'])) $maintenance->priority = $input['priority'];
-            if (isset($input['technician'])) $maintenance->technician = $input['technician'];
-            if (isset($input['cost'])) $maintenance->cost = $input['cost'];
-            if (isset($input['description'])) $maintenance->description = $input['description'];
-            if (isset($input['status'])) $maintenance->status = $input['status'];
-
-            $maintenance->updated_at = date('Y-m-d H:i:s');
-            $maintenance->save();
-
-            _log("Updated maintenance ID: " . $input['maintenance_id']);
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'message' => 'Maintenance schedule updated successfully'
-            ]);
-            exit;
-        } catch (Exception $e) {
-            _log("Error updating maintenance: " . $e->getMessage());
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Error updating maintenance: ' . $e->getMessage()]);
-            exit;
-        }
-    }
-
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-    exit;
-}
-
-function asset_delete_maintenance()
-{
-    _admin();
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        try {
-            $input = json_decode(file_get_contents('php://input'), true);
-
-            if (!$input || empty($input['maintenance_id'])) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => 'Maintenance ID is required']);
-                exit;
-            }
-
-            // Find maintenance record
-            $maintenance = ORM::for_table('tbl_asset_maintenance')
-                ->where('id', $input['maintenance_id'])
-                ->find_one();
-
-            if (!$maintenance) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => 'Maintenance record not found']);
-                exit;
-            }
-
-            // Delete maintenance record
-            $result = $maintenance->delete();
-
-            if ($result) {
-                _log("Deleted maintenance ID: " . $input['maintenance_id']);
-                header('Content-Type: application/json');
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Maintenance schedule deleted successfully'
-                ]);
-            } else {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => 'Failed to delete maintenance schedule']);
-            }
-            exit;
-        } catch (Exception $e) {
-            _log("Error deleting maintenance: " . $e->getMessage());
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Error deleting maintenance: ' . $e->getMessage()]);
-            exit;
-        }
-    }
-
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-    exit;
-}
-
-function getLifecycleDistribution()
-{
-    try {
-        _log("Starting getLifecycleDistribution calculation");
-
-        $distribution = [];
-        $labels = ['New (0-1yr)', 'Good (1-3yr)', 'Aging (3-5yr)', 'End of Life (5yr+)'];
-        $data = [0, 0, 0, 0];
-
-        // Get all assets with purchase dates
-        $assets = ORM::for_table('tbl_assets')
-            ->select('purchase_date', 'created_at')
-            ->where_not_null('purchase_date')
-            ->find_array();
-
-        $currentDate = new DateTime();
-
-        foreach ($assets as $asset) {
-            $assetDate = new DateTime($asset['purchase_date']);
-            $interval = $currentDate->diff($assetDate);
-            $years = $interval->y + ($interval->m / 12); // Include months as decimal
-
-            if ($years <= 1) {
-                $data[0]++; // New (0-1yr)
-            } elseif ($years <= 3) {
-                $data[1]++; // Good (1-3yr)
-            } elseif ($years <= 5) {
-                $data[2]++; // Aging (3-5yr)
-            } else {
-                $data[3]++; // End of Life (5yr+)
-            }
-        }
-
-        // For assets without purchase dates, use created_at as fallback
-        $assetsWithoutPurchaseDate = ORM::for_table('tbl_assets')
-            ->select('created_at')
-            ->where_null('purchase_date')
-            ->find_array();
-
-        foreach ($assetsWithoutPurchaseDate as $asset) {
-            $assetDate = new DateTime($asset['created_at']);
-            $interval = $currentDate->diff($assetDate);
-            $years = $interval->y + ($interval->m / 12);
-
-            if ($years <= 1) {
-                $data[0]++; // New (0-1yr)
-            } elseif ($years <= 3) {
-                $data[1]++; // Good (1-3yr)
-            } elseif ($years <= 5) {
-                $data[2]++; // Aging (3-5yr)
-            } else {
-                $data[3]++; // End of Life (5yr+)
-            }
-        }
-
-        $result = [
-            'labels' => $labels,
-            'data' => $data
-        ];
-
-        _log("Lifecycle Distribution Result: " . json_encode($result));
-
-        return $result;
-    } catch (Exception $e) {
-        _log("Asset Lifecycle Distribution Error: " . $e->getMessage());
-        return [
-            'labels' => ['New (0-1yr)', 'Good (1-3yr)', 'Aging (3-5yr)', 'End of Life (5yr+)'],
-            'data' => [0, 0, 0, 0]
-        ];
-    }
-}
-
-/**
- * Function to generate and export asset reports in PDF format
- * This function handles the AJAX request from the asset manager UI
- * to create PDF reports for inventory, value, maintenance, depreciation, or status
- */
-function asset_report_export()
-{
-    _admin();
-
-    // Check user permissions
-    $admin = Admin::_info();
-    if (!in_array($admin['user_type'], ['SuperAdmin', 'Admin', 'Sales'])) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => Lang::T('Permission denied')]);
-        exit;
-    }
-
-    // Check if the request is POST
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => Lang::T('Invalid request method')]);
-        exit;
-    }
-
-    // Get the report data from the request
-    $reportDataJson = $_POST['reportData'] ?? '';
-
-    if (empty($reportDataJson)) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => Lang::T('No report data provided')]);
-        exit;
-    }
-
-    // Decode the report data
-    $reportData = json_decode($reportDataJson, true);
-
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => Lang::T('Invalid JSON data')]);
-        exit;
-    }
-
-    try {
-        // Check if we have required data
-        if (!isset($reportData['reportType']) || !isset($reportData['title']) || !isset($reportData['tableHTML'])) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => Lang::T('Missing required report data')]);
-            exit;
-        }
-
-        // Generate a unique filename for the PDF
-        $timestamp = date('Y-m-d_H-i-s');
-        $reportType = $reportData['reportType'];
-        $fileName = "asset_{$reportType}_report_{$timestamp}.pdf";
-        $filePath = 'system/uploads/' . $fileName;
-
-        // Generate the PDF content
-        $html = generatePdfHtml($reportData);
-
-        $mpdf = new \Mpdf\Mpdf([
-            'margin_left' => 15,
-            'margin_right' => 15,
-            'margin_top' => 15,
-            'margin_bottom' => 15,
-        ]);
-
-        // Set document information
-        $mpdf->SetTitle($reportData['title']);
-        $mpdf->SetAuthor($admin['fullname']);
-        $mpdf->SetCreator($GLOBALS['config']['CompanyName']);
-
-        // Set header
-        $mpdf->SetHTMLHeader('<div style="text-align: center; font-weight: bold;">' . $GLOBALS['config']['CompanyName'] . '</div>');
-
-        // Set footer
-        $mpdf->SetHTMLFooter('<div style="text-align: center; font-size: 10px;">Generated on: ' . date('Y-m-d H:i:s') . '</div>');
-
-        // Write HTML content
-        $mpdf->WriteHTML($html);
-
-        // Save file
-        $mpdf->Output($filePath, \Mpdf\Output\Destination::FILE);
-
-
-        // Check if file was created
-        if (!file_exists($filePath)) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => Lang::T('Failed to save PDF file')]);
-            exit;
-        }
-
-        // Log the successful PDF generation
-        _log("Generated PDF report: " . $fileName, $admin['user_type']);
-
-        // Return success response with file URL
-        $fileUrl = getUrl('') . '/' . $filePath;
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true,
-            'message' => Lang::T('PDF report generated successfully'),
-            'fileName' => $fileName,
-            'fileUrl' => $fileUrl
-        ]);
-    } catch (Exception $e) {
-        _log("PDF generation error: " . $e->getMessage());
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => false,
-            'message' => Lang::T('PDF generation error: ') . $e->getMessage()
-        ]);
-    }
-    exit;
-}
-
-/**
- * Helper function to generate HTML content for the PDF report with professional styling
- * 
- * @param array $reportData The report data from the request
- * @return string The HTML content for the PDF
- */
-function generatePdfHtml($reportData)
-{
-    // Extract data
-    $title = $reportData['title'];
-    $reportType = $reportData['reportType'];
-    $tableHTML = $reportData['tableHTML'];
-    $summaryHTML = $reportData['summaryHTML'] ?? '';
-    $companyName = $GLOBALS['config']['CompanyName'];
-    $currentDate = date('F j, Y');
-    $currentTime = date('H:i:s');
-
-    // Create a simple HTML structure
-    $html = "<!DOCTYPE html>
-        <html>
-        <head>
-            <title>{$title}</title>
-            <style>
-                body { font-family: Arial, sans-serif; }
-                .header { text-align: center; margin-bottom: 20px; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid #ddd; padding: 8px; }
-                th { background-color: #f2f2f2; }
-            </style>
-        </head>
-        <body>
-            <div class='header'>
-                <h1>{$title}</h1>
-                <p>Generated on {$currentDate} at {$currentTime}</p>
-            </div>";
-
-    // Add summary if available
-    if (!empty($summaryHTML)) {
-        $html .= '<div>' . $summaryHTML . '</div>';
-    }
-
-    // Add table (either as is if it's HTML, or create a simple one if it's text)
-    if (strpos($tableHTML, '<table') !== false) {
-        $html .= $tableHTML;
-    } else {
-        // Create a basic table from plaintext
-        $html .= '<table>';
-        $lines = preg_split('/\r\n|\r|\n/', $tableHTML);
-        foreach ($lines as $index => $line) {
-            $line = trim($line);
-            if (empty($line)) continue;
-
-            $cells = preg_split('/\s{2,}/', $line);
-
-            $html .= '<tr>';
-            foreach ($cells as $cell) {
-                $tag = ($index === 0) ? 'th' : 'td';
-                $html .= "<{$tag}>" . htmlspecialchars(trim($cell)) . "</{$tag}>";
-            }
-            $html .= '</tr>';
-        }
-        $html .= '</table>';
-    }
-
-    $html .= "
-            <div style='margin-top: 20px; text-align: center;'>
-                <p>Generated by {$companyName}</p>
-            </div>
-        </body>
-        </html>";
-
-    return $html;
 }
 
 /**
@@ -1355,29 +1253,27 @@ function generatePdfHtml($reportData)
 function asset_welcome_seen()
 {
     _admin();
-    // _log("Processing asset_welcome_seen request");
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header('Content-Type: application/json');
-        // _log("Invalid request method for asset_welcome_seen");
-        echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+        echo json_encode(['success' => false, 'message' => Lang::T('Invalid request method')]);
         exit;
     }
-    // Update the settings to record that welcome message has been seen
+
     try {
         $exists = ORM::for_table('tbl_appconfig')
-            ->where('setting', 'welcome_message_viewed') 
+            ->where('setting', 'asset_welcome_message_viewed')
             ->count();
 
         if ($exists) {
             ORM::for_table('tbl_appconfig')
-                ->where('setting', 'welcome_message_viewed')
+                ->where('setting', 'asset_welcome_message_viewed')
                 ->find_one()
                 ->set('value', 'yes')
                 ->save();
         } else {
             ORM::for_table('tbl_appconfig')->create()
-                ->set('setting', 'welcome_message_viewed')
+                ->set('setting', 'asset_welcome_message_viewed')
                 ->set('value', 'yes')
                 ->save();
         }
@@ -1388,5 +1284,730 @@ function asset_welcome_seen()
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
+    exit;
+}
+
+// ============================================
+// ASSET REPORTS FUNCTIONS
+// ============================================
+
+function assetReports()
+{
+    global $ui, $config;
+
+    // Get currency code from config
+    $currencyCode = isset($config['currency_code']) ? $config['currency_code'] : 'USD';
+
+    // Get categories for filter
+    $categories = ORM::for_table('tbl_asset_categories')
+        ->where('status', 'Active')
+        ->order_by_asc('name')
+        ->find_array();
+
+    // Get brands for filter
+    $brands = ORM::for_table('tbl_asset_brands')
+        ->where('status', 'Active')
+        ->order_by_asc('name')
+        ->find_array();
+
+    // Get models for filter
+    $models = ORM::for_table('tbl_asset_models')
+        ->where('status', 'Active')
+        ->order_by_asc('name')
+        ->find_array();
+
+    // Get assigned_to values from assets for assignment filter
+    $assignedToValues = ORM::for_table('tbl_assets')
+        ->select('tbl_assets.assigned_to')
+        ->select('tbl_customers.fullname', 'assigned_name')
+        ->select('tbl_customers.username', 'assigned_username')
+        ->select('tbl_customers.email', 'assigned_email')
+        ->join('tbl_customers', ['tbl_assets.assigned_to', '=', 'tbl_customers.id'])
+        ->where_not_null('tbl_assets.assigned_to')
+        ->where_not_equal('tbl_assets.assigned_to', '')
+        ->group_by('tbl_assets.assigned_to')
+        ->order_by_asc('tbl_customers.fullname')
+        ->find_array();
+
+    $ui->assign('categories', $categories);
+    $ui->assign('brands', $brands);
+    $ui->assign('models', $models);
+    $ui->assign('assignedToValues', $assignedToValues);
+    $ui->assign('currencyCode', $currencyCode);
+    $ui->assign('_title', Lang::T('Asset Reports'));
+    $ui->display('assetManager_reports.tpl');
+}
+
+function generateAssetReport()
+{
+    global $ui, $config;
+
+    // Get POST parameters
+    $reportType = $_POST['report_type'] ?? 'summary';
+    $categoryId = $_POST['category_id'] ?? '';
+    $brandId = $_POST['brand_id'] ?? '';
+    $modelId = $_POST['model_id'] ?? '';
+    $status = $_POST['status'] ?? '';
+    $dateFrom = $_POST['date_from'] ?? '';
+    $dateTo = $_POST['date_to'] ?? '';
+    $costFrom = $_POST['cost_from'] ?? '';
+    $costTo = $_POST['cost_to'] ?? '';
+
+    // Get currency code from config
+    $currencyCode = isset($config['currency_code']) ? $config['currency_code'] : 'USD';
+
+    $data = [];
+
+    try {
+        switch ($reportType) {
+            case 'detailed':
+                $data = generateDetailedReport($categoryId, $brandId, $modelId, $status, $dateFrom, $dateTo, $costFrom, $costTo);
+                break;
+            case 'category':
+                $data = generateCategoryReport($categoryId, $dateFrom, $dateTo);
+                break;
+            case 'brand':
+                $data = generateBrandReport($brandId, $dateFrom, $dateTo);
+                break;
+            case 'status':
+                $data = generateStatusReport($status, $dateFrom, $dateTo);
+                break;
+            case 'assigned':
+                $assignedTo = $_POST['assigned_to'] ?? '';
+                $data = generateAssignmentReport($assignedTo, $dateFrom, $dateTo);
+                break;
+            case 'cost':
+                $data = generateCostAnalysisReport($costFrom, $costTo, $dateFrom, $dateTo);
+                break;
+            case 'warranty':
+                $data = generateWarrantyReport($dateFrom, $dateTo);
+                break;
+            default:
+                $data = generateSummaryReport();
+                break;
+        }
+
+        // Return JSON response
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'data' => $data,
+            'currencyCode' => $currencyCode,
+            'reportType' => $reportType
+        ]);
+    } catch (Exception $e) {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => false,
+            'message' => 'Error generating report: ' . $e->getMessage()
+        ]);
+    }
+    exit;
+}
+
+function exportAssetReport()
+{
+    global $config;
+
+    // Get POST parameters
+    $reportType = $_POST['report_type'] ?? 'summary';
+    $exportFormat = $_POST['export_format'] ?? 'csv';
+    $categoryId = $_POST['category_id'] ?? '';
+    $brandId = $_POST['brand_id'] ?? '';
+    $modelId = $_POST['model_id'] ?? '';
+    $status = $_POST['status'] ?? '';
+    $dateFrom = $_POST['date_from'] ?? '';
+    $dateTo = $_POST['date_to'] ?? '';
+    $costFrom = $_POST['cost_from'] ?? '';
+    $costTo = $_POST['cost_to'] ?? '';
+
+    try {
+        // Generate the report data
+        switch ($reportType) {
+            case 'detailed':
+                $data = generateDetailedReport($categoryId, $brandId, $modelId, $status, $dateFrom, $dateTo, $costFrom, $costTo);
+                break;
+            case 'category':
+                $data = generateCategoryReport($categoryId, $dateFrom, $dateTo);
+                break;
+            case 'brand':
+                $data = generateBrandReport($brandId, $dateFrom, $dateTo);
+                break;
+            case 'status':
+                $data = generateStatusReport($status, $dateFrom, $dateTo);
+                break;
+            case 'assigned':
+                $assignedTo = $_POST['assigned_to'] ?? '';
+                $data = generateAssignmentReport($assignedTo, $dateFrom, $dateTo);
+                break;
+            case 'cost':
+                $data = generateCostAnalysisReport($costFrom, $costTo, $dateFrom, $dateTo);
+                break;
+            case 'warranty':
+                $data = generateWarrantyReport($dateFrom, $dateTo);
+                break;
+            default:
+                $data = generateSummaryReport();
+                break;
+        }
+
+        // Export based on format
+        if ($exportFormat === 'csv') {
+            exportToCSV($data, $reportType);
+        } else if ($exportFormat === 'pdf') {
+            exportToPDF($data, $reportType);
+        } else {
+            exportToExcel($data, $reportType);
+        }
+    } catch (Exception $e) {
+        r2(getUrl('plugin/assetManager/reports'), 'e', 'Error exporting report: ' . $e->getMessage());
+    }
+}
+
+// Helper functions for different report types
+function generateSummaryReport()
+{
+    $summary = [];
+
+    // Total assets
+    $totalAssets = ORM::for_table('tbl_assets')->count();
+
+    // Assets by status
+    $statusCounts = ORM::for_table('tbl_assets')
+        ->select('status')
+        ->select_expr('COUNT(*)', 'count')
+        ->group_by('status')
+        ->find_array();
+
+    // Assets by category
+    $categoryCounts = ORM::for_table('tbl_assets')
+        ->select('tbl_asset_categories.name', 'category_name')
+        ->select_expr('COUNT(*)', 'count')
+        ->join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+        ->group_by('tbl_assets.category_id')
+        ->find_array();
+
+    // Total asset value
+    $totalValue = ORM::for_table('tbl_assets')
+        ->select_expr('SUM(CAST(purchase_cost AS DECIMAL(10,2)))', 'total_cost')
+        ->find_one();
+
+    $summary = [
+        'total_assets' => $totalAssets,
+        'status_breakdown' => $statusCounts,
+        'category_breakdown' => $categoryCounts,
+        'total_value' => $totalValue ? $totalValue->total_cost : 0
+    ];
+
+    return $summary;
+}
+
+function generateDetailedReport($categoryId, $brandId, $modelId, $status, $dateFrom, $dateTo, $costFrom, $costTo)
+{
+    $query = ORM::for_table('tbl_assets')
+        ->select('tbl_assets.*')
+        ->select('tbl_asset_categories.name', 'category_name')
+        ->select('tbl_asset_brands.name', 'brand_name')
+        ->select('tbl_asset_models.name', 'model_name')
+        ->left_outer_join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+        ->left_outer_join('tbl_asset_brands', ['tbl_assets.brand_id', '=', 'tbl_asset_brands.id'])
+        ->left_outer_join('tbl_asset_models', ['tbl_assets.model_id', '=', 'tbl_asset_models.id']);
+
+    // Apply filters
+    if (!empty($categoryId)) {
+        $query->where('tbl_assets.category_id', $categoryId);
+    }
+    if (!empty($brandId)) {
+        $query->where('tbl_assets.brand_id', $brandId);
+    }
+    if (!empty($modelId)) {
+        $query->where('tbl_assets.model_id', $modelId);
+    }
+    if (!empty($status)) {
+        $query->where('status', $status);
+    }
+    if (!empty($dateFrom)) {
+        $query->where_gte('purchase_date', $dateFrom);
+    }
+    if (!empty($dateTo)) {
+        $query->where_lte('purchase_date', $dateTo);
+    }
+    if (!empty($costFrom)) {
+        $query->where_gte('purchase_cost', $costFrom);
+    }
+    if (!empty($costTo)) {
+        $query->where_lte('purchase_cost', $costTo);
+    }
+
+    return $query->order_by_desc('created_at')->find_array();
+}
+
+function generateCategoryReport($categoryId, $dateFrom, $dateTo)
+{
+    $query = ORM::for_table('tbl_asset_categories')
+        ->select('tbl_asset_categories.*')
+        ->select_expr('COUNT(tbl_assets.id)', 'asset_count')
+        ->select_expr('SUM(CAST(tbl_assets.purchase_cost AS DECIMAL(10,2)))', 'total_value')
+        ->left_outer_join('tbl_assets', ['tbl_asset_categories.id', '=', 'tbl_assets.category_id'])
+        ->group_by('tbl_asset_categories.id');
+
+    if (!empty($categoryId)) {
+        $query->where('tbl_asset_categories.id', $categoryId);
+    }
+    if (!empty($dateFrom)) {
+        $query->where_gte('tbl_assets.purchase_date', $dateFrom);
+    }
+    if (!empty($dateTo)) {
+        $query->where_lte('tbl_assets.purchase_date', $dateTo);
+    }
+
+    return $query->find_array();
+}
+
+function generateBrandReport($brandId, $dateFrom, $dateTo)
+{
+    $query = ORM::for_table('tbl_asset_brands')
+        ->select('tbl_asset_brands.*')
+        ->select_expr('COUNT(tbl_assets.id)', 'asset_count')
+        ->select_expr('SUM(CAST(tbl_assets.purchase_cost AS DECIMAL(10,2)))', 'total_value')
+        ->left_outer_join('tbl_assets', ['tbl_asset_brands.id', '=', 'tbl_assets.brand_id'])
+        ->group_by('tbl_asset_brands.id');
+
+    if (!empty($brandId)) {
+        $query->where('tbl_asset_brands.id', $brandId);
+    }
+    if (!empty($dateFrom)) {
+        $query->where_gte('tbl_assets.purchase_date', $dateFrom);
+    }
+    if (!empty($dateTo)) {
+        $query->where_lte('tbl_assets.purchase_date', $dateTo);
+    }
+
+    return $query->find_array();
+}
+
+function generateStatusReport($status, $dateFrom, $dateTo)
+{
+    $query = ORM::for_table('tbl_assets')
+        ->select('tbl_assets.*')
+        ->select('tbl_asset_categories.name', 'category_name')
+        ->select('tbl_asset_brands.name', 'brand_name')
+        ->select('tbl_asset_models.name', 'model_name')
+        ->left_outer_join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+        ->left_outer_join('tbl_asset_brands', ['tbl_assets.brand_id', '=', 'tbl_asset_brands.id'])
+        ->left_outer_join('tbl_asset_models', ['tbl_assets.model_id', '=', 'tbl_asset_models.id']);
+
+    if (!empty($status)) {
+        $query->where('status', $status);
+    }
+    if (!empty($dateFrom)) {
+        $query->where_gte('purchase_date', $dateFrom);
+    }
+    if (!empty($dateTo)) {
+        $query->where_lte('purchase_date', $dateTo);
+    }
+
+    return $query->order_by_desc('created_at')->find_array();
+}
+
+function generateCostAnalysisReport($costFrom, $costTo, $dateFrom, $dateTo)
+{
+    $query = ORM::for_table('tbl_assets')
+        ->select('tbl_assets.*')
+        ->select('tbl_asset_categories.name', 'category_name')
+        ->select('tbl_asset_brands.name', 'brand_name')
+        ->select('tbl_asset_models.name', 'model_name')
+        ->left_outer_join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+        ->left_outer_join('tbl_asset_brands', ['tbl_assets.brand_id', '=', 'tbl_asset_brands.id'])
+        ->left_outer_join('tbl_asset_models', ['tbl_assets.model_id', '=', 'tbl_asset_models.id']);
+
+    if (!empty($costFrom)) {
+        $query->where_gte('purchase_cost', $costFrom);
+    }
+    if (!empty($costTo)) {
+        $query->where_lte('purchase_cost', $costTo);
+    }
+    if (!empty($dateFrom)) {
+        $query->where_gte('purchase_date', $dateFrom);
+    }
+    if (!empty($dateTo)) {
+        $query->where_lte('purchase_date', $dateTo);
+    }
+
+    return $query->order_by_desc('purchase_cost')->find_array();
+}
+
+function generateWarrantyReport($dateFrom, $dateTo)
+{
+    $query = ORM::for_table('tbl_assets')
+        ->select('tbl_assets.*')
+        ->select('tbl_asset_categories.name', 'category_name')
+        ->select('tbl_asset_brands.name', 'brand_name')
+        ->select('tbl_asset_models.name', 'model_name')
+        ->left_outer_join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+        ->left_outer_join('tbl_asset_brands', ['tbl_assets.brand_id', '=', 'tbl_asset_brands.id'])
+        ->left_outer_join('tbl_asset_models', ['tbl_assets.model_id', '=', 'tbl_asset_models.id'])
+        ->where_not_null('warranty_expiry')
+        ->where_not_equal('warranty_expiry', '0000-00-00');
+
+    if (!empty($dateFrom)) {
+        $query->where_gte('warranty_expiry', $dateFrom);
+    }
+    if (!empty($dateTo)) {
+        $query->where_lte('warranty_expiry', $dateTo);
+    }
+
+    return $query->order_by_asc('warranty_expiry')->find_array();
+}
+
+function generateAssignmentReport($assignedTo, $dateFrom, $dateTo)
+{
+    $query = ORM::for_table('tbl_assets')
+        ->select('tbl_assets.name')
+        ->select('tbl_assets.asset_tag')
+        ->select('tbl_assets.created_at')
+        ->select('tbl_assets.updated_at')
+        ->select('tbl_assets.status')
+        ->select('tbl_asset_categories.name', 'category_name')
+        ->select('tbl_asset_brands.name', 'brand_name')
+        ->select('tbl_asset_models.name', 'model_name')
+        ->left_outer_join('tbl_asset_categories', ['tbl_assets.category_id', '=', 'tbl_asset_categories.id'])
+        ->left_outer_join('tbl_asset_brands', ['tbl_assets.brand_id', '=', 'tbl_asset_brands.id'])
+        ->left_outer_join('tbl_asset_models', ['tbl_assets.model_id', '=', 'tbl_asset_models.id']);
+
+    // Filter by assignment
+    if ($assignedTo === 'unassigned') {
+        $query->where_raw('(tbl_assets.assigned_to IS NULL OR tbl_assets.assigned_to = "")');
+    } elseif (!empty($assignedTo)) {
+        $query->where('tbl_assets.assigned_to', $assignedTo);
+        $query->left_outer_join('tbl_customers', ['tbl_assets.assigned_to', '=', 'tbl_customers.id']);
+        $query->select('tbl_customers.fullname', 'assigned_to_customer');
+    }
+
+    // Date filters
+    if (!empty($dateFrom)) {
+        $query->where_gte('tbl_assets.created_at', $dateFrom);
+    }
+    if (!empty($dateTo)) {
+        $query->where_lte('tbl_assets.created_at', $dateTo . ' 23:59:59');
+    }
+
+    return $query->order_by_asc('tbl_assets.assigned_to')->order_by_asc('tbl_assets.name')->find_array();
+}
+
+// Export functions
+function exportToCSV($data, $reportType)
+{
+    $filename = "asset_report_" . $reportType . "_" . date('Y-m-d_H-i-s') . ".csv";
+
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+    $output = fopen('php://output', 'w');
+
+    if (!empty($data)) {
+        // Write headers
+        if ($reportType === 'summary') {
+            fputcsv($output, ['Report Type', 'Value']);
+            fputcsv($output, ['Total Assets', $data['total_assets']]);
+            fputcsv($output, ['Total Value', $data['total_value']]);
+            fputcsv($output, ['']);
+
+            if (!empty($data['status_breakdown'])) {
+                fputcsv($output, ['Status Breakdown']);
+                fputcsv($output, ['Status', 'Count']);
+                foreach ($data['status_breakdown'] as $status) {
+                    fputcsv($output, [$status['status'], $status['count']]);
+                }
+            }
+
+            if (!empty($data['category_breakdown'])) {
+                fputcsv($output, ['']);
+                fputcsv($output, ['Category Breakdown']);
+                fputcsv($output, ['Category', 'Count']);
+                foreach ($data['category_breakdown'] as $category) {
+                    fputcsv($output, [$category['category_name'], $category['count']]);
+                }
+            }
+        } else {
+            // For detailed reports
+            $headers = array_keys($data[0]);
+            fputcsv($output, $headers);
+
+            foreach ($data as $row) {
+                fputcsv($output, $row);
+            }
+        }
+    }
+
+    fclose($output);
+    exit;
+}
+
+function exportToPDF($data, $reportType)
+{
+    try {
+        // Get currency code from config
+        global $config;
+        $currencyCode = isset($config['currency_code']) ? $config['currency_code'] : 'USD';
+
+        // Get company name from config
+        $companyName = isset($config['CompanyName']) ? $config['CompanyName'] : 'Asset Manager';
+
+        // Create mPDF instance
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'orientation' => 'P',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 16,
+            'margin_bottom' => 16,
+            'margin_header' => 9,
+            'margin_footer' => 9
+        ]);
+
+        // Set PDF metadata
+        $mpdf->SetTitle('Asset Report - ' . ucfirst($reportType));
+        $mpdf->SetAuthor($companyName);
+        $mpdf->SetCreator('Asset Manager Plugin');
+        $mpdf->SetSubject('Asset Management Report');
+
+        // Generate HTML content
+        $html = '<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                body { font-family: Arial, sans-serif; font-size: 12px; }
+                .header { text-align: center; margin-bottom: 20px; }
+                .company-name { font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; }
+                .report-title { font-size: 16px; font-weight: bold; color: #34495e; margin-bottom: 5px; }
+                .report-date { font-size: 10px; color: #7f8c8d; }
+                .summary-box { background-color: #f8f9fa; padding: 15px; margin: 20px 0; border: 1px solid #dee2e6; }
+                .summary-item { margin-bottom: 8px; }
+                .summary-label { font-weight: bold; color: #495057; }
+                .summary-value { color: #28a745; font-weight: bold; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                th { background-color: #343a40; color: white; padding: 8px; text-align: left; font-size: 11px; }
+                td { padding: 6px 8px; border-bottom: 1px solid #dee2e6; font-size: 10px; }
+                tr:nth-child(even) { background-color: #f8f9fa; }
+                .section-title { font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+                .no-data { text-align: center; color: #6c757d; font-style: italic; padding: 20px; }
+                .footer { text-align: center; font-size: 9px; color: #6c757d; margin-top: 30px; }
+            </style>
+        </head>
+        <body>';
+
+        // Header
+        $html .= '<div class="header">
+            <div class="company-name">' . htmlspecialchars($companyName) . '</div>
+            <div class="report-title">Asset Report - ' . ucfirst($reportType) . '</div>
+            <div class="report-date">Generated on: ' . date('F j, Y \a\t g:i A') . '</div>
+        </div>';
+
+        // Generate content based on report type
+        if ($reportType === 'summary' && !empty($data)) {
+            $html .= '<div class="summary-box">
+                <div class="summary-item">
+                    <span class="summary-label">Total Assets:</span> 
+                    <span class="summary-value">' . number_format($data['total_assets']) . '</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Value:</span> 
+                    <span class="summary-value">' . $currencyCode . ' ' . number_format($data['total_value'], 2) . '</span>
+                </div>
+            </div>';
+
+            // Status breakdown
+            if (!empty($data['status_breakdown'])) {
+                $html .= '<div class="section-title">Assets by Status</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th style="text-align: center;">Count</th>
+                            <th style="text-align: center;">Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+
+                foreach ($data['status_breakdown'] as $status) {
+                    $percentage = $data['total_assets'] > 0 ? number_format(($status['count'] / $data['total_assets']) * 100, 1) : 0;
+                    $html .= '<tr>
+                        <td>' . htmlspecialchars($status['status']) . '</td>
+                        <td style="text-align: center;">' . number_format($status['count']) . '</td>
+                        <td style="text-align: center;">' . $percentage . '%</td>
+                    </tr>';
+                }
+
+                $html .= '</tbody></table>';
+            }
+
+            // Category breakdown
+            if (!empty($data['category_breakdown'])) {
+                $html .= '<div class="section-title">Assets by Category</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th style="text-align: center;">Count</th>
+                            <th style="text-align: center;">Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+
+                foreach ($data['category_breakdown'] as $category) {
+                    $percentage = $data['total_assets'] > 0 ? number_format(($category['count'] / $data['total_assets']) * 100, 1) : 0;
+                    $html .= '<tr>
+                        <td>' . htmlspecialchars($category['category_name']) . '</td>
+                        <td style="text-align: center;">' . number_format($category['count']) . '</td>
+                        <td style="text-align: center;">' . $percentage . '%</td>
+                    </tr>';
+                }
+
+                $html .= '</tbody></table>';
+            }
+        } else if (!empty($data)) {
+            // Detailed report table
+            $html .= '<div class="section-title">Detailed Asset Information</div>';
+
+            if (is_array($data) && count($data) > 0) {
+                $headers = array_keys($data[0]);
+                $html .= '<table><thead><tr>';
+
+                foreach ($headers as $header) {
+                    $displayHeader = ucfirst(str_replace('_', ' ', $header));
+                    $html .= '<th>' . htmlspecialchars($displayHeader) . '</th>';
+                }
+
+                $html .= '</tr></thead><tbody>';
+
+                foreach ($data as $row) {
+                    $html .= '<tr>';
+                    foreach ($headers as $header) {
+                        $value = isset($row[$header]) ? $row[$header] : '';
+
+                        // Format currency fields
+                        if (strpos($header, 'cost') !== false || strpos($header, 'value') !== false) {
+                            if (is_numeric($value) && $value > 0) {
+                                $value = $currencyCode . ' ' . number_format($value, 2);
+                            }
+                        }
+
+                        // Format dates
+                        if (strpos($header, 'date') !== false && $value && $value !== '0000-00-00') {
+                            $value = date('M j, Y', strtotime($value));
+                        }
+
+                        $html .= '<td>' . htmlspecialchars($value) . '</td>';
+                    }
+                    $html .= '</tr>';
+                }
+
+                $html .= '</tbody></table>';
+            } else {
+                $html .= '<div class="no-data">No data available for the selected criteria.</div>';
+            }
+        } else {
+            $html .= '<div class="no-data">No data available for this report.</div>';
+        }
+
+        // Footer
+        $html .= '<div class="footer">
+            Report generated by ' . htmlspecialchars($companyName) . ' Asset Management System<br>
+            For internal use only - Confidential
+        </div>';
+
+        $html .= '</body></html>';
+
+        // Write HTML to PDF
+        $mpdf->WriteHTML($html);
+
+        // Generate filename
+        $filename = "asset_report_" . $reportType . "_" . date('Y-m-d_H-i-s') . ".pdf";
+
+        // Output PDF
+        $mpdf->Output($filename, 'D'); // 'D' for download
+
+    } catch (Exception $e) {
+        // Fallback to simple PDF if mPDF fails
+        _log("mPDF Error: " . $e->getMessage());
+
+        $filename = "asset_report_" . $reportType . "_" . date('Y-m-d_H-i-s') . ".pdf";
+
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        echo "<h1>Asset Report - " . ucfirst($reportType) . "</h1>";
+        echo "<p>Generated on: " . date('Y-m-d H:i:s') . "</p>";
+        echo "<p><em>Note: Enhanced PDF generation temporarily unavailable.</em></p>";
+
+        if ($reportType === 'summary' && !empty($data)) {
+            echo "<h2>Summary</h2>";
+            echo "<p>Total Assets: " . $data['total_assets'] . "</p>";
+            echo "<p>Total Value: " . number_format($data['total_value'], 2) . "</p>";
+        } else if (!empty($data)) {
+            echo "<table border='1'>";
+            $headers = array_keys($data[0]);
+            echo "<tr>";
+            foreach ($headers as $header) {
+                echo "<th>" . ucfirst(str_replace('_', ' ', $header)) . "</th>";
+            }
+            echo "</tr>";
+
+            foreach ($data as $row) {
+                echo "<tr>";
+                foreach ($row as $cell) {
+                    echo "<td>" . htmlspecialchars($cell) . "</td>";
+                }
+                echo "</tr>";
+            }
+            echo "</table>";
+        }
+    }
+
+    exit;
+}
+
+function exportToExcel($data, $reportType)
+{
+    // Simple Excel export using CSV with Excel-specific headers
+    $filename = "asset_report_" . $reportType . "_" . date('Y-m-d_H-i-s') . ".xls";
+
+    header('Content-Type: application/vnd.ms-excel');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+    echo "<table border='1'>";
+
+    if ($reportType === 'summary' && !empty($data)) {
+        echo "<tr><th colspan='2'>Asset Report Summary</th></tr>";
+        echo "<tr><td>Total Assets</td><td>" . $data['total_assets'] . "</td></tr>";
+        echo "<tr><td>Total Value</td><td>" . number_format($data['total_value'], 2) . "</td></tr>";
+
+        if (!empty($data['status_breakdown'])) {
+            echo "<tr><th colspan='2'>Status Breakdown</th></tr>";
+            foreach ($data['status_breakdown'] as $status) {
+                echo "<tr><td>" . $status['status'] . "</td><td>" . $status['count'] . "</td></tr>";
+            }
+        }
+    } else if (!empty($data)) {
+        $headers = array_keys($data[0]);
+        echo "<tr>";
+        foreach ($headers as $header) {
+            echo "<th>" . ucfirst(str_replace('_', ' ', $header)) . "</th>";
+        }
+        echo "</tr>";
+
+        foreach ($data as $row) {
+            echo "<tr>";
+            foreach ($row as $cell) {
+                echo "<td>" . htmlspecialchars($cell) . "</td>";
+            }
+            echo "</tr>";
+        }
+    }
+
+    echo "</table>";
     exit;
 }
