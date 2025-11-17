@@ -102,7 +102,7 @@ For additional help and information:
 - Initial release of the Asset Manager plugin for PHPNuxBill
 
 ---
-
+Inspired by: [iBrowse Technologies](https://ibrowse.ng/)
 Developed by [Focuslinks Digital Solutions](https://focuslinkstech.com.ng/)
 
 _PHPNuxBill: Professional Internet Service Provider Management_
