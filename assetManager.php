@@ -5,7 +5,7 @@
  * 
  * PHP Mikrotik Billing (https://github.com/hotspotbilling/phpnuxbill/)
  *
- * Asset Manager System For PHPNuxBill 
+ * Gestor de Activos System For PHPNuxBill
  *
  * @author: Focuslinks Digital Solutions <freedarwuin@gmail.com>
  * Website: https://freedarwuin.com.ng/
@@ -14,7 +14,7 @@
  *
  **/
 
-register_menu(" Asset Manager", true, "assetManager", 'AFTER_MESSAGE', 'fa fa-cubes', '', "");
+register_menu(" Gestor de Activos", true, "assetManager", 'AFTER_MESSAGE', 'fa fa-cubes', '', "");
 
 
 function assetManager()
@@ -268,8 +268,8 @@ function createAssetsTable()
         }
         // Continue
     } catch (Exception $e) {
-        _log(Lang::T('Asset Manager DB Error: ') . $e->getMessage());
-        echo Lang::T("Error creating Asset Manager tables.  Error: ") . $e->getMessage();
+        _log(Lang::T('Gestor de Activos DB Error: ') . $e->getMessage());
+        echo Lang::T("Error creating Gestor de Activos tables.  Error: ") . $e->getMessage();
     }
 }
 
@@ -283,7 +283,7 @@ function ensureSchemaUpdates()
         } catch (Exception $e) {
             // Column probably already exists, which is fine
             if (strpos($e->getMessage(), 'Duplicate column name') === false) {
-                _log("Asset Manager: purchase_cost column check - " . $e->getMessage());
+                _log("Gestor de Activos: purchase_cost column check - " . $e->getMessage());
             }
         }
 
@@ -294,7 +294,7 @@ function ensureSchemaUpdates()
         } catch (Exception $e) {
             // Column probably already exists, which is fine
             if (strpos($e->getMessage(), 'Duplicate column name') === false) {
-                _log("Asset Manager: purchase_date column check - " . $e->getMessage());
+                _log("Gestor de Activos: purchase_date column check - " . $e->getMessage());
             }
         }
 
@@ -305,7 +305,7 @@ function ensureSchemaUpdates()
         } catch (Exception $e) {
             // Column probably already exists, which is fine
             if (strpos($e->getMessage(), 'Duplicate column name') === false) {
-                _log("Asset Manager: warranty_expiry column check - " . $e->getMessage());
+                _log("Gestor de Activos: warranty_expiry column check - " . $e->getMessage());
             }
         }
 
@@ -316,7 +316,7 @@ function ensureSchemaUpdates()
         } catch (Exception $e) {
             // Column probably already exists, which is fine
             if (strpos($e->getMessage(), 'Duplicate column name') === false) {
-                _log("Asset Manager: condition_status column check - " . $e->getMessage());
+                _log("Gestor de Activos: condition_status column check - " . $e->getMessage());
             }
         }
 
@@ -341,14 +341,14 @@ function ensureSchemaUpdates()
             } catch (Exception $e) {
                 // Constraint might already exist or there might be invalid references
                 if (strpos($e->getMessage(), 'Duplicate') === false) {
-                    _log(Lang::T("Asset Manager: Could not add foreign key constraint - ") . $e->getMessage());
+                    _log(Lang::T("Gestor de Activos: Could not add foreign key constraint - ") . $e->getMessage());
                 }
             }
         } catch (Exception $e) {
-            _log(Lang::T("Asset Manager: assigned_to column conversion error - ") . $e->getMessage());
+            _log(Lang::T("Gestor de Activos: assigned_to column conversion error - ") . $e->getMessage());
         }
     } catch (Exception $e) {
-        _log(Lang::T("Asset Manager Schema Update Error: ") . $e->getMessage());
+        _log(Lang::T("Gestor de Activos Schema Update Error: ") . $e->getMessage());
     }
 }
 
@@ -455,7 +455,7 @@ function assetDashboard()
             $assetsByCostRange = [];
             $expensiveAssets = [];
             $costByCategory = [];
-            _log(Lang::T('Asset Manager Cost Query Error (column may not exist): ') . $costException->getMessage());
+            _log(Lang::T('Gestor de Activos Cost Query Error (column may not exist): ') . $costException->getMessage());
         }
     } catch (Exception $e) {
         // If tables don't exist yet, set default values
@@ -474,7 +474,7 @@ function assetDashboard()
         $expensiveAssets = [];
         $costByCategory = [];
 
-        _log(Lang::T('Asset Manager Dashboard Error: ') . $e->getMessage());
+        _log(Lang::T('Gestor de Activos Dashboard Error: ') . $e->getMessage());
     }
 
     // Get currency code for UI display
@@ -1752,7 +1752,7 @@ function exportToPDF($data, $reportType)
         $currencyCode = isset($config['currency_code']) ? $config['currency_code'] : 'USD';
 
         // Get company name from config
-        $companyName = isset($config['CompanyName']) ? $config['CompanyName'] : 'Asset Manager';
+        $companyName = isset($config['CompanyName']) ? $config['CompanyName'] : 'Gestor de Activos';
 
         // Create mPDF instance
         $mpdf = new \Mpdf\Mpdf([
@@ -1770,7 +1770,7 @@ function exportToPDF($data, $reportType)
         // Set PDF metadata
         $mpdf->SetTitle('Asset Report - ' . ucfirst($reportType));
         $mpdf->SetAuthor($companyName);
-        $mpdf->SetCreator('Asset Manager Plugin');
+        $mpdf->SetCreator('Gestor de Activos Plugin');
         $mpdf->SetSubject('Asset Management Report');
 
         // Generate HTML content

@@ -555,7 +555,7 @@
         const portalLink = "https://t.me/freedarwuin";
         const donateLink = "https://www.paypal.com/paypalme/freedarwuin";
         const updateLink = "{$updateLink}";
-        const productName = "Asset Manager";
+        const productName = "Gestor de Activos";
         const version = "{$version}";
         $('#version').html(productName + ' | Ver: ' + version + ' | by: <a href="' + portalLink + '">Focuslinks Tech</a> | <a href="' + donateLink + '">Donate</a>');
 

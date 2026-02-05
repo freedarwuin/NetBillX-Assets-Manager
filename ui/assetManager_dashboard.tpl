@@ -54,7 +54,7 @@
                         <span class="glyphicon glyphicon-stats" aria-hidden="true"></span> {Lang::T('Reports')}
                     </a>
                 </div>
-                {Lang::T('Asset Manager Dashboard')}
+                {Lang::T('Gestor de Activos Dashboard')}
             </div>
             <div class="panel-body">
 
@@ -330,7 +330,7 @@
                 <div class="text-center mb-4">
                     <img src="https://shop.freedarwuin.com.ng/public/storage/settings/172805218211.png" alt="Logo"
                         style="max-height: 80px;" class="mb-3">
-                    <h4>{Lang::T('Thank you for installing the Asset Manager plugin')}</h4>
+                    <h4>{Lang::T('Thank you for installing the Gestor de Activos plugin')}</h4>
                     <p class="text-muted">{Lang::T('Manage your organization\'s assets with ease')}</p>
                 </div>
 
@@ -652,7 +652,7 @@
         const portalLink = "https://t.me/freedarwuin";
         const donateLink = "https://www.paypal.com/paypalme/freedarwuin";
         const updateLink = "{$updateLink}";
-        const productName = "Asset Manager";
+        const productName = "Gestor de Activos";
         const version = "{$version}";
         $('#version').html(productName + ' | Ver: ' + version + ' | by: <a href="' + portalLink + '">Focuslinks Tech</a> | <a href="' + donateLink + '">Donate</a>');
 

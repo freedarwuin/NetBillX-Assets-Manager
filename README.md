@@ -1,7 +1,7 @@
-# PHPNuxBill Asset Manager
+# PHPNuxBill Gestor de Activos
 
 ## Overview
-The Asset Manager is a comprehensive plugin for PHPNuxBill that provides organizations with powerful tools to track, manage, and report on their physical and digital assets. This module seamlessly integrates with the PHPNuxBill platform, offering a complete asset lifecycle management solution.
+The Gestor de Activos is a comprehensive plugin for PHPNuxBill that provides organizations with powerful tools to track, manage, and report on their physical and digital assets. This module seamlessly integrates with the PHPNuxBill platform, offering a complete asset lifecycle management solution.
 
 ## Key Features
 
@@ -70,11 +70,11 @@ The Asset Manager is a comprehensive plugin for PHPNuxBill that provides organiz
 ## Getting Started
 
 ### Installation
-The Asset Manager comes pre-installed with recent PHPNuxBill installations. For manual installation:
+The Gestor de Activos comes pre-installed with recent PHPNuxBill installations. For manual installation:
 
 1. Ensure you're running PHPNuxBill version 2025.3.13 or higher and PHPNuxBill Ultimate Edition
 2. Access the plugin manager in the admin panel
-3. Locate and activate the Asset Manager plugin
+3. Locate and activate the Gestor de Activos plugin
 4. Follow the setup wizard to configure initial settings
 
 ### Initial Configuration
@@ -99,7 +99,7 @@ For additional help and information:
 
 ## Changelogs
 ### Version 1.0.0
-- Initial release of the Asset Manager plugin for PHPNuxBill
+- Initial release of the Gestor de Activos plugin for PHPNuxBill
 
 ---
 Inspired by: [iBrowse Technologies](https://ibrowse.ng/)
