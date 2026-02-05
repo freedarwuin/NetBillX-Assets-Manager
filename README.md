@@ -95,7 +95,7 @@ The Asset Manager comes pre-installed with recent PHPNuxBill installations. For 
 For additional help and information:
 - Refer to the inline documentation within the system
 - Visit the PHPNuxBill knowledge base at [https://phpnuxbill.org/getting-started/introduction](https://phpnuxbill.org/getting-started/introduction)
-- Contact [Focuslinks Digital Solutions](https://t.me/focuslinkstech) for professional support services
+- Contact [Focuslinks Digital Solutions](https://t.me/freedarwuin) for professional support services
 
 ## Changelogs
 ### Version 1.0.0
@@ -103,6 +103,6 @@ For additional help and information:
 
 ---
 Inspired by: [iBrowse Technologies](https://ibrowse.ng/)
-Developed by [Focuslinks Digital Solutions](https://focuslinkstech.com.ng/)
+Developed by [Focuslinks Digital Solutions](https://freedarwuin.com.ng/)
 
 _PHPNuxBill: Professional Internet Service Provider Management_

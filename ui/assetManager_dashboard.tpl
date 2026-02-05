@@ -328,7 +328,7 @@
             </div>
             <div class="modal-body">
                 <div class="text-center mb-4">
-                    <img src="https://shop.focuslinkstech.com.ng/public/storage/settings/172805218211.png" alt="Logo"
+                    <img src="https://shop.freedarwuin.com.ng/public/storage/settings/172805218211.png" alt="Logo"
                         style="max-height: 80px;" class="mb-3">
                     <h4>{Lang::T('Thank you for installing the Asset Manager plugin')}</h4>
                     <p class="text-muted">{Lang::T('Manage your organization\'s assets with ease')}</p>
@@ -378,7 +378,7 @@
                                     <li class="mb-2">{Lang::T('Generate your first report to see the system in action')}
                                     </li>
                                     <li class="mb-2">{Lang::T('Please don\'t forget to donate to support the
-                                        development')} <a href="https://www.paypal.com/paypalme/focuslinkstech"
+                                        development')} <a href="https://www.paypal.com/paypalme/freedarwuin"
                                             target="_blank">{Lang::T('Donate Now')}</a></li>
                                     <li class="mb-2">{Lang::T('Click on Get Started to continue')}</li>
                                 </ol>
@@ -388,7 +388,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <a href="https://www.paypal.com/paypalme/focuslinkstech" target="_blank" class="btn btn-primary"><i
+                <a href="https://www.paypal.com/paypalme/freedarwuin" target="_blank" class="btn btn-primary"><i
                         class="fa fa-paypal"></i> {Lang::T('Donate')}</a>
                 <button type="button" class="btn btn-success" data-dismiss="modal"><i class="fa fa-check-circle"></i>
                     {Lang::T('Get Started')}</button>
@@ -649,8 +649,8 @@
 
 <script>
     window.addEventListener('DOMContentLoaded', function () {
-        const portalLink = "https://t.me/focuslinkstech";
-        const donateLink = "https://www.paypal.com/paypalme/focuslinkstech";
+        const portalLink = "https://t.me/freedarwuin";
+        const donateLink = "https://www.paypal.com/paypalme/freedarwuin";
         const updateLink = "{$updateLink}";
         const productName = "Asset Manager";
         const version = "{$version}";

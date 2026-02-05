@@ -552,8 +552,8 @@
 
 <script>
     window.addEventListener('DOMContentLoaded', function () {
-        const portalLink = "https://t.me/focuslinkstech";
-        const donateLink = "https://www.paypal.com/paypalme/focuslinkstech";
+        const portalLink = "https://t.me/freedarwuin";
+        const donateLink = "https://www.paypal.com/paypalme/freedarwuin";
         const updateLink = "{$updateLink}";
         const productName = "Asset Manager";
         const version = "{$version}";

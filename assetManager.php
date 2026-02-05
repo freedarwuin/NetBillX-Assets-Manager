@@ -7,10 +7,10 @@
  *
  * Asset Manager System For PHPNuxBill 
  *
- * @author: Focuslinks Digital Solutions <focuslinkstech@gmail.com>
- * Website: https://focuslinkstech.com.ng/
- * GitHub: https://github.com/Focuslinkstech/
- * Telegram: https://t.me/focuslinkstech/
+ * @author: Focuslinks Digital Solutions <freedarwuin@gmail.com>
+ * Website: https://freedarwuin.com.ng/
+ * GitHub: https://github.com/freedarwuin/
+ * Telegram: https://t.me/freedarwuin/
  *
  **/
 
@@ -21,7 +21,7 @@ function assetManager()
 {
     global $ui, $config, $routes;
     _admin();
-    $ui->assign('_title', $GLOBALS['config']['CompanyName'] . ' - ' . 'Asset Manager');
+    $ui->assign('_title', $GLOBALS['config']['CompanyName'] . ' - ' . 'Gestor de Activos');
     $ui->assign('_system_menu', '');
     $admin = Admin::_info();
     $ui->assign('_admin', $admin);
