@@ -214,11 +214,11 @@ function createAssetsTable()
             $categoryCount = ORM::for_table('tbl_asset_categories')->count();
             if ($categoryCount == 0) {
                 $categories = [
-                    ['name' => 'Network Equipment', 'description' => 'Routers, switches, access points, and other networking hardware'],
-                    ['name' => 'Power Equipment', 'description' => 'UPS, power supplies, batteries, and power management devices'],
-                    ['name' => 'Transmission Equipment', 'description' => 'Fiber optic equipment, wireless transmission, antennas'],
-                    ['name' => 'Computing Equipment', 'description' => 'Servers, computers, storage devices'],
-                    ['name' => 'Infrastructure', 'description' => 'Towers, cabinets, cables, and physical infrastructure']
+                    ['name' => 'Equipos de red', 'description' => 'Enrutadores, conmutadores, puntos de acceso y otro hardware de red'],
+                    ['name' => 'Equipos de potencia', 'description' => 'UPS, fuentes de alimentación, baterías y dispositivos de gestión de energía'],
+                    ['name' => 'Equipo de transmisión', 'description' => 'Equipos de fibra óptica, transmisión inalámbrica, antenas.'],
+                    ['name' => 'Equipos de computación', 'description' => 'Servidores, computadoras, dispositivos de almacenamiento'],
+                    ['name' => 'Infraestructura', 'description' => 'Torres, gabinetes, cables e infraestructura física']
                 ];
 
                 foreach ($categories as $cat) {
@@ -242,11 +242,11 @@ function createAssetsTable()
             $brandCount = ORM::for_table('tbl_asset_brands')->count();
             if ($brandCount == 0) {
                 $brands = [
-                    ['name' => 'Cisco Systems', 'description' => 'Leading provider of networking equipment', 'country' => 'United States', 'website' => 'https://www.cisco.com'],
-                    ['name' => 'Ubiquiti Networks', 'description' => 'Manufacturer of networking and wireless communication products', 'country' => 'United States', 'website' => 'https://www.ui.com'],
-                    ['name' => 'MikroTik', 'description' => 'Latvian manufacturer of computer networking equipment', 'country' => 'Latvia', 'website' => 'https://mikrotik.com'],
-                    ['name' => 'TP-Link', 'description' => 'Chinese manufacturer of computer networking products', 'country' => 'China', 'website' => 'https://www.tp-link.com'],
-                    ['name' => 'Huawei', 'description' => 'Chinese multinational technology corporation', 'country' => 'China', 'website' => 'https://www.huawei.com']
+                    ['name' => 'Cisco Systems', 'description' => 'Proveedor líder de equipos de red', 'country' => 'United States', 'website' => 'https://www.cisco.com'],
+                    ['name' => 'Ubiquiti Networks', 'description' => 'Fabricante de productos de redes y comunicaciones inalámbricas.', 'country' => 'United States', 'website' => 'https://www.ui.com'],
+                    ['name' => 'MikroTik', 'description' => 'Fabricante letón de equipos de redes informáticas', 'country' => 'Latvia', 'website' => 'https://mikrotik.com'],
+                    ['name' => 'TP-Link', 'description' => 'Fabricante chino de productos de redes informáticas', 'country' => 'China', 'website' => 'https://www.tp-link.com'],
+                    ['name' => 'Huawei', 'description' => 'Corporación tecnológica multinacional china', 'country' => 'China', 'website' => 'https://www.huawei.com']
                 ];
 
                 foreach ($brands as $mak) {
