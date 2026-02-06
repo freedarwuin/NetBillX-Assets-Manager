@@ -328,7 +328,7 @@
             </div>
             <div class="modal-body">
                 <div class="text-center mb-4">
-                    <img src="https://shop.freedarwuin.com.ng/public/storage/settings/172805218211.png" alt="Logo"
+                    <img src="https://github.com/freedarwuin/NetBillX/blob/master/ui/ui/images/logo.png" alt="Logo"
                         style="max-height: 80px;" class="mb-3">
                     <h4>{Lang::T('Thank you for installing the Gestor de Activos plugin')}</h4>
                     <p class="text-muted">{Lang::T('Manage your organization\'s assets with ease')}</p>
